@@ -1,0 +1,51 @@
+group CDRHeader;
+
+main(ctx, blocks) ::= <<
+#ifndef _$ctx.filename$CDR_H_
+#define _$ctx.filename$CDR_H_
+
+#include "$ctx.filename$.h"
+#include "CDR.h"
+
+class $ctx.filename$CDR : public eProsima::CDR
+{ 
+public:
+    $ctx.filename$CDR(eProsima::CDRBuffer &cdrBuffer);
+    
+    $blocks; separator="\n"$
+};
+
+#endif // _$ctx.filename$CDR_H_
+>>
+
+module(name, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+struct_type(ctx, name, members) ::= <<
+/*!
+ * @brief This function serialize type $ctx.scope$$name$.
+ */
+inline bool operator<<(const $ctx.scope$$name$ &x){return serialize(x);}
+
+/*!
+ * @brief This function serialize type $ctx.scope$$name$.
+ */
+bool serialize(const $ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess = eProsima::CDRBuffer::NO_ENDIANESS);
+
+/*!
+ * @brief This function deserialize type $ctx.scope$$name$.
+ */
+inline bool operator$ctx.sersym$($ctx.scope$$name$ &x){return deserialize(x);}
+
+/*!
+ * @brief This function deserialize type $ctx.scope$$name$.
+ */
+bool deserialize($ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess = eProsima::CDRBuffer::NO_ENDIANESS);
+>>
+
+union_type(ctx, name, discriminator, elements) ::= <<>>

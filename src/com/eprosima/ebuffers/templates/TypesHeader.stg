@@ -1,0 +1,83 @@
+group TypesHeader;
+
+main(ctx, blocks) ::= <<
+#ifndef _$ctx.filename$_H_
+#define _$ctx.filename$_H_
+
+#include <stdint.h>
+#include <array>
+#include <string>
+#include <vector>
+
+$blocks; separator="\n"$
+
+#endif // _$ctx.filename$_H_
+>>
+
+module(name, definition_list) ::= <<
+namespace $name$
+{
+    $definition_list$
+}
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+struct_type(ctx, name, members) ::= <<
+class $name$
+{
+public:
+    $name$();
+    ~$name$();
+    $name$(const $name$ &x);
+    $name$($name$ &&x);
+    $name$& operator=(const $name$ &x);
+    $name$& operator=($name$ &&x);
+    
+    $members:{$public_member_declaration(it)$}; separator="\n"$
+    
+private:
+    $members:{$private_member_declaration(it)$}; separator="\n"$
+};
+>>
+
+private_member_declaration(member) ::= <<
+$member.type$ m_$member.name$;
+>>
+
+public_member_declaration(member) ::= <<
+$if(basicTypes.(member.type))$
+void $member.name$($member.type$ _$member.name$);
+$member.type$ $member.name$() const;
+$member.type$& $member.name$();
+$else$
+void $member.name$(const $member.type$ &_$member.name$);
+void $member.name$($member.type$ &&_$member.name$);
+const $member.type$& $member.name$() const;
+$member.type$& $member.name$();
+$endif$
+>>
+
+union_type(ctx, name, discriminator, elements) ::= <<
+class $name$
+{
+public:
+    $name$();
+    ~$name$();
+    $name$(const $name$ &x);
+    $name$($name$ &&x);
+    $name$& operator=(const $name$ &x);
+    $name$& operator=($name$ &&x);
+    
+    $public_member_declaration(discriminator)$
+    
+    $elements:{$public_member_declaration(it)$}; separator="\n"$
+    
+private:
+    $private_member_declaration(discriminator)$
+    
+    $elements:{$private_member_declaration(it)$}; separator="\n"$
+};
+>>

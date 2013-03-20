@@ -1,0 +1,115 @@
+group TypesSource;
+
+main(ctx, blocks) ::= <<
+#include "$ctx.filename$.h"
+
+#include <utility>
+
+$blocks; separator="\n"$
+>>
+
+module(name, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+class_constructors(ctx, name, members) ::<<
+$ctx.scope$$name$::$name$()
+{
+    $members:{$member_default_init(it)$}; separator="\n"$
+}
+
+$ctx.scope$$name$::~$name$()
+{
+}
+
+$ctx.scope$$name$::$name$(const $ctx.scope$$name$ &x)
+{
+    $members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
+}
+
+$ctx.scope$$name$::$name$($ctx.scope$$name$ &&x)
+{
+    $members:{$member_move(it)$}; separator="\n"$
+}
+
+$ctx.scope$$name$& $ctx.scope$$name$::operator=(const $ctx.scope$$name$ &x)
+{
+    $members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
+    
+    return *this;
+}
+
+$ctx.scope$$name$& $ctx.scope$$name$::operator=($ctx.scope$$name$ &&x)
+{
+    $members:{$member_move(it)$}; separator="\n"$
+    
+    return *this;
+}
+>>
+
+struct_type(ctx, name, members) ::= <<
+$class_constructors(ctx=ctx, name=name, members=members)$
+
+$members:{$public_member_declaration(scope=ctx.scope, class=name, member=it)$}; separator="\n"$
+>>
+
+union_type(ctx, name, discriminator, elements) ::= <<
+$class_constructors(ctx=ctx, name=name, members=members)$
+>>
+
+public_member_declaration(scope, class, member) ::= <<
+$if(basicTypes.(member.type))$
+void $scope$$class$::$member.name$($member.type$ _$member.name$)
+{
+    m_$member.name$ = _$member.name$;
+}
+
+$member.type$ $scope$$class$::$member.name$() const
+{
+    return m_$member.name$;
+}
+
+$member.type$& $scope$$class$::$member.name$()
+{
+    return m_$member.name$;
+}
+$else$
+void $scope$$class$::$member.name$(const $member.type$ &_$member.name$)
+{
+    m_$member.name$ = _$member.name$;
+}
+
+void $scope$$class$::$member.name$($member.type$ &&_$member.name$)
+{
+    m_$member.name$ = std::move(_$member.name$);
+}
+
+const $member.type$& $scope$$class$::$member.name$() const
+{
+    return m_$member.name$;
+}
+
+$member.type$& $scope$$class$::$member.name$()
+{
+    return m_$member.name$;
+}
+$endif$
+>>
+
+member_default_init(member) ::= <<
+$if(basicTypes.(member.type))$
+m_$member.name$ = $basicTypes.(member.type)$;
+$endif$
+>>
+
+member_move(member) ::= <<
+$if(basicTypes.(member.type))$
+m_$member.name$ = x.m_$member.name$;
+$else$
+m_$member.name$ = std::move(x.m_$member.name$);
+$endif$
+>>

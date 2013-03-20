@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<project name="eBuffers" default="jar" basedir=".">
+	<macrodef name="antlr">
+		<attribute name="base"/>
+		<attribute name="grammar"/>
+		<sequential>
+			<java classname="antlr.Tool" classpath="lib/antlr-2.7.7.jar">
+				<arg value="-o"/>
+				<arg value="@{base}"/>
+				<arg value="@{grammar}"/>
+			</java>
+		</sequential>
+	</macrodef>
+
+	<target name="init">
+		<tstamp>
+			<format property="src.timestamp" pattern="dd/MM/yyyy"/>
+			<format property="year" pattern="2009-yyyy"/>
+		</tstamp>
+
+		<!-- Allow any user specific values to override the defaults -->
+		<property file="./build.properties"/>
+		<property environment="env"/>
+
+		<property name="Name" value="${ant.project.name}"/>
+		<property name="name" value="${ant.project.name}"/>
+		<property name="copyright" value="${year} Proyectos y Sistema de Mantenimiento S.L"/>
+
+		<!-- Filters -->
+		<filter token="date" value="${src.timestamp}"/>
+		<filter token="version" value="${version}"/>
+		<filter token="copyright" value="${copyright}"/>
+
+		<!-- Source related properties -->
+		<property name="src.dir" value="${basedir}${file.separator}src"/>
+		<property name="src.java" value="${src.dir}"/>
+		<property name="lib.dir" value="${basedir}${file.separator}lib${file.separator}"/>
+		<property name="grammar.dir" value="${basedir}${file.separator}grammar"/>
+		<property name="src.excludes" value=""/>
+
+		<!-- Build related properties -->
+		<property name="build.dir" value="${basedir}${file.separator}build"/>
+		<property name="build.src" value="${build.dir}${file.separator}src"/>
+		<property name="build.classes" value="${build.dir}"/>
+		<property name="build.javadocs" value="${basedir}${file.separator}docs${file.separator}api"/>
+		<property name="build.jar" value="${lib.dir}${file.separator}${name}.jar"/>
+
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="antlr-2.7.7.jar" />
+				<include name="stringtemplate-3.2.1.jar" />
+			</fileset>
+		</path>
+
+		<path id="run.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<property name="build.dist" value="${build.dir}${file.separator}${name}-${version}"/>
+
+		<property name="dist.basedir" value="${build.dir}"/>
+		<property name="dist.includes" value="${name}${file.separator}**"/>
+		<property name="dist.excludes"
+	      value="**/prj/**,
+	            **/dist/**,
+	             **/test/**,
+	             **/model/**,
+	             **/build/**,
+	             **/.DS_Store"
+	      />
+		<property name="packages" value="${build.packages}"/>
+		<property name="library.includes" value="${bundle.includes}"/>
+
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Basic build targets                                                 -->
+	<!-- =================================================================== -->
+	<target name="prepare-sources" depends="init">
+		<mkdir dir="${build.dir}"/>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Compiles the source code                                            -->
+	<!-- =================================================================== -->
+	<target name="compile" depends="init, prepare-sources" description="Compiles the sources. (Default)">
+		<!-- Echo compilation properties -->
+		<echo>Building ANTLR grammars... Some warnings are expected...</echo>
+		<antlr base="${src.java}${file.separator}com/eprosima/ebuffers/parser" grammar="${grammar.dir}${file.separator}idl.g"/>
+		<echo>Compiling java code...</echo>
+		<mkdir dir="${build.classes}"/>
+		<javac srcdir="${src.java}"
+	      destdir="${build.classes}"
+	      >
+			<classpath refid="build.classpath"/>
+		</javac>
+		<copy todir="${build.classes}">
+		    <fileset dir="${src.dir}" includes="**/*.stg"/>
+		</copy>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Creates the jar archive                                             -->
+	<!-- =================================================================== -->
+	<target name="jar" depends="init,compile" description="Builds the library (.jar).">
+		<jar jarfile="${build.jar}"
+	      basedir="${build.classes}"
+	      manifest="manifest">
+		</jar>
+
+	</target>
+</project>

@@ -1,0 +1,85 @@
+group CDRSource;
+
+main(ctx, blocks) ::= <<
+#include "$ctx.filename$CDR.h"
+
+$ctx.filename$CDR::$ctx.filename$CDR(eProsima::CDRBuffer &cdrBuffer) : CDR(cdrBuffer)
+{
+}
+
+$blocks; separator="\n"$
+>>
+
+module(name, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+struct_type(ctx, name, members) ::= <<
+
+bool $ctx.filename$CDR::serialize(const $ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess)
+{
+    bool returnedValue = true;
+    
+    $members:{$member_serialization(it)$}; separator="\n"$
+    
+    return returnedValue;
+}
+
+
+bool $ctx.filename$CDR::deserialize($ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess)
+{
+    bool returnedValue = true;
+    
+    $members:{$member_deserialization(it)$}; separator="\n"$
+    
+    return returnedValue;
+}
+>>
+
+member_serialization(member) ::= <<
+$if(member.typelimitation)$
+if(x.$member.name$().$sizeFunction.(member.striptype)$ <= $member.typelimitation$)
+    
+$endif$returnedValue &= $basicCDRTypes.(member.striptype)$serialize(x.$member.name$(), endianess);
+$if(member.typelimitation)$
+else
+    return false; //Change
+$endif$
+>>
+
+member_deserialization(member) ::= <<
+returnedValue &= $basicCDRTypes.(member.striptype)$deserialize(x.$member.name$(), endianess);
+>>
+
+union_type(ctx, name, discriminator, elements) ::= <<>>
+
+basicCDRTypes ::= [
+        "float":"CDR::",
+        "double":"CDR::",
+        "long double":"CDR::",
+        "int32_t":"CDR::",
+        "int64_t":"CDR::",
+        "uint16_t":"CDR::",
+        "uint32_t":"CDR::",
+        "uint64_t":"CDR::",
+        "char":"CDR::",
+        "wchar_t":"CDR::",
+        "bool":"CDR::",
+        "uint8_t":"CDR::",
+        "std::array":"CDR::",
+        "std::vector":"CDR::",
+        "std::string":"CDR::",
+        "std::wstring":"CDR::",
+        default: // not basic type.
+]
+
+sizeFunction ::= [
+        "std::vector":"size()",
+        "std::string":"length()",
+        "std::wstring":"length()",
+        default: // not basic type.
+]
