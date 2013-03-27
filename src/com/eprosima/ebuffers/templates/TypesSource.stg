@@ -16,100 +16,262 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-class_constructors(ctx, name, members) ::<<
-$ctx.scope$$name$::$name$()
+struct_type(ctx, struct) ::= <<
+$struct.scopedname$::$struct.name$()
 {
-    $members:{$member_default_init(it)$}; separator="\n"$
+    $struct.members:{$member_default_init(it)$}; separator="\n"$
 }
 
-$ctx.scope$$name$::~$name$()
+$struct.scopedname$::~$struct.name$()
 {
 }
 
-$ctx.scope$$name$::$name$(const $ctx.scope$$name$ &x)
+$struct.scopedname$::$struct.name$(const $struct.scopedname$ &x)
 {
-    $members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
+    $struct.members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
 }
 
-$ctx.scope$$name$::$name$($ctx.scope$$name$ &&x)
+$struct.scopedname$::$struct.name$($struct.scopedname$ &&x)
 {
-    $members:{$member_move(it)$}; separator="\n"$
+    $struct.members:{$structmember_move(it)$}; separator="\n"$
 }
 
-$ctx.scope$$name$& $ctx.scope$$name$::operator=(const $ctx.scope$$name$ &x)
+$struct.scopedname$& $struct.scopedname$::operator=(const $struct.scopedname$ &x)
 {
-    $members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
+    $struct.members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
     
     return *this;
 }
 
-$ctx.scope$$name$& $ctx.scope$$name$::operator=($ctx.scope$$name$ &&x)
+$struct.scopedname$& $struct.scopedname$::operator=($struct.scopedname$ &&x)
 {
-    $members:{$member_move(it)$}; separator="\n"$
+    $struct.members:{$structmember_move(it)$}; separator="\n"$
     
     return *this;
 }
 >>
 
-struct_type(ctx, name, members) ::= <<
-$class_constructors(ctx=ctx, name=name, members=members)$
+union_type(ctx, union) ::= <<
+$union.scopedname$::$union.name$()
+{
+    m__d = $union.defaultvalue$;
+    $union.members:{$member_default_init(it)$}; separator="\n"$
+}
 
-$members:{$public_member_declaration(scope=ctx.scope, class=name, member=it)$}; separator="\n"$
+$union.scopedname$::~$union.name$()
+{
+}
+
+$union.scopedname$::$union.name$(const $union.scopedname$ &x)
+{
+    m__d = x.m__d;
+    
+    switch(m__d)
+    {
+        $union.members:{$unionmember_copy(it)$}; separator="\n"$
+    }
+}
+
+$union.scopedname$::$union.name$($union.scopedname$ &&x)
+{
+    m__d = x.m__d;
+    
+    switch(m__d)
+    {
+        $union.members:{$unionmember_move(it)$}; separator="\n"$
+    }
+}
+
+$union.scopedname$& $union.scopedname$::operator=(const $union.scopedname$ &x)
+{
+    m__d = x.m__d;
+    
+    switch(m__d)
+    {
+        $union.members:{$unionmember_copy(it)$}; separator="\n"$
+    }
+    
+    return *this;
+}
+
+$union.scopedname$& $union.scopedname$::operator=($union.scopedname$ &&x)
+{
+    m__d = x.m__d;
+    
+    switch(m__d)
+    {
+        $union.members:{$unionmember_move(it)$}; separator="\n"$
+    }
+    
+    return *this;
+}
+
+void $union.scopedname$::_d($union.discriminator.typename$ __d)
+{
+    bool b = false;
+    
+    switch(m__d)
+    {
+        $union.members:{$unionmember_discriminator_case(member=it, totallabels=union.totallabels)$}; separator="\n"$
+    }
+    
+    if(!b) /*TODO*/printf("ERROR: BAD_PARAM Exception in union");
+    
+    m__d = __d;
+}
+
+$union.discriminator.typename$ $union.scopedname$::_d() const
+{
+    return m__d;
+}
+
+$union.discriminator.typename$& $union.scopedname$::_d()
+{
+    return m__d;
+}
+
+$union.members:{$public_unionmember_declaration(class=union.scopedname, member=it, defaultvalue=union.defaultvalue, totallabels=union.totallabels)$}; separator="\n"$
 >>
 
-union_type(ctx, name, discriminator, elements) ::= <<
-$class_constructors(ctx=ctx, name=name, members=members)$
->>
-
-public_member_declaration(scope, class, member) ::= <<
-$if(basicTypes.(member.type))$
-void $scope$$class$::$member.name$($member.type$ _$member.name$)
+public_unionmember_declaration(class, member, totallabels, defaultvalue) ::= <<
+$if(member.typecode.primitive)$
+void $class$::$member.name$($member.typecode.typename$ _$member.name$)
 {
     m_$member.name$ = _$member.name$;
+    $unionmember_set_discriminator(member)$
 }
 
-$member.type$ $scope$$class$::$member.name$() const
+$member.typecode.typename$ $class$::$member.name$() const
 {
+    $unionmember_check_case_list(member=member, totallabels=totallabels)$
+    
     return m_$member.name$;
 }
 
-$member.type$& $scope$$class$::$member.name$()
+$member.typecode.typename$& $class$::$member.name$()
 {
+    $unionmember_check_case_list(member=member, totallabels=totallabels)$
+    
     return m_$member.name$;
 }
 $else$
-void $scope$$class$::$member.name$(const $member.type$ &_$member.name$)
+void $class$::$member.name$(const $member.typecode.typename$ &_$member.name$)
 {
     m_$member.name$ = _$member.name$;
+    $unionmember_set_discriminator(member)$
 }
 
-void $scope$$class$::$member.name$($member.type$ &&_$member.name$)
+void $class$::$member.name$($member.typecode.typename$ &&_$member.name$)
 {
     m_$member.name$ = std::move(_$member.name$);
+    $unionmember_set_discriminator(member)$
 }
 
-const $member.type$& $scope$$class$::$member.name$() const
+const $member.typecode.typename$& $class$::$member.name$() const
 {
+    $unionmember_check_case_list(member=member, totallabels=totallabels)$
+    
     return m_$member.name$;
 }
 
-$member.type$& $scope$$class$::$member.name$()
+$member.typecode.typename$& $class$::$member.name$()
 {
+    $unionmember_check_case_list(member=member, totallabels=totallabels)$
+    
     return m_$member.name$;
 }
 $endif$
 >>
 
 member_default_init(member) ::= <<
-$if(basicTypes.(member.type))$
-m_$member.name$ = $basicTypes.(member.type)$;
+$if(member.typecode.primitive)$
+m_$member.name$ = $basicTypes.(member.typecode.typename)$;
 $endif$
 >>
 
-member_move(member) ::= <<
-$if(basicTypes.(member.type))$
+structmember_move(member) ::= <<
+$if(member.typecode.primitive)$
 m_$member.name$ = x.m_$member.name$;
 $else$
 m_$member.name$ = std::move(x.m_$member.name$);
 $endif$
 >>
+
+unionmember_discriminator_case(member, totallabels) ::= <<
+$if(member.default)$
+default:
+b = true;
+switch(__d)
+{
+    $totallabels:{case $it$:}; separator="\n"$
+    b = false;
+    break;
+}
+break;
+$else$
+$member.labels:{case $it$:}; separator="\n"$
+switch(__d)
+{
+    $member.labels:{case $it$:}; separator="\n"$
+    b = true;
+    break;
+}
+break;
+$endif$
+>>
+
+unionmember_copy(member) ::= <<
+$member.labels:{case $it$:}; separator="\n"$
+$if(member.default)$
+default:$\n$
+$endif$
+m_$member.name$ = x.m_$member.name$;
+break;
+>>
+
+unionmember_move(member) ::= <<
+$member.labels:{case $it$:}; separator="\n"$
+$if(member.default)$
+default:$\n$
+$endif$
+$if(member.typecode.primitive)$
+m_$member.name$ = x.m_$member.name$;
+$else$
+m_$member.name$ = std::move(x.m_$member.name$);
+$endif$
+break;
+>>
+
+unionmember_set_discriminator(member) ::= <<
+$if(member.default)$
+m__d = $defaultvalue$;
+$else$
+m__d = $first(member.labels)$;
+$endif$
+>>
+
+unionmember_check_case_list(member, totallabels) ::= <<
+$if(member.default)$
+bool b = true;
+    
+switch(m__d)
+{
+    $totallabels:{case $it$:}; separator="\n"$
+    b = false;
+    break;
+}
+$else$
+bool b = false;
+    
+switch(m__d)
+{
+    $member.labels:{case $it$:}; separator="\n"$
+    b = true;
+    break;
+}
+$endif$
+    
+if(!b) /*TODO*/printf("ERROR: BAD_PARAM Exception in union");
+>>
+
+enum_type(ctx, enum) ::= <<>>

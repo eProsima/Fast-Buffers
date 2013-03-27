@@ -4,7 +4,8 @@
     
     import com.eprosima.ebuffers.templates.TemplateManager;
     import com.eprosima.ebuffers.templates.TemplateGroup;
-     import com.eprosima.ebuffers.templates.TemplateUtil;
+    import com.eprosima.ebuffers.templates.TemplateUtil;
+    import com.eprosima.ebuffers.typecode.*;
     import com.eprosima.ebuffers.util.Pair;
     
     import org.antlr.stringtemplate.StringTemplate;
@@ -14,6 +15,8 @@
     import java.util.Vector;
     import java.util.List;
     import java.util.ArrayList;
+    import java.util.Map;
+    import java.util.HashMap;
  
 import antlr.TokenBuffer;
 import antlr.TokenStreamException;
@@ -37,6 +40,7 @@ public class IDLParser extends antlr.LLkParser       implements IDLTokenTypes
         public Context(String filename)
         {
             m_filename = filename;
+            m_types = new HashMap<String, TypeCode>();
         }
         
         public void setFilename(String filename)
@@ -79,10 +83,30 @@ public class IDLParser extends antlr.LLkParser       implements IDLTokenTypes
             return m_typelimitation;
         }
         
+        public void addTypeCode(String name, TypeCode typecode)
+        {
+            m_types.put(name, typecode);
+        }
+        
+        public TypeCode getTypeCode(String name)
+        {
+            int lastIndex = -1;
+            TypeCode returnedValue = m_types.get(name);
+            
+            // Probar si no tiene scope, con el scope acutal.
+            if(returnedValue == null && ((lastIndex = name.lastIndexOf("::")) == -1))
+            {
+                returnedValue = m_types.get(m_scope + name);
+            }
+            
+            return returnedValue;
+        }
+        
         private String m_filename = "";
         private String m_scope = "";
         private String m_sersym = ">>";
         private String m_typelimitation = null;
+        private Map<String, TypeCode> m_types = null;
     }; 
     
     private TemplateManager tmanager = null;
@@ -462,7 +486,7 @@ inputState.guessing--;
 			}
 			case LITERAL_enum:
 			{
-				enum_type();
+				tg=enum_type();
 				break;
 			}
 			case LITERAL_native:
@@ -1436,8 +1460,8 @@ inputState.guessing--;
 		}
 	}
 	
-	public final String  type_spec() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  type_spec() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
@@ -1461,7 +1485,7 @@ inputState.guessing--;
 			case LITERAL_fixed:
 			case LITERAL_ValueBase:
 			{
-				literal=simple_type_spec();
+				typecode=simple_type_spec();
 				break;
 			}
 			case LITERAL_struct:
@@ -1485,7 +1509,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final void value_abs_full_dcl() throws RecognitionException, TokenStreamException {
@@ -1837,11 +1861,11 @@ inputState.guessing--;
 		}
 	}
 	
-	public final Vector<Pair<String, StringTemplate>>  declarators() throws RecognitionException, TokenStreamException {
-		Vector<Pair<String, StringTemplate>> declvector = new Vector<Pair<String, StringTemplate>>();
+	public final Vector<Pair<String, ContainerTypeCode>>  declarators() throws RecognitionException, TokenStreamException {
+		Vector<Pair<String, ContainerTypeCode>> declvector = new Vector<Pair<String, ContainerTypeCode>>();
 		
 		
-		Pair<String, StringTemplate> pair = null;
+		Pair<String, ContainerTypeCode> pair = null;
 		
 		
 		try {      // for error handling
@@ -2012,8 +2036,8 @@ inputState.guessing--;
 		}
 	}
 	
-	public final Pair<String, StringTemplate>  simple_declarator() throws RecognitionException, TokenStreamException {
-		Pair<String, StringTemplate> pair = null;
+	public final Pair<String, ContainerTypeCode>  simple_declarator() throws RecognitionException, TokenStreamException {
+		Pair<String, ContainerTypeCode> pair = null;
 		
 		
 		String name = null;
@@ -2023,7 +2047,7 @@ inputState.guessing--;
 			name=identifier();
 			if ( inputState.guessing==0 ) {
 				
-					       pair = new Pair<String, StringTemplate>(name, tmanager.createStringTemplate("simple_declarator_type"));
+					       pair = new Pair<String, ContainerTypeCode>(name, null);
 					
 			}
 		}
@@ -2140,8 +2164,8 @@ inputState.guessing--;
 		return literal;
 	}
 	
-	public final String  integer_type() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  integer_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
@@ -2149,12 +2173,12 @@ inputState.guessing--;
 			case LITERAL_long:
 			case LITERAL_short:
 			{
-				literal=signed_int();
+				typecode=signed_int();
 				break;
 			}
 			case LITERAL_unsigned:
 			{
-				literal=unsigned_int();
+				typecode=unsigned_int();
 				break;
 			}
 			default:
@@ -2171,11 +2195,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  char_type() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("char_type").toString();
+	public final TypeCode  char_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_CHAR);
 		
 		
 		try {      // for error handling
@@ -2189,11 +2213,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  wide_char_type() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("wide_char_type").toString();
+	public final TypeCode  wide_char_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_WCHAR);
 		
 		
 		try {      // for error handling
@@ -2207,11 +2231,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  boolean_type() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("boolean_type").toString();
+	public final TypeCode  boolean_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN);
 		
 		
 		try {      // for error handling
@@ -2225,11 +2249,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  floating_pt_type() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  floating_pt_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
@@ -2238,7 +2262,7 @@ inputState.guessing--;
 			{
 				match(LITERAL_float);
 				if ( inputState.guessing==0 ) {
-					literal = tmanager.createStringTemplate("float_type").toString();
+					typecode = new PrimitiveTypeCode(TypeCode.KIND_FLOAT);
 				}
 				break;
 			}
@@ -2246,7 +2270,7 @@ inputState.guessing--;
 			{
 				match(LITERAL_double);
 				if ( inputState.guessing==0 ) {
-					literal = tmanager.createStringTemplate("double_type").toString();
+					typecode = new PrimitiveTypeCode(TypeCode.KIND_DOUBLE);
 				}
 				break;
 			}
@@ -2255,7 +2279,7 @@ inputState.guessing--;
 				match(LITERAL_long);
 				match(LITERAL_double);
 				if ( inputState.guessing==0 ) {
-					literal = tmanager.createStringTemplate("long_double_type").toString();
+					typecode = new PrimitiveTypeCode(TypeCode.KIND_LONGDOUBLE);
 				}
 				break;
 			}
@@ -2273,14 +2297,14 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  string_type() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("string_type").toString();
+	public final TypeCode  string_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
-		String typelimitation = null;
+		String maxsize = null;
 		
 		
 		try {      // for error handling
@@ -2290,10 +2314,7 @@ inputState.guessing--;
 			case LT:
 			{
 				match(LT);
-				typelimitation=positive_int_const();
-				if ( inputState.guessing==0 ) {
-					ctx.setTypelimitation(typelimitation);
-				}
+				maxsize=positive_int_const();
 				match(GT);
 				break;
 			}
@@ -2310,6 +2331,9 @@ inputState.guessing--;
 			}
 			}
 			}
+			if ( inputState.guessing==0 ) {
+				typecode = new StringTypeCode(TypeCode.KIND_STRING, maxsize);
+			}
 		}
 		catch (RecognitionException ex) {
 			if (inputState.guessing==0) {
@@ -2319,14 +2343,14 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  wide_string_type() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("wide_string_type").toString();
+	public final TypeCode  wide_string_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
-		String typelimitation = null;
+		String maxsize = null;
 		
 		
 		try {      // for error handling
@@ -2336,10 +2360,7 @@ inputState.guessing--;
 			case LT:
 			{
 				match(LT);
-				typelimitation=positive_int_const();
-				if ( inputState.guessing==0 ) {
-					ctx.setTypelimitation(typelimitation);
-				}
+				maxsize=positive_int_const();
 				match(GT);
 				break;
 			}
@@ -2356,6 +2377,9 @@ inputState.guessing--;
 			}
 			}
 			}
+			if ( inputState.guessing==0 ) {
+				typecode = new StringTypeCode(TypeCode.KIND_WSTRING, maxsize);
+			}
 		}
 		catch (RecognitionException ex) {
 			if (inputState.guessing==0) {
@@ -2365,7 +2389,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final void fixed_pt_const_type() throws RecognitionException, TokenStreamException {
@@ -2384,8 +2408,8 @@ inputState.guessing--;
 		}
 	}
 	
-	public final String  octet_type() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("octet_type").toString();
+	public final TypeCode  octet_type() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_OCTET);
 		
 		
 		try {      // for error handling
@@ -2399,7 +2423,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final String  or_expr() throws RecognitionException, TokenStreamException {
@@ -3163,6 +3187,7 @@ inputState.guessing--;
 		
 		
 		String name = null;
+		StructTypeCode structTP = null;
 		
 		
 		try {      // for error handling
@@ -3170,13 +3195,20 @@ inputState.guessing--;
 			name=identifier();
 			if ( inputState.guessing==0 ) {
 				
-					       structTemplates.setAttribute("ctx", ctx);
-					       structTemplates.setAttribute("name", name);
+					       structTP = new StructTypeCode(ctx.getScope(), name);
 					
 			}
 			match(LCURLY);
-			member_list(structTemplates);
+			member_list(structTP);
 			match(RCURLY);
+			if ( inputState.guessing==0 ) {
+				
+					       structTemplates.setAttribute("ctx", ctx);
+				structTemplates.setAttribute("struct", structTP);
+				// Add struct typecode to the map with all typecodes.
+				ctx.addTypeCode(structTP.getScopedname(), structTP);
+					
+			}
 		}
 		catch (RecognitionException ex) {
 			if (inputState.guessing==0) {
@@ -3193,29 +3225,35 @@ inputState.guessing--;
 		TemplateGroup unionTemplates = tmanager.createTemplateGroup("union_type");
 		
 		
-		List<String> total_labels = null;
-		String name = null, dist_type = null;
+		String name = null;
+		TypeCode dist_type = null;
+		UnionTypeCode unionTP = null;
 		
 		
 		try {      // for error handling
 			match(LITERAL_union);
 			name=identifier();
-			if ( inputState.guessing==0 ) {
-				
-				unionTemplates.setAttribute("ctx", ctx);
-				unionTemplates.setAttribute("name", name);
-				
-			}
 			match(LITERAL_switch);
 			match(LPAREN);
 			dist_type=switch_type_spec();
 			match(RPAREN);
+			if ( inputState.guessing==0 ) {
+				
+					       unionTP = new UnionTypeCode(ctx.getScope(), name, dist_type);
+					
+			}
 			match(LCURLY);
-			total_labels=switch_body(unionTemplates);
+			switch_body(unionTP);
 			match(RCURLY);
 			if ( inputState.guessing==0 ) {
 				
-				unionTemplates.setAttribute("discriminator.{type, name, default}", dist_type, "_d", TemplateUtil.getDefaultLabel(total_labels));
+					       // Calculate default label.
+					       unionTP.setDefaultvalue(TemplateUtil.getUnionDefaultLabel(unionTP.getDiscriminator(), unionTP.getMembers()));
+					       unionTemplates.setAttribute("ctx", ctx);
+				unionTemplates.setAttribute("union", unionTP);
+				
+				// Add union typecode to the map with all typecodes.
+				ctx.addTypeCode(unionTP.getScopedname(), unionTP);
 				
 			}
 		}
@@ -3230,15 +3268,33 @@ inputState.guessing--;
 		return unionTemplates;
 	}
 	
-	public final void enum_type() throws RecognitionException, TokenStreamException {
+	public final TemplateGroup  enum_type() throws RecognitionException, TokenStreamException {
+		TemplateGroup enumTemplates = tmanager.createTemplateGroup("enum_type");
+		
+		
+		String name = null;
+		EnumTypeCode enumTP = null;
 		
 		
 		try {      // for error handling
 			match(LITERAL_enum);
-			identifier();
+			name=identifier();
+			if ( inputState.guessing==0 ) {
+				
+					       enumTP = new EnumTypeCode(ctx.getScope(), name);
+					
+			}
 			match(LCURLY);
-			enumerator_list();
+			enumerator_list(enumTP);
 			match(RCURLY);
+			if ( inputState.guessing==0 ) {
+				
+				enumTemplates.setAttribute("ctx", ctx);
+				enumTemplates.setAttribute("enum", enumTP);
+				// Add enum typecode to the map with all typecodes.
+				ctx.addTypeCode(enumTP.getScopedname(), enumTP);
+					
+			}
 		}
 		catch (RecognitionException ex) {
 			if (inputState.guessing==0) {
@@ -3248,6 +3304,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
+		return enumTemplates;
 	}
 	
 	public final void constr_forward_decl() throws RecognitionException, TokenStreamException {
@@ -3283,7 +3340,10 @@ inputState.guessing--;
 		}
 	}
 	
-	public final String  simple_type_spec() throws RecognitionException, TokenStreamException {
+	public final TypeCode  simple_type_spec() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
+		
+		
 		String literal = null;
 		
 		
@@ -3302,7 +3362,7 @@ inputState.guessing--;
 			case LITERAL_Object:
 			case LITERAL_ValueBase:
 			{
-				literal=base_type_spec();
+				typecode=base_type_spec();
 				break;
 			}
 			case LITERAL_sequence:
@@ -3310,13 +3370,22 @@ inputState.guessing--;
 			case LITERAL_wstring:
 			case LITERAL_fixed:
 			{
-				literal=template_type_spec();
+				typecode=template_type_spec();
 				break;
 			}
 			case SCOPEOP:
 			case IDENT:
 			{
 				literal=scoped_name();
+				if ( inputState.guessing==0 ) {
+					
+						       // Find typecode in the global map.
+						       typecode = ctx.getTypeCode(literal);
+						       
+						       if(typecode == null)
+						           System.out.println("ERROR: Cannot find the typecode for " + literal);
+						
+				}
 				break;
 			}
 			default:
@@ -3333,7 +3402,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final void constr_type_spec() throws RecognitionException, TokenStreamException {
@@ -3372,30 +3441,30 @@ inputState.guessing--;
 		}
 	}
 	
-	public final String  base_type_spec() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  base_type_spec() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
 			switch ( LA(1)) {
 			case LITERAL_char:
 			{
-				literal=char_type();
+				typecode=char_type();
 				break;
 			}
 			case LITERAL_wchar:
 			{
-				literal=wide_char_type();
+				typecode=wide_char_type();
 				break;
 			}
 			case LITERAL_boolean:
 			{
-				literal=boolean_type();
+				typecode=boolean_type();
 				break;
 			}
 			case LITERAL_octet:
 			{
-				literal=octet_type();
+				typecode=octet_type();
 				break;
 			}
 			case LITERAL_any:
@@ -3431,10 +3500,10 @@ inputState.guessing--;
 inputState.guessing--;
 				}
 				if ( synPredMatched122 ) {
-					literal=floating_pt_type();
+					typecode=floating_pt_type();
 				}
 				else if (((LA(1) >= LITERAL_long && LA(1) <= LITERAL_unsigned)) && (_tokenSet_48.member(LA(2))) && (_tokenSet_49.member(LA(3))) && (_tokenSet_47.member(LA(4)))) {
-					literal=integer_type();
+					typecode=integer_type();
 				}
 			else {
 				throw new NoViableAltException(LT(1), getFilename());
@@ -3449,28 +3518,28 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  template_type_spec() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  template_type_spec() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
 			switch ( LA(1)) {
 			case LITERAL_sequence:
 			{
-				literal=sequence_type();
+				typecode=sequence_type();
 				break;
 			}
 			case LITERAL_string:
 			{
-				literal=string_type();
+				typecode=string_type();
 				break;
 			}
 			case LITERAL_wstring:
 			{
-				literal=wide_string_type();
+				typecode=wide_string_type();
 				break;
 			}
 			case LITERAL_fixed:
@@ -3492,7 +3561,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final void any_type() throws RecognitionException, TokenStreamException {
@@ -3543,29 +3612,24 @@ inputState.guessing--;
 		}
 	}
 	
-	public final String  sequence_type() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final SequenceTypeCode  sequence_type() throws RecognitionException, TokenStreamException {
+		SequenceTypeCode typecode = null;
 		
 		
-		StringTemplate t = tmanager.createStringTemplate("sequence_type");
-		String type = null, size = null;
+		TypeCode type = null;
+		String maxsize = null;
 		
 		
 		try {      // for error handling
 			match(LITERAL_sequence);
 			match(LT);
 			type=simple_type_spec();
-			if ( inputState.guessing==0 ) {
-				t.setAttribute("type", type);
-			}
-			size=opt_pos_int();
-			if ( inputState.guessing==0 ) {
-				ctx.setTypelimitation(size);
-			}
+			maxsize=opt_pos_int();
 			match(GT);
 			if ( inputState.guessing==0 ) {
 				
-					       literal = t.toString();
+					       typecode = new SequenceTypeCode(maxsize);
+					       typecode.setContentTypeCode(type);
 					
 			}
 		}
@@ -3577,7 +3641,7 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final void fixed_pt_type() throws RecognitionException, TokenStreamException {
@@ -3601,8 +3665,8 @@ inputState.guessing--;
 		}
 	}
 	
-	public final Pair<String, StringTemplate>  declarator() throws RecognitionException, TokenStreamException {
-		Pair<String, StringTemplate> pair = null;
+	public final Pair<String, ContainerTypeCode>  declarator() throws RecognitionException, TokenStreamException {
+		Pair<String, ContainerTypeCode> pair = null;
 		
 		
 		try {      // for error handling
@@ -3628,8 +3692,8 @@ inputState.guessing--;
 		return pair;
 	}
 	
-	public final Pair<String, StringTemplate>  complex_declarator() throws RecognitionException, TokenStreamException {
-		Pair<String, StringTemplate> pair = null;
+	public final Pair<String, ContainerTypeCode>  complex_declarator() throws RecognitionException, TokenStreamException {
+		Pair<String, ContainerTypeCode> pair = null;
 		
 		
 		try {      // for error handling
@@ -3646,13 +3710,12 @@ inputState.guessing--;
 		return pair;
 	}
 	
-	public final Pair<String, StringTemplate>  array_declarator() throws RecognitionException, TokenStreamException {
-		Pair<String, StringTemplate> pair = null;
+	public final Pair<String, ContainerTypeCode>  array_declarator() throws RecognitionException, TokenStreamException {
+		Pair<String, ContainerTypeCode> pair = null;
 		
 		
 		String name = LT(1).getText(), size = null;
-		StringTemplate first = null, second = null;
-		String prevf = null, prevs = null;
+		ArrayTypeCode typecode = new ArrayTypeCode();
 		
 		
 		try {      // for error handling
@@ -3665,21 +3728,7 @@ inputState.guessing--;
 					size=fixed_array_size();
 					if ( inputState.guessing==0 ) {
 						
-							           first = tmanager.createStringTemplate("array_declarator_type_first");
-							           second = tmanager.createStringTemplate("array_declarator_type_second");
-							           second.setAttribute("size", size);
-							           
-							           if(prevf != null)
-							           {
-							               first.setAttribute("prev", prevf);
-							           }
-							           if(prevs != null)
-						{
-						second.setAttribute("prev", prevs);
-						}
-						
-							           prevf = first.toString();
-							           prevs = second.toString();
+							           typecode.addDimension(size);
 							
 					}
 				}
@@ -3692,11 +3741,8 @@ inputState.guessing--;
 			}
 			if ( inputState.guessing==0 ) {
 				
-					       StringTemplate fin = tmanager.createStringTemplate("array_declarator_type");
-					       fin.setAttribute("firs", prevf);
-					       fin.setAttribute("secon", prevs);
-				pair = new Pair<String, StringTemplate>(name, fin);
-				
+					       pair = new Pair<String, ContainerTypeCode>(name, typecode);
+					
 			}
 		}
 		catch (RecognitionException ex) {
@@ -3710,19 +3756,19 @@ inputState.guessing--;
 		return pair;
 	}
 	
-	public final String  signed_int() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  signed_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
 			if ((LA(1)==LITERAL_short)) {
-				literal=signed_short_int();
+				typecode=signed_short_int();
 			}
 			else if ((LA(1)==LITERAL_long) && (_tokenSet_35.member(LA(2)))) {
-				literal=signed_long_int();
+				typecode=signed_long_int();
 			}
 			else if ((LA(1)==LITERAL_long) && (LA(2)==LITERAL_long)) {
-				literal=signed_longlong_int();
+				typecode=signed_longlong_int();
 			}
 			else {
 				throw new NoViableAltException(LT(1), getFilename());
@@ -3737,22 +3783,22 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  unsigned_int() throws RecognitionException, TokenStreamException {
-		String literal = null;
+	public final TypeCode  unsigned_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
 			if ((LA(1)==LITERAL_unsigned) && (LA(2)==LITERAL_short)) {
-				literal=unsigned_short_int();
+				typecode=unsigned_short_int();
 			}
 			else if ((LA(1)==LITERAL_unsigned) && (LA(2)==LITERAL_long) && (_tokenSet_35.member(LA(3)))) {
-				literal=unsigned_long_int();
+				typecode=unsigned_long_int();
 			}
 			else if ((LA(1)==LITERAL_unsigned) && (LA(2)==LITERAL_long) && (LA(3)==LITERAL_long)) {
-				literal=unsigned_longlong_int();
+				typecode=unsigned_longlong_int();
 			}
 			else {
 				throw new NoViableAltException(LT(1), getFilename());
@@ -3767,11 +3813,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  signed_short_int() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("signed_short_int").toString();
+	public final TypeCode  signed_short_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_SHORT);
 		
 		
 		try {      // for error handling
@@ -3785,11 +3831,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  signed_long_int() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("signed_long_int").toString();
+	public final TypeCode  signed_long_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_LONG);
 		
 		
 		try {      // for error handling
@@ -3803,11 +3849,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  signed_longlong_int() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("signed_longlong_int").toString();
+	public final TypeCode  signed_longlong_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_LONGLONG);
 		
 		
 		try {      // for error handling
@@ -3822,11 +3868,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  unsigned_short_int() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("unsigned_short_int").toString();
+	public final TypeCode  unsigned_short_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_USHORT);
 		
 		
 		try {      // for error handling
@@ -3841,11 +3887,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  unsigned_long_int() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("unsigned_long_int").toString();
+	public final TypeCode  unsigned_long_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_ULONG);
 		
 		
 		try {      // for error handling
@@ -3860,11 +3906,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final String  unsigned_longlong_int() throws RecognitionException, TokenStreamException {
-		String literal = tmanager.createStringTemplate("unsigned_longlong_int").toString();
+	public final TypeCode  unsigned_longlong_int() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_ULONGLONG);
 		
 		
 		try {      // for error handling
@@ -3880,15 +3926,15 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
 	public final void member_list(
-		TemplateGroup mTemplate
+		StructTypeCode structTP
 	) throws RecognitionException, TokenStreamException {
 		
 		
-		Vector<Pair<String, StringTemplate>> declvector = null;
+		Vector<Pair<String, TypeCode>> declvector = null;
 		
 		
 		try {      // for error handling
@@ -3901,10 +3947,7 @@ inputState.guessing--;
 					if ( inputState.guessing==0 ) {
 						
 							           for(int count = 0; count < declvector.size(); ++count)
-							               mTemplate.setAttribute("members.{type, name, striptype, typelimitation}", declvector.get(count).second().toString(),
-							                   declvector.get(count).first(), TemplateUtil.stripType(declvector.get(count).second().toString()), ctx.getTypelimitation());
-							           
-							           ctx.setTypelimitation(null);
+							               structTP.addMember(new StructMember(declvector.get(count).second(), declvector.get(count).first()));
 							
 					}
 				}
@@ -3926,21 +3969,34 @@ inputState.guessing--;
 		}
 	}
 	
-	public final Vector<Pair<String, StringTemplate>>  member() throws RecognitionException, TokenStreamException {
-		Vector<Pair<String, StringTemplate>> declvector = null;
+	public final Vector<Pair<String, TypeCode>>  member() throws RecognitionException, TokenStreamException {
+		Vector<Pair<String, TypeCode>> newVector = new Vector<Pair<String, TypeCode>>();
 		
 		
-		String literal = null;
+		Vector<Pair<String, ContainerTypeCode>> declvector = null;
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
-			literal=type_spec();
+			typecode=type_spec();
 			declvector=declarators();
 			match(SEMI);
 			if ( inputState.guessing==0 ) {
 				
 					       for(int count = 0; count < declvector.size(); ++count)
-					           declvector.get(count).second().setAttribute("type", literal);
+					       {
+					           if(declvector.get(count).second() != null)
+					           {
+					               // Array declaration
+					               declvector.get(count).second().setContentTypeCode(typecode);
+					               newVector.add(new Pair<String, TypeCode>(declvector.get(count).first(), declvector.get(count).second()));
+					           }
+					           else
+					           {
+					               // Simple declaration
+					               newVector.add(new Pair<String, TypeCode>(declvector.get(count).first(), typecode));
+					           }
+					       }
 					
 			}
 		}
@@ -3952,10 +4008,13 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return declvector;
+		return newVector;
 	}
 	
-	public final String  switch_type_spec() throws RecognitionException, TokenStreamException {
+	public final TypeCode  switch_type_spec() throws RecognitionException, TokenStreamException {
+		TypeCode typecode = null;
+		
+		
 		String literal = null;
 		
 		
@@ -3965,17 +4024,17 @@ inputState.guessing--;
 			case LITERAL_short:
 			case LITERAL_unsigned:
 			{
-				literal=integer_type();
+				typecode=integer_type();
 				break;
 			}
 			case LITERAL_char:
 			{
-				literal=char_type();
+				typecode=char_type();
 				break;
 			}
 			case LITERAL_boolean:
 			{
-				literal=boolean_type();
+				typecode=boolean_type();
 				break;
 			}
 			case LITERAL_enum:
@@ -3987,6 +4046,15 @@ inputState.guessing--;
 			case IDENT:
 			{
 				literal=scoped_name();
+				if ( inputState.guessing==0 ) {
+					
+					// Find typecode in the global map.
+					typecode = ctx.getTypeCode(literal);
+					
+					if(typecode == null)
+					System.out.println("ERROR: Cannot find the typecode for " + literal);
+					
+				}
 				break;
 			}
 			default:
@@ -4003,17 +4071,16 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return literal;
+		return typecode;
 	}
 	
-	public final List<String>  switch_body(
-		TemplateGroup mTemplate
+	public final void switch_body(
+		UnionTypeCode unionTP
 	) throws RecognitionException, TokenStreamException {
-		List<String> total_labels = null;
 		
 		
 		try {      // for error handling
-			total_labels=case_stmt_list(mTemplate);
+			case_stmt_list(unionTP);
 		}
 		catch (RecognitionException ex) {
 			if (inputState.guessing==0) {
@@ -4023,16 +4090,11 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return total_labels;
 	}
 	
-	public final List<String>  case_stmt_list(
-		TemplateGroup mTemplate
+	public final void case_stmt_list(
+		UnionTypeCode unionTP
 	) throws RecognitionException, TokenStreamException {
-		List<String> total_labels = new ArrayList<String>();
-		
-		
-		List<String> labels = new ArrayList<String>();
 		
 		
 		try {      // for error handling
@@ -4041,10 +4103,7 @@ inputState.guessing--;
 			_loop157:
 			do {
 				if ((LA(1)==LITERAL_case||LA(1)==LITERAL_default)) {
-					labels=case_stmt(mTemplate);
-					if ( inputState.guessing==0 ) {
-						total_labels.addAll(labels);
-					}
+					case_stmt(unionTP);
 				}
 				else {
 					if ( _cnt157>=1 ) { break _loop157; } else {throw new NoViableAltException(LT(1), getFilename());}
@@ -4062,17 +4121,17 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return total_labels;
 	}
 	
-	public final List<String>  case_stmt(
-		TemplateGroup mTemplate
+	public final void case_stmt(
+		UnionTypeCode unionTP
 	) throws RecognitionException, TokenStreamException {
-		List<String> labels = new ArrayList<String>();
 		
 		
-		Pair<String, StringTemplate> element = null;
+		Pair<String, TypeCode> element = null;
 		String label = null;
+		boolean defaul = false;
+		UnionMember member = new UnionMember();
 		
 		
 		try {      // for error handling
@@ -4086,7 +4145,7 @@ inputState.guessing--;
 					match(LITERAL_case);
 					label=const_exp();
 					if ( inputState.guessing==0 ) {
-						labels.add(label);
+						member.addLabel(label);
 					}
 					match(COLON);
 					break;
@@ -4094,6 +4153,9 @@ inputState.guessing--;
 				case LITERAL_default:
 				{
 					match(LITERAL_default);
+					if ( inputState.guessing==0 ) {
+						defaul = true;
+					}
 					match(COLON);
 					break;
 				}
@@ -4109,8 +4171,10 @@ inputState.guessing--;
 			match(SEMI);
 			if ( inputState.guessing==0 ) {
 				
-					       mTemplate.setAttribute("elements.{type, name, labels, striptype, typelimitation}", element.second().toString(),
-				element.first(), labels, TemplateUtil.stripType(element.second().toString()), ctx.getTypelimitation());
+					       member.setTypecode(element.second());
+					       member.setName(element.first());
+					       int index = unionTP.addMember(member);
+					       if(defaul) unionTP.setDefaultindex(index);
 					
 			}
 		}
@@ -4122,22 +4186,30 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return labels;
 	}
 	
-	public final Pair<String, StringTemplate>  element_spec() throws RecognitionException, TokenStreamException {
-		Pair<String, StringTemplate> decl = null;
+	public final Pair<String, TypeCode>  element_spec() throws RecognitionException, TokenStreamException {
+		Pair<String, TypeCode> newpair = null;
 		
 		
-		String literal = null;
+		Pair<String, ContainerTypeCode> decl = null;
+		TypeCode typecode = null;
 		
 		
 		try {      // for error handling
-			literal=type_spec();
+			typecode=type_spec();
 			decl=declarator();
 			if ( inputState.guessing==0 ) {
 				
-				decl.second().setAttribute("type", literal);
+				if(decl.second() != null)
+				{
+				decl.second().setContentTypeCode(typecode);
+				newpair = new Pair<String, TypeCode>(decl.first(), decl.second());
+				}
+				else
+				{
+				newpair = new Pair<String, TypeCode>(decl.first(), typecode);
+				}
 				
 			}
 		}
@@ -4149,20 +4221,22 @@ inputState.guessing--;
 			  throw ex;
 			}
 		}
-		return decl;
+		return newpair;
 	}
 	
-	public final void enumerator_list() throws RecognitionException, TokenStreamException {
+	public final void enumerator_list(
+		EnumTypeCode enumTP
+	) throws RecognitionException, TokenStreamException {
 		
 		
 		try {      // for error handling
-			enumerator();
+			enumerator(enumTP);
 			{
 			_loop165:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
-					enumerator();
+					enumerator(enumTP);
 				}
 				else {
 					break _loop165;
@@ -4181,11 +4255,19 @@ inputState.guessing--;
 		}
 	}
 	
-	public final void enumerator() throws RecognitionException, TokenStreamException {
+	public final void enumerator(
+		EnumTypeCode enumTP
+	) throws RecognitionException, TokenStreamException {
+		
+		
+		String name = null;
 		
 		
 		try {      // for error handling
-			identifier();
+			name=identifier();
+			if ( inputState.guessing==0 ) {
+				enumTP.addMember(new EnumMember(name));
+			}
 		}
 		catch (RecognitionException ex) {
 			if (inputState.guessing==0) {

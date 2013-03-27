@@ -25,59 +25,109 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-struct_type(ctx, name, members) ::= <<
-class $name$
+struct_type(ctx, struct) ::= <<
+class $struct.name$
 {
 public:
-    $name$();
-    ~$name$();
-    $name$(const $name$ &x);
-    $name$($name$ &&x);
-    $name$& operator=(const $name$ &x);
-    $name$& operator=($name$ &&x);
+    $struct.name$();
+    ~$struct.name$();
+    $struct.name$(const $struct.name$ &x);
+    $struct.name$($struct.name$ &&x);
+    $struct.name$& operator=(const $struct.name$ &x);
+    $struct.name$& operator=($struct.name$ &&x);
     
-    $members:{$public_member_declaration(it)$}; separator="\n"$
+    $struct.members:{$public_structmember_declaration(it)$}; separator="\n"$
     
 private:
-    $members:{$private_member_declaration(it)$}; separator="\n"$
+    $struct.members:{$private_member_declaration(it)$}; separator="\n"$
 };
 >>
 
-private_member_declaration(member) ::= <<
-$member.type$ m_$member.name$;
->>
+public_structmember_declaration(member) ::= <<
+$if(member.typecode.primitive)$
+inline void $member.name$($member.typecode.typename$ _$member.name$)
+{
+    m_$member.name$ = _$member.name$;
+}
 
-public_member_declaration(member) ::= <<
-$if(basicTypes.(member.type))$
-void $member.name$($member.type$ _$member.name$);
-$member.type$ $member.name$() const;
-$member.type$& $member.name$();
+inline $member.typecode.typename$ $member.name$() const
+{
+    return m_$member.name$;
+}
+
+inline $member.typecode.typename$& $member.name$()
+{
+    return m_$member.name$;
+}
 $else$
-void $member.name$(const $member.type$ &_$member.name$);
-void $member.name$($member.type$ &&_$member.name$);
-const $member.type$& $member.name$() const;
-$member.type$& $member.name$();
+inline void $member.name$(const $member.typecode.typename$ &_$member.name$)
+{
+    m_$member.name$ = _$member.name$;
+}
+
+inline void $member.name$($member.typecode.typename$ &&_$member.name$)
+{
+    m_$member.name$ = std::move(_$member.name$);
+}
+
+inline const $member.typecode.typename$& $member.name$() const
+{
+    return m_$member.name$;
+}
+
+inline $member.typecode.typename$& $member.name$()
+{
+    return m_$member.name$;
+}
 $endif$
 >>
 
-union_type(ctx, name, discriminator, elements) ::= <<
-class $name$
+private_member_declaration(member) ::= <<$private_declaration(typecode=member.typecode, name=member.name)$>>
+
+public_member_declaration(member) ::= <<$public_declaration(typecode=member.typecode, name=member.name)$>>
+
+public_declaration(typecode, name) ::= <<
+$if(typecode.primitive)$
+void $name$($typecode.typename$ _$name$);
+$typecode.typename$ $name$() const;
+$typecode.typename$& $name$();
+$else$
+void $name$(const $typecode.typename$ &_$name$);
+void $name$($typecode.typename$ &&_$name$);
+const $typecode.typename$& $name$() const;
+$typecode.typename$& $name$();
+$endif$
+>>
+
+private_declaration(typecode, name) ::= <<
+$typecode.typename$ m_$name$;
+>>
+
+union_type(ctx, union) ::= <<
+class $union.name$
 {
 public:
-    $name$();
-    ~$name$();
-    $name$(const $name$ &x);
-    $name$($name$ &&x);
-    $name$& operator=(const $name$ &x);
-    $name$& operator=($name$ &&x);
+    $union.name$();
+    ~$union.name$();
+    $union.name$(const $union.name$ &x);
+    $union.name$($union.name$ &&x);
+    $union.name$& operator=(const $union.name$ &x);
+    $union.name$& operator=($union.name$ &&x);
     
-    $public_member_declaration(discriminator)$
+    $public_declaration(typecode=union.discriminator, name="_d")$
     
-    $elements:{$public_member_declaration(it)$}; separator="\n"$
+    $union.members:{$public_member_declaration(it)$}; separator="\n"$
     
 private:
-    $private_member_declaration(discriminator)$
+    $private_declaration(typecode=union.discriminator, name="_d")$
     
-    $elements:{$private_member_declaration(it)$}; separator="\n"$
+    $union.members:{$private_member_declaration(it)$}; separator="\n"$
+};
+>>
+
+enum_type(ctx, enum) ::= <<
+enum $enum.name$ : uint32_t
+{
+    $enum.members:{$it.name$}; separator=",\n"$
 };
 >>

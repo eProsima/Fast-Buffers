@@ -1,0 +1,17 @@
+module performance
+{
+struct Performance
+{
+     long m1;
+     long m2;
+     long m3;
+     long m4;
+     long m5;
+     long m6;
+     long m7;
+     long m8;
+     long m9;
+     long m10;
+};
+
+};

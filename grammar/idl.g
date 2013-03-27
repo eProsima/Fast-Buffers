@@ -3,7 +3,8 @@ header {
     
     import com.eprosima.ebuffers.templates.TemplateManager;
     import com.eprosima.ebuffers.templates.TemplateGroup;
-     import com.eprosima.ebuffers.templates.TemplateUtil;
+    import com.eprosima.ebuffers.templates.TemplateUtil;
+    import com.eprosima.ebuffers.typecode.*;
     import com.eprosima.ebuffers.util.Pair;
     
     import org.antlr.stringtemplate.StringTemplate;
@@ -13,6 +14,8 @@ header {
     import java.util.Vector;
     import java.util.List;
     import java.util.ArrayList;
+    import java.util.Map;
+    import java.util.HashMap;
  }
 
 class IDLParser extends Parser;
@@ -27,6 +30,7 @@ options {
         public Context(String filename)
         {
             m_filename = filename;
+            m_types = new HashMap<String, TypeCode>();
         }
         
         public void setFilename(String filename)
@@ -69,10 +73,30 @@ options {
             return m_typelimitation;
         }
         
+        public void addTypeCode(String name, TypeCode typecode)
+        {
+            m_types.put(name, typecode);
+        }
+        
+        public TypeCode getTypeCode(String name)
+        {
+            int lastIndex = -1;
+            TypeCode returnedValue = m_types.get(name);
+            
+            // Probar si no tiene scope, con el scope acutal.
+            if(returnedValue == null && ((lastIndex = name.lastIndexOf("::")) == -1))
+            {
+                returnedValue = m_types.get(m_scope + name);
+            }
+            
+            return returnedValue;
+        }
+        
         private String m_filename = "";
         private String m_scope = "";
         private String m_sersym = ">>";
         private String m_typelimitation = null;
+        private Map<String, TypeCode> m_types = null;
     }; 
     
     private TemplateManager tmanager = null;
@@ -559,7 +583,7 @@ type_dcl returns [TemplateGroup tg = null]
 	:   "typedef"^ type_declarator
 	|   (struct_type) => tg=struct_type
 	|   (union_type) => tg=union_type
-	|   enum_type
+	|   tg=enum_type
 	|   "native"^ simple_declarator
 	|   constr_forward_decl
 	;
@@ -568,33 +592,43 @@ type_declarator
 	:   type_spec declarators
 	;
 
-type_spec returns [String literal = null]
-	:   literal=simple_type_spec
+type_spec returns [TypeCode typecode = null]
+	:   typecode=simple_type_spec
 	|   constr_type_spec
 	;
 
-simple_type_spec returns [String literal = null]
-	:   literal=base_type_spec
-	|   literal=template_type_spec
-	|   literal=scoped_name
+simple_type_spec returns [TypeCode typecode = null]
+{
+    String literal = null;
+} 
+	:   typecode=base_type_spec
+	|   typecode=template_type_spec
+	|	literal=scoped_name
+	   {
+	       // Find typecode in the global map.
+	       typecode = ctx.getTypeCode(literal);
+	       
+	       if(typecode == null)
+	           System.out.println("ERROR: Cannot find the typecode for " + literal);
+	   }
 	;
 
-base_type_spec returns [String literal = null]
-	:   (floating_pt_type) => literal=floating_pt_type	
-	|   literal=integer_type	
-	|   literal=char_type		
-	|   literal=wide_char_type		
-	|   literal=boolean_type	
-	|   literal=octet_type
+base_type_spec returns [TypeCode typecode = null]
+	:   (floating_pt_type) => typecode=floating_pt_type	
+	|   typecode=integer_type	
+	|   typecode=char_type		
+	|   typecode=wide_char_type		
+	|   typecode=boolean_type	
+	|   typecode=octet_type
 	|   any_type
 	|   object_type
 	|   value_base_type
 	;
 
-template_type_spec returns [String literal = null]
-	:   literal=sequence_type
-	|   literal=string_type
-	|   literal=wide_string_type
+template_type_spec returns [TypeCode typecode = null]
+	:   typecode=sequence_type
+	|   typecode=string_type
+	|   typecode=wide_string_type
 	|   fixed_pt_type
 	;
 
@@ -604,92 +638,92 @@ constr_type_spec
 	|   enum_type
 	;
 
-declarators returns [Vector<Pair<String, StringTemplate>> declvector = new Vector<Pair<String, StringTemplate>>()]
+declarators returns [Vector<Pair<String, ContainerTypeCode>> declvector = new Vector<Pair<String, ContainerTypeCode>>()]
 {
-    Pair<String, StringTemplate> pair = null;
+    Pair<String, ContainerTypeCode> pair = null;
 }
 	:   pair=declarator{declvector.add(pair);} (COMMA! pair=declarator{declvector.add(pair);})*
 	;
 
-declarator returns [Pair<String, StringTemplate> pair = null]
+declarator returns [Pair<String, ContainerTypeCode> pair = null]
 	:   pair=simple_declarator
 	|   pair=complex_declarator
 	;
 
-simple_declarator returns [Pair<String, StringTemplate> pair = null]
+simple_declarator returns [Pair<String, ContainerTypeCode> pair = null]
 {
     String name = null;
 }
 	:  name=identifier
 	   {
-	       pair = new Pair<String, StringTemplate>(name, tmanager.createStringTemplate("simple_declarator_type"));
+	       pair = new Pair<String, ContainerTypeCode>(name, null);
 	   }
 	;
 
-complex_declarator returns [Pair<String, StringTemplate> pair = null]
+complex_declarator returns [Pair<String, ContainerTypeCode> pair = null]
 	:   pair=array_declarator
 	;
 
-floating_pt_type returns [String literal = null]
-	:   "float"{literal = tmanager.createStringTemplate("float_type").toString();}
-	|   "double"{literal = tmanager.createStringTemplate("double_type").toString();}
-	|   "long"^ "double"{literal = tmanager.createStringTemplate("long_double_type").toString();}
+floating_pt_type returns [TypeCode typecode = null]
+	:   "float"{typecode = new PrimitiveTypeCode(TypeCode.KIND_FLOAT);}
+	|   "double"{typecode = new PrimitiveTypeCode(TypeCode.KIND_DOUBLE);}
+	|   "long"^ "double"{typecode = new PrimitiveTypeCode(TypeCode.KIND_LONGDOUBLE);}
 	;
 
-integer_type returns [String literal = null]
-	:  literal=signed_int
-	|  literal=unsigned_int
+integer_type returns [TypeCode typecode = null]
+	:  typecode=signed_int
+	|  typecode=unsigned_int
 	;
 
-signed_int returns [String literal = null]
-	:  literal=signed_short_int
-	|  literal=signed_long_int
-	|  literal=signed_longlong_int
+signed_int returns [TypeCode typecode = null]
+	:  typecode=signed_short_int
+	|  typecode=signed_long_int
+	|  typecode=signed_longlong_int
 	;
 
-signed_short_int returns [String literal = tmanager.createStringTemplate("signed_short_int").toString()]
+signed_short_int returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_SHORT)]
 	:  "short"
 	;
 
-signed_long_int returns [String literal = tmanager.createStringTemplate("signed_long_int").toString()]
+signed_long_int returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_LONG)]
 	:  "long"
 	;
 
-signed_longlong_int returns [String literal = tmanager.createStringTemplate("signed_longlong_int").toString()]
+signed_longlong_int returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_LONGLONG)]
 	:  "long" "long"
 	;
 
-unsigned_int returns [String literal = null]
-	:  literal=unsigned_short_int
-	|  literal=unsigned_long_int
-	|  literal=unsigned_longlong_int
+unsigned_int returns [TypeCode typecode = null]
+	:  typecode=unsigned_short_int
+	|  typecode=unsigned_long_int
+	|  typecode=unsigned_longlong_int
 	;
 
-unsigned_short_int returns [String literal = tmanager.createStringTemplate("unsigned_short_int").toString()]
+unsigned_short_int returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_USHORT)]
 	:  "unsigned" "short"
 	;
 
-unsigned_long_int returns [String literal = tmanager.createStringTemplate("unsigned_long_int").toString()]
+unsigned_long_int returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_ULONG)]
 	:  "unsigned" "long"
 	;
 
-unsigned_longlong_int returns [String literal = tmanager.createStringTemplate("unsigned_longlong_int").toString()]
+unsigned_longlong_int returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_ULONGLONG)]
 	:  "unsigned" "long" "long"
 	;
 
-char_type returns [String literal = tmanager.createStringTemplate("char_type").toString()]
+char_type returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_CHAR)]
 	:   "char"
 	;
 
-wide_char_type returns [String literal = tmanager.createStringTemplate("wide_char_type").toString()]
+wide_char_type returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_WCHAR)]
 	:   "wchar"
 	;
 
-boolean_type returns [String literal = tmanager.createStringTemplate("boolean_type").toString()]
+boolean_type returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN)]
 	:   "boolean"
 	;
 
-octet_type returns [String literal = tmanager.createStringTemplate("octet_type").toString()]
+octet_type returns [TypeCode typecode = new PrimitiveTypeCode(TypeCode.KIND_OCTET)]
 	:   "octet"
 	;
 
@@ -704,95 +738,126 @@ object_type
 struct_type returns [TemplateGroup structTemplates = tmanager.createTemplateGroup("struct_type")]
 {
     String name = null;
+    StructTypeCode structTP = null;
 }
 	:   "struct"^
 	    name=identifier
 	    {
-	       structTemplates.setAttribute("ctx", ctx);
-	       structTemplates.setAttribute("name", name);
+	       structTP = new StructTypeCode(ctx.getScope(), name);
 	    }
-	    LCURLY! member_list[structTemplates] RCURLY!
+	    LCURLY! member_list[structTP] RCURLY!
+	    {
+	       structTemplates.setAttribute("ctx", ctx);
+           structTemplates.setAttribute("struct", structTP);
+           // Add struct typecode to the map with all typecodes.
+           ctx.addTypeCode(structTP.getScopedname(), structTP);
+	    }
 	;
 
-member_list [TemplateGroup mTemplate]
+member_list [StructTypeCode structTP]
 {
-    Vector<Pair<String, StringTemplate>> declvector = null;
+    Vector<Pair<String, TypeCode>> declvector = null;
 }
 	:   (
 	       declvector=member
-	       /* TODO En un futuro cambiar el typelimitation a que los tipos devuelvan un objeto con esta información en vez un String*/
 	       {
 	           for(int count = 0; count < declvector.size(); ++count)
-	               mTemplate.setAttribute("members.{type, name, striptype, typelimitation}", declvector.get(count).second().toString(),
-	                   declvector.get(count).first(), TemplateUtil.stripType(declvector.get(count).second().toString()), ctx.getTypelimitation());
-	           
-	           ctx.setTypelimitation(null);
+	               structTP.addMember(new StructMember(declvector.get(count).second(), declvector.get(count).first()));
 	       }
 	    )+
 	;
 
-member returns [Vector<Pair<String, StringTemplate>> declvector = null]
+member returns [Vector<Pair<String, TypeCode>> newVector = new Vector<Pair<String, TypeCode>>()]
 {
-    String literal = null;
+    Vector<Pair<String, ContainerTypeCode>> declvector = null;
+    TypeCode typecode = null;
 }
-	:  literal=type_spec declvector=declarators SEMI!
+	:  typecode=type_spec declvector=declarators SEMI!
 	   {
 	       for(int count = 0; count < declvector.size(); ++count)
-	           declvector.get(count).second().setAttribute("type", literal);
+	       {
+	           if(declvector.get(count).second() != null)
+	           {
+	               // Array declaration
+	               declvector.get(count).second().setContentTypeCode(typecode);
+	               newVector.add(new Pair<String, TypeCode>(declvector.get(count).first(), declvector.get(count).second()));
+	           }
+	           else
+	           {
+	               // Simple declaration
+	               newVector.add(new Pair<String, TypeCode>(declvector.get(count).first(), typecode));
+	           }
+	       }
 	   }
 	;
 
 union_type returns [TemplateGroup unionTemplates = tmanager.createTemplateGroup("union_type")]
 {
-    List<String> total_labels = null;
-    String name = null, dist_type = null;
+    String name = null;
+    TypeCode dist_type = null;
+    UnionTypeCode unionTP = null;
 }
 	:   "union"^
 	    name=identifier
-	    {
-           unionTemplates.setAttribute("ctx", ctx);
-           unionTemplates.setAttribute("name", name);
-        }
 	    "switch"! LPAREN! dist_type=switch_type_spec RPAREN!
-	    LCURLY! total_labels=switch_body[unionTemplates] RCURLY!
 	    {
-           unionTemplates.setAttribute("discriminator.{type, name, default}", dist_type, "_d", TemplateUtil.getDefaultLabel(dist_type, total_labels));
+	       unionTP = new UnionTypeCode(ctx.getScope(), name, dist_type);
+	    }
+	    LCURLY! switch_body[unionTP] RCURLY!
+	    {
+	       // Calculate default label.
+	       unionTP.setDefaultvalue(TemplateUtil.getUnionDefaultLabel(unionTP.getDiscriminator(), unionTP.getMembers()));
+	       unionTemplates.setAttribute("ctx", ctx);
+           unionTemplates.setAttribute("union", unionTP);
+           
+           // Add union typecode to the map with all typecodes.
+           ctx.addTypeCode(unionTP.getScopedname(), unionTP);
         }
 	;
 
-switch_type_spec returns [String literal = null]
-	:   literal=integer_type
-	|   literal=char_type
-	|   literal=boolean_type
+switch_type_spec returns [TypeCode typecode = null]
+{
+    String literal = null;
+}
+	:   typecode=integer_type
+	|   typecode=char_type
+	|   typecode=boolean_type
 	|   enum_type
 	|   literal=scoped_name
+	   {
+           // Find typecode in the global map.
+           typecode = ctx.getTypeCode(literal);
+           
+           if(typecode == null)
+               System.out.println("ERROR: Cannot find the typecode for " + literal);
+       }
 	;
 
-switch_body [TemplateGroup mTemplate] returns [List<String> total_labels = null]
-	:   total_labels=case_stmt_list[mTemplate]
+switch_body [UnionTypeCode unionTP]
+	:   case_stmt_list[unionTP]
 	;
 
-case_stmt_list [TemplateGroup mTemplate] returns [List<String> total_labels = new ArrayList<String>()]
+case_stmt_list [UnionTypeCode unionTP]
+	:  (case_stmt[unionTP])+
+	;
+
+case_stmt [UnionTypeCode unionTP]
 {
-    List<String> labels = new ArrayList<String>();
-}
-	:  (labels=case_stmt[mTemplate]{total_labels.addAll(labels);})+
-	;
-
-case_stmt [TemplateGroup mTemplate] returns [List<String> labels = new ArrayList<String>()]
-{
-    Pair<String, StringTemplate> element = null;
+    Pair<String, TypeCode> element = null;
     String label = null;
+    boolean defaul = false;
+    UnionMember member = new UnionMember();
 }
 	:   // case_label_list
-	    ( "case"^ label=const_exp{labels.add(label);} COLON!
-	    | "default"^ COLON!
+	    ( "case"^ label=const_exp{member.addLabel(label);} COLON!
+	    | "default"^ {defaul = true;} COLON!
 	    )+
 	    element=element_spec SEMI!
-	    /* TODO En un futuro cambiar el typelimitation a que los tipos devuelvan un objeto con esta información en vez un String*/
 	    {
-	       mTemplate.setAttribute("elements.{type, name, labels, striptype, typelimitation}", element.second().toString(),
-                       element.first(), labels, TemplateUtil.stripType(element.second().toString()), ctx.getTypelimitation());
+	       member.setTypecode(element.second());
+	       member.setName(element.first());
+	       int index = unionTP.addMember(member);
+	       if(defaul) unionTP.setDefaultindex(index);
 	    }
 	;
 
@@ -806,91 +871,103 @@ case_stmt [TemplateGroup mTemplate] returns [List<String> labels = new ArrayList
 // 	|   "default"^ COLON!
 // 	;
 
-element_spec returns [Pair<String, StringTemplate> decl = null]
+element_spec returns [Pair<String, TypeCode> newpair = null]
 {
-    String literal = null;
+    Pair<String, ContainerTypeCode> decl = null;
+    TypeCode typecode = null;
 }
-	:   literal=type_spec decl=declarator
+	:   typecode=type_spec decl=declarator
 	    {
-            decl.second().setAttribute("type", literal);
+            if(decl.second() != null)
+            {
+                decl.second().setContentTypeCode(typecode);
+                newpair = new Pair<String, TypeCode>(decl.first(), decl.second());
+            }
+            else
+            {
+                newpair = new Pair<String, TypeCode>(decl.first(), typecode);
+            }
         }
 	;
 
-enum_type
-	:   "enum"^ identifier LCURLY! enumerator_list RCURLY!
-	;
-
-enumerator_list
-	:    enumerator (COMMA! enumerator)*
-	;
-
-enumerator
-	:   identifier
-	;
-
-sequence_type returns [String literal = null]
+enum_type returns [TemplateGroup enumTemplates = tmanager.createTemplateGroup("enum_type")]
 {
-    StringTemplate t = tmanager.createStringTemplate("sequence_type");
-    String type = null, size = null;
+    String name = null;
+    EnumTypeCode enumTP = null;
 }
-	:   "sequence"^
-	     LT! type=simple_type_spec{t.setAttribute("type", type);} size=opt_pos_int{ctx.setTypelimitation(size);} GT!
-	     {
-	       literal = t.toString();
-	     }
+	:  "enum"^
+	   name=identifier
+	   {
+	       enumTP = new EnumTypeCode(ctx.getScope(), name);
+	   }
+	   LCURLY! enumerator_list[enumTP] RCURLY!
+	   {
+           enumTemplates.setAttribute("ctx", ctx);
+           enumTemplates.setAttribute("enum", enumTP);
+           // Add enum typecode to the map with all typecodes.
+           ctx.addTypeCode(enumTP.getScopedname(), enumTP);
+	   }
+	;
+
+enumerator_list [EnumTypeCode enumTP]
+	:    enumerator[enumTP] (COMMA! enumerator[enumTP])*
+	;
+
+enumerator [EnumTypeCode enumTP]
+{
+    String name = null;
+}
+	:   name=identifier{enumTP.addMember(new EnumMember(name));}
+	;
+
+sequence_type returns [SequenceTypeCode typecode = null]
+{
+    TypeCode type = null;
+    String maxsize = null;
+}
+	:  "sequence"^
+	    LT! type=simple_type_spec maxsize=opt_pos_int GT!
+	    {
+	       typecode = new SequenceTypeCode(maxsize);
+	       typecode.setContentTypeCode(type);
+	    }
 	;
 
 opt_pos_int returns [String literal = null]
 	:    (COMMA! literal=positive_int_const)?
 	;
 
-string_type returns [String literal = tmanager.createStringTemplate("string_type").toString()]
+string_type returns [TypeCode typecode = null]
 {
-    String typelimitation = null;
+    String maxsize = null;
 }
-	:   "string"^ (LT! typelimitation=positive_int_const {ctx.setTypelimitation(typelimitation);} GT!)?
+	:  "string"^ (LT! maxsize=positive_int_const GT!)?
+	   {typecode = new StringTypeCode(TypeCode.KIND_STRING, maxsize);}
 	;
 
-wide_string_type returns [String literal = tmanager.createStringTemplate("wide_string_type").toString()]
+wide_string_type returns [TypeCode typecode = null]
 {
-    String typelimitation = null;
+    String maxsize = null;
 }
-	:   "wstring"^ (LT! typelimitation=positive_int_const {ctx.setTypelimitation(typelimitation);} GT!)?
+	:  "wstring"^ (LT! maxsize=positive_int_const GT!)?
+	   {typecode = new StringTypeCode(TypeCode.KIND_WSTRING, maxsize);}
 	;
 
-array_declarator returns [Pair<String, StringTemplate> pair = null]
+array_declarator returns [Pair<String, ContainerTypeCode> pair = null]
 {
     String name = LT(1).getText(), size = null;
-    StringTemplate first = null, second = null;
-    String prevf = null, prevs = null;
+    ArrayTypeCode typecode = new ArrayTypeCode();
 }
 	:   IDENT^					// identifier
 	    (
 	       size=fixed_array_size
 	       {
-	           first = tmanager.createStringTemplate("array_declarator_type_first");
-	           second = tmanager.createStringTemplate("array_declarator_type_second");
-	           second.setAttribute("size", size);
-	           
-	           if(prevf != null)
-	           {
-	               first.setAttribute("prev", prevf);
-	           }
-	           if(prevs != null)
-               {
-                   second.setAttribute("prev", prevs);
-               }
-               
-	           prevf = first.toString();
-	           prevs = second.toString();
+	           typecode.addDimension(size);
 	       }
 	    )+
 	    {
-	       StringTemplate fin = tmanager.createStringTemplate("array_declarator_type");
-	       fin.setAttribute("firs", prevf);
-	       fin.setAttribute("secon", prevs);
-           pair = new Pair<String, StringTemplate>(name, fin);
-        }
+	       pair = new Pair<String, ContainerTypeCode>(name, typecode);
+	    }
 	;
 
 fixed_array_size returns [String literal = null]

@@ -4,7 +4,8 @@
     
     import com.eprosima.ebuffers.templates.TemplateManager;
     import com.eprosima.ebuffers.templates.TemplateGroup;
-     import com.eprosima.ebuffers.templates.TemplateUtil;
+    import com.eprosima.ebuffers.templates.TemplateUtil;
+    import com.eprosima.ebuffers.typecode.*;
     import com.eprosima.ebuffers.util.Pair;
     
     import org.antlr.stringtemplate.StringTemplate;
@@ -14,6 +15,8 @@
     import java.util.Vector;
     import java.util.List;
     import java.util.ArrayList;
+    import java.util.Map;
+    import java.util.HashMap;
  
 import java.io.InputStream;
 import antlr.TokenStreamException;

@@ -26,26 +26,34 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-struct_type(ctx, name, members) ::= <<
+membered_type(ctx, mtype) ::=<<
 /*!
- * @brief This function serialize type $ctx.scope$$name$.
+ * @brief This function serialize type $mtype.scopedname$.
  */
-inline bool operator<<(const $ctx.scope$$name$ &x){return serialize(x);}
+inline bool operator<<(const $mtype.scopedname$ &x){return serialize(x);}
 
 /*!
- * @brief This function serialize type $ctx.scope$$name$.
+ * @brief This function serialize type $mtype.scopedname$.
  */
-bool serialize(const $ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess = eProsima::CDRBuffer::NO_ENDIANESS);
+bool serialize(const $mtype.scopedname$ &x);
 
 /*!
- * @brief This function deserialize type $ctx.scope$$name$.
+ * @brief This function deserialize type $mtype.scopedname$.
  */
-inline bool operator$ctx.sersym$($ctx.scope$$name$ &x){return deserialize(x);}
+inline bool operator$ctx.sersym$($mtype.scopedname$ &x){return deserialize(x);}
 
 /*!
- * @brief This function deserialize type $ctx.scope$$name$.
+ * @brief This function deserialize type $mtype.scopedname$.
  */
-bool deserialize($ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess = eProsima::CDRBuffer::NO_ENDIANESS);
+bool deserialize($mtype.scopedname$ &x);
 >>
 
-union_type(ctx, name, discriminator, elements) ::= <<>>
+struct_type(ctx, struct) ::= <<
+$membered_type(ctx=ctx, mtype=struct)$
+>>
+
+union_type(ctx, union) ::= <<
+$membered_type(ctx=ctx, mtype=union)$
+>>
+
+enum_type(ctx, enum) ::= <<>>

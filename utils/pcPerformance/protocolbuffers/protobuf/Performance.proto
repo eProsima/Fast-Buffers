@@ -1,0 +1,103 @@
+package performance;
+
+message mfloats
+{
+    required float m1 = 1;
+    required float m2 = 2;
+    required float m3 = 3;
+    required float m4 = 4;
+    required float m5 = 5;
+    required float m6 = 6;
+    required float m7 = 7;
+    required float m8 = 8;
+    required float m9 = 9;
+};
+
+message mdoubles
+{
+    required double m1 = 1;
+    required double m2 = 2;
+    required double m3 = 3;
+    required double m4 = 4;
+    required double m5 = 5;
+    required double m6 = 6;
+    required double m7 = 7;
+    required double m8 = 8;
+    required double m9 = 9;
+};
+
+message msfixed32s
+{
+    required sfixed32 m1 = 1;
+    required sfixed32 m2 = 2;
+    required sfixed32 m3 = 3;
+    required sfixed32 m4 = 4;
+    required sfixed32 m5 = 5;
+    required sfixed32 m6 = 6;
+    required sfixed32 m7 = 7;
+    required sfixed32 m8 = 8;
+    required sfixed32 m9 = 9;
+};
+
+message msfixed64s
+{
+    required sfixed64 m1 = 1;
+    required sfixed64 m2 = 2;
+    required sfixed64 m3 = 3;
+    required sfixed64 m4 = 4;
+    required sfixed64 m5 = 5;
+    required sfixed64 m6 = 6;
+    required sfixed64 m7 = 7;
+    required sfixed64 m8 = 8;
+    required sfixed64 m9 = 9;
+};
+
+message mfixed32s
+{
+    required fixed32 m1 = 1;
+    required fixed32 m2 = 2;
+    required fixed32 m3 = 3;
+    required fixed32 m4 = 4;
+    required fixed32 m5 = 5;
+    required fixed32 m6 = 6;
+    required fixed32 m7 = 7;
+    required fixed32 m8 = 8;
+    required fixed32 m9 = 9;
+};
+
+message mfixed64s
+{
+    required fixed64 m1 = 1;
+    required fixed64 m2 = 2;
+    required fixed64 m3 = 3;
+    required fixed64 m4 = 4;
+    required fixed64 m5 = 5;
+    required fixed64 m6 = 6;
+    required fixed64 m7 = 7;
+    required fixed64 m8 = 8;
+    required fixed64 m9 = 9;
+};
+
+message mstrings
+{
+    required string m1 = 1;
+    required string m2 = 2;
+    required string m3 = 3;
+    required string m4 = 4;
+    required string m5 = 5;
+    required string m6 = 6;
+    required string m7 = 7;
+    required string m8 = 8;
+    required string m9 = 9;
+};
+
+message Performance
+{
+    required mfloats mf = 1;
+    required mdoubles md = 2;
+    required msfixed32s msf3 = 3;
+    required msfixed64s msf6 = 4;
+    required mfixed32s mf3 = 5;
+    required mfixed64s mf6 = 6;
+    required mstrings mstr = 7;
+}

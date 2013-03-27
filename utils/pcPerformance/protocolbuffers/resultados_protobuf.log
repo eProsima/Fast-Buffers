@@ -1,0 +1,167 @@
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_10.exe
+ 1.563894s wall, 1.560010s user + 0.000000s system = 1.560010s CPU (99.8%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_10.exe
+ 1.537635s wall, 1.544410s user + 0.000000s system = 1.544410s CPU (100.4%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_10.exe
+ 1.523435s wall, 1.528810s user + 0.000000s system = 1.528810s CPU (100.4%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_10.exe
+ 1.518352s wall, 1.528810s user + 0.000000s system = 1.528810s CPU (100.7%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_10.exe
+ 1.518137s wall, 1.528810s user + 0.000000s system = 1.528810s CPU (100.7%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_20.exe
+ 2.966758s wall, 3.010819s user + 0.000000s system = 3.010819s CPU (101.5%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_20.exe
+ 2.956480s wall, 2.870418s user + 0.000000s system = 2.870418s CPU (97.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_20.exe
+ 2.992148s wall, 2.932819s user + 0.000000s system = 2.932819s CPU (98.0%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_20.exe
+ 2.927740s wall, 2.917219s user + 0.000000s system = 2.917219s CPU (99.6%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_20.exe
+ 2.945368s wall, 2.948419s user + 0.000000s system = 2.948419s CPU (100.1%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_30.exe
+ 4.130190s wall, 4.071626s user + 0.000000s system = 4.071626s CPU (98.6%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_30.exe
+ 4.061507s wall, 4.071626s user + 0.000000s system = 4.071626s CPU (100.2%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_30.exe
+ 3.969604s wall, 3.946825s user + 0.000000s system = 3.946825s CPU (99.4%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_30.exe
+ 3.960756s wall, 3.993626s user + 0.000000s system = 3.993626s CPU (100.8%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_30.exe
+ 3.976431s wall, 3.962425s user + 0.000000s system = 3.962425s CPU (99.6%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_40.exe
+ 5.236585s wall, 5.241634s user + 0.000000s system = 5.241634s CPU (100.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_40.exe
+ 5.213379s wall, 5.319634s user + 0.000000s system = 5.319634s CPU (102.0%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_40.exe
+ 5.202182s wall, 5.194833s user + 0.000000s system = 5.194833s CPU (99.9%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_40.exe
+ 5.202660s wall, 5.319634s user + 0.000000s system = 5.319634s CPU (102.2%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_40.exe
+ 5.192699s wall, 5.226033s user + 0.000000s system = 5.226033s CPU (100.6%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_50.exe
+ 6.445833s wall, 6.505242s user + 0.000000s system = 6.505242s CPU (100.9%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_50.exe
+ 6.471012s wall, 6.474042s user + 0.000000s system = 6.474042s CPU (100.0%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_50.exe
+ 6.432285s wall, 6.598842s user + 0.000000s system = 6.598842s CPU (102.6%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_50.exe
+ 6.429402s wall, 6.442841s user + 0.000000s system = 6.442841s CPU (100.2%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_50.exe
+ 6.457129s wall, 6.396041s user + 0.000000s system = 6.396041s CPU (99.1%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_60.exe
+ 7.639445s wall, 7.534848s user + 0.000000s system = 7.534848s CPU (98.6%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_60.exe
+ 7.654009s wall, 7.659649s user + 0.000000s system = 7.659649s CPU (100.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_60.exe
+ 7.664331s wall, 7.675249s user + 0.000000s system = 7.675249s CPU (100.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_60.exe
+ 7.612572s wall, 7.675249s user + 0.000000s system = 7.675249s CPU (100.8%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_60.exe
+ 7.661316s wall, 7.784450s user + 0.000000s system = 7.784450s CPU (101.6%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_70.exe
+ 8.764557s wall, 8.751656s user + 0.000000s system = 8.751656s CPU (99.9%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_70.exe
+ 8.812514s wall, 8.860857s user + 0.000000s system = 8.860857s CPU (100.5%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_70.exe
+ 8.771875s wall, 8.782856s user + 0.000000s system = 8.782856s CPU (100.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_70.exe
+ 8.796597s wall, 8.860857s user + 0.000000s system = 8.860857s CPU (100.7%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_70.exe
+ 8.778504s wall, 8.626855s user + 0.000000s system = 8.626855s CPU (98.3%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_80.exe
+ 10.082251s wall, 10.046464s user + 0.000000s system = 10.046464s CPU (99.6%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_80.exe
+ 10.035882s wall, 10.046464s user + 0.000000s system = 10.046464s CPU (100.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_80.exe
+ 10.070367s wall, 10.077665s user + 0.000000s system = 10.077665s CPU (100.1%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_80.exe
+ 10.069634s wall, 10.124465s user + 0.000000s system = 10.124465s CPU (100.5%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_80.exe
+ 10.045262s wall, 10.062065s user + 0.000000s system = 10.062065s CPU (100.2%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_90.exe
+ 11.231963s wall, 11.263272s user + 0.000000s system = 11.263272s CPU (100.3%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_90.exe
+ 11.211207s wall, 11.247672s user + 0.000000s system = 11.247672s CPU (100.3%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_90.exe
+ 11.223278s wall, 11.216472s user + 0.000000s system = 11.216472s CPU (99.9%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_90.exe
+ 11.317536s wall, 11.200872s user + 0.000000s system = 11.200872s CPU (99.0%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_90.exe
+ 11.201256s wall, 11.154072s user + 0.000000s system = 11.154072s CPU (99.6%)
+
+
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_100.exe
+ 12.606042s wall, 12.604881s user + 0.000000s system = 12.604881s CPU (100.0%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_100.exe
+ 12.704151s wall, 12.698481s user + 0.000000s system = 12.698481s CPU (100.0%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_100.exe
+ 12.589346s wall, 12.526880s user + 0.000000s system = 12.526880s CPU (99.5%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_100.exe
+ 12.552694s wall, 12.464480s user + 0.000000s system = 12.464480s CPU (99.3%)
+
+D:\richi\workspace\desarrollo\DDS\proyectos\eBuffers\utils\pcPerformance\protocolbuffers\protobuf>Release\PerformanceProtoBuffers_100.exe
+ 12.584199s wall, 12.526880s user + 0.000000s system = 12.526880s CPU (99.5%)

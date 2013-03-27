@@ -18,49 +18,98 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-struct_type(ctx, name, members) ::= <<
-
-bool $ctx.filename$CDR::serialize(const $ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess)
+struct_type(ctx, struct) ::= <<
+bool $ctx.filename$CDR::serialize(const $struct.scopedname$ &x)
 {
     bool returnedValue = true;
     
-    $members:{$member_serialization(it)$}; separator="\n"$
+    $struct.members:{$member_serialization(it)$}; separator="\n"$
     
     return returnedValue;
 }
 
-
-bool $ctx.filename$CDR::deserialize($ctx.scope$$name$ &x, eProsima::CDRBuffer::Endianess endianess)
+bool $ctx.filename$CDR::deserialize($struct.scopedname$ &x)
 {
     bool returnedValue = true;
     
-    $members:{$member_deserialization(it)$}; separator="\n"$
+    $struct.members:{$member_deserialization(it)$}; separator="\n"$
     
     return returnedValue;
 }
 >>
 
 member_serialization(member) ::= <<
-$if(member.typelimitation)$
-if(x.$member.name$().$sizeFunction.(member.striptype)$ <= $member.typelimitation$)
+$if(member.typecode.maxsize)$
+if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
     
-$endif$returnedValue &= $basicCDRTypes.(member.striptype)$serialize(x.$member.name$(), endianess);
-$if(member.typelimitation)$
+$endif$returnedValue &= $basicCDRTypes.(member.typecode.striptypename)$serialize(x.$member.name$());
+$if(member.typecode.maxsize)$
 else
     return false; //Change
 $endif$
 >>
 
 member_deserialization(member) ::= <<
-returnedValue &= $basicCDRTypes.(member.striptype)$deserialize(x.$member.name$(), endianess);
+returnedValue &= $basicCDRTypes.(member.typecode.striptypename)$deserialize(x.$member.name$());
 >>
 
-union_type(ctx, name, discriminator, elements) ::= <<>>
+union_type(ctx, union) ::= <<
+bool $ctx.filename$CDR::serialize(const $union.scopedname$ &x)
+{
+    bool returnedValue = true;
+    
+    if(CDR::serialize(x._d()))
+    {
+        switch(x._d())
+        {
+            $union.members:{$unionmember_case_selection_se(it)$}; separator="\n"$
+        }
+    }
+    
+    return returnedValue;
+}
+
+bool $ctx.filename$CDR::deserialize($union.scopedname$ &x)
+{
+    bool returnedValue = true;
+    
+    if(CDR::deserialize(x._d()))
+    {
+        switch(x._d())
+        {
+            $union.members:{$unionmember_case_selection_de(it)$}; separator="\n"$
+        }
+    }
+    
+    return returnedValue;
+}
+>>
+
+unionmember_case_selection_se(member) ::= <<
+$member.labels:{case $it$:}; separator="\n"$
+$if(member.default)$
+default:$\n$
+$endif$
+$member_serialization(it)$
+break;
+>>
+
+unionmember_case_selection_de(member) ::= <<
+$member.labels:{case $it$:}; separator="\n"$
+$if(member.default)$
+default:$\n$
+$endif$
+$member_deserialization(it)$
+break;
+>>
+
+enum_type(ctx, enum) ::= <<>>
 
 basicCDRTypes ::= [
         "float":"CDR::",
         "double":"CDR::",
         "long double":"CDR::",
+        "int16_t":"CDR::",
         "int32_t":"CDR::",
         "int64_t":"CDR::",
         "uint16_t":"CDR::",
