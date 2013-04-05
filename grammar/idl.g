@@ -6,11 +6,10 @@ header {
     import com.eprosima.ebuffers.templates.TemplateUtil;
     import com.eprosima.ebuffers.typecode.*;
     import com.eprosima.ebuffers.util.Pair;
+    import com.eprosima.ebuffers.Utils;
     
     import org.antlr.stringtemplate.StringTemplate;
    
-    
-    import java.io.*;
     import java.util.Vector;
     import java.util.List;
     import java.util.ArrayList;
@@ -101,39 +100,9 @@ options {
     
     private TemplateManager tmanager = null;
     private Context ctx = null;
-    
-    private boolean writeFile(String file, StringTemplate template)
-    {
-        boolean returnedValue = false;
-        
-        try
-        {
-            File handle = new File(file);
-            
-            if(!handle.exists() /*|| replace*/)
-            {
-                FileWriter fw = new FileWriter(file);
-                String data = template.toString();
-                fw.write(data, 0, data.length());
-                fw.close();
-            }
-            else
-            {
-                System.out.println("INFO: " + file + " exists. Skipping.");
-            }
-
-            returnedValue = true;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }   
-
-        return returnedValue;
-    }
 }
 
-specification [String idlFilename] returns [boolean returnedValue = false]
+specification [String outdir, String idlFilename, boolean replace] returns [boolean returnedValue = false]
 {
     // Create initial context.
     ctx = new Context(idlFilename);
@@ -155,13 +124,13 @@ specification [String idlFilename] returns [boolean returnedValue = false]
 }
 	:   (import_dcl)* (tg=definition{maintemplates.setAttribute("blocks", tg);})+
 {
-    if(writeFile(idlFilename + ".h", maintemplates.getTemplate("TypesHeader")))
+    if(Utils.writeFile(outdir + idlFilename + ".h", maintemplates.getTemplate("TypesHeader"), replace))
     {
-        if(writeFile(idlFilename + ".cpp", maintemplates.getTemplate("TypesSource")))
+        if(Utils.writeFile(outdir + idlFilename + ".cpp", maintemplates.getTemplate("TypesSource"), replace))
         {
-            if(writeFile(idlFilename + "CDR.h", maintemplates.getTemplate("CDRHeader")))
+            if(Utils.writeFile(outdir + idlFilename + "CDR.h", maintemplates.getTemplate("CDRHeader"), replace))
             {
-                if(writeFile(idlFilename + "CDR.cpp", maintemplates.getTemplate("CDRSource")))
+                if(Utils.writeFile(outdir + idlFilename + "CDR.cpp", maintemplates.getTemplate("CDRSource"), replace))
                 {
                     returnedValue = true;
                 }

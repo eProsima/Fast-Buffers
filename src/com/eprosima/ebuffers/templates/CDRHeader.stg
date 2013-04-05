@@ -5,7 +5,7 @@ main(ctx, blocks) ::= <<
 #define _$ctx.filename$CDR_H_
 
 #include "$ctx.filename$.h"
-#include "CDR.h"
+#include "cpp/CDR.h"
 
 class $ctx.filename$CDR : public eProsima::CDR
 { 
