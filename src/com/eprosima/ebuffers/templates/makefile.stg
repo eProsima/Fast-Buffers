@@ -1,0 +1,92 @@
+group makefile;
+
+makecxx(projnames, example, arch) ::= <<
+CPP= g++
+CXXFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x
+CXXFLAGS_DEBUG = \$(CXXFLAGS) -g
+LN= g++
+AR=ar
+LDFLAGS = -m$arch$
+
+OUTDIR= output
+OUTDIR_DEBUG= \$(OUTDIR)/debug
+OUTDIR_RELEASE= \$(OUTDIR)/release
+
+SED_OUTPUT_DIR_DEBUG= \$(subst /,\\\\/,\$(OUTDIR_DEBUG))
+SED_OUTPUT_DIR_RELEASE= \$(subst /,\\\\/,\$(OUTDIR_RELEASE))
+
+INCLUDE_DIRS= -I. -I\$(FAST_CDR_BUFFER)/include
+
+LIBRARY_PATH= -L\$(FAST_CDR_BUFFER)/lib/$example$
+LIBS= -lcdr
+LIBS_DEBUG= -lcdrd
+
+$projnames:{
+$it$_TARGET_DEBUG= lib/$example$/lib$it$d.so
+$it$_TARGET_DEBUG_Z= lib/$example$/lib$it$zd.a
+$it$_TARGET= lib/$example$/lib$it$.so
+$it$_TARGET_Z= lib/$example$/lib$it$z.a
+
+$it$_SRC_CPPFILES= $it$.cpp $it$CDR.cpp
+
+# Source directories
+$it$_SOURCES_DIRS_AUX= \$(foreach srcdir, \$(dir \$($it$_SRC_CPPFILES)), \$(srcdir))
+$it$_SOURCES_DIRS= \$(shell echo \$($it$_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+
+$it$_OBJS_DEBUG = \$(foreach obj,\$(notdir \$(addsuffix .o, \$(basename \$($it$_SRC_CPPFILES)))), \$(OUTDIR_DEBUG)/\$(obj))
+$it$_DEPS_DEBUG = \$(foreach dep,\$(notdir \$(addsuffix .d, \$(basename \$($it$_SRC_CPPFILES)))), \$(OUTDIR_DEBUG)/\$(dep))
+$it$_OBJS_RELEASE = \$(foreach obj,\$(notdir \$(addsuffix .o, \$(basename \$($it$_SRC_CPPFILES)))), \$(OUTDIR_RELEASE)/\$(obj))
+$it$_DEPS_RELEASE = \$(foreach dep,\$(notdir \$(addsuffix .d, \$(basename \$($it$_SRC_CPPFILES)))), \$(OUTDIR_RELEASE)/\$(dep))
+
+OBJS+= \$($it$_OBJS_DEBUG) \$($it$_OBJS_RELEASE)
+DEPS+= \$($it$_DEPS_DEBUG) \$($it$_DEPS_RELEASE)
+
+$it$: \$($it$_TARGET_DEBUG) \$($it$_TARGET_DEBUG_Z) \$($it$_TARGET) \$($it$_TARGET_Z)
+
+\$($it$_TARGET_DEBUG): \$($it$_OBJS_DEBUG)
+	\$(LN) -shared -o \$($it$_TARGET_DEBUG) \$(LIBRARY_PATH) \$(LIBS_DEBUG) \$($it$_OBJS_DEBUG)
+
+\$($it$_TARGET_DEBUG_Z): \$($it$_OBJS_DEBUG)
+	\$(AR) -cru \$($it$_TARGET_DEBUG_Z) \$($it$_OBJS_DEBUG)
+
+\$($it$_TARGET): \$($it$_OBJS_RELEASE)
+	\$(LN) -shared -o \$($it$_TARGET) \$(LIBRARY_PATH) \$(LIBS) \$($it$_OBJS_RELEASE)
+
+\$($it$_TARGET_Z): \$($it$_OBJS_RELEASE)
+	\$(AR) -cru \$($it$_TARGET_Z) \$($it$_OBJS_RELEASE)
+	
+vpath %.cpp \$($it$_SOURCES_DIRS)
+
+}; separator="\n"$
+
+\$(OUTDIR_DEBUG)/%.o:%.cpp
+	@echo Calculating dependencies \(DEBUG mode\) \$<
+	@\$(CPP) \$(CXXFLAGS_DEBUG) -MM \$(INCLUDE_DIRS) \$< | sed "s/^.*:/\$(SED_OUTPUT_DIR_DEBUG)\/&/g" > \$(@:%.o=%.d)
+	@echo Compiling \(DEBUG mode\) \$<  
+	@\$(CPP) \$(CXXFLAGS_DEBUG) \$(INCLUDE_DIRS) \$< -o \$@
+
+\$(OUTDIR_RELEASE)/%.o:%.cpp
+	@echo Calculating dependencies \(RELEASE mode\) \$<
+	@\$(CPP) \$(CXXFLAGS) -MM \$(INCLUDE_DIRS) \$< | sed "s/^.*:/\$(SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%.d)
+	@echo Compiling \(RELEASE mode\) \$<
+	@\$(CPP) \$(CXXFLAGS) \$(INCLUDE_DIRS) \$< -o \$@
+
+.PHONY: checkDirectories $projnames:{$it$}; separator=" "$
+
+all: checkDirectories $projnames:{$it$}; separator=" "$
+
+checkDirectories:
+	@mkdir -p \$(OUTDIR)
+	@mkdir -p \$(OUTDIR_DEBUG)
+	@mkdir -p \$(OUTDIR_RELEASE)
+	@mkdir -p lib/$example$
+
+clean:
+	@rm -f \$(OBJS)
+	@rm -f \$(DEPS)
+
+ifneq (\$(MAKECMDGOALS), clean)
+-include \$(DEPS)
+endif
+
+>>

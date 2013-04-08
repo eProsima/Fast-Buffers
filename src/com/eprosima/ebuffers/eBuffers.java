@@ -46,7 +46,7 @@ public class eBuffers
             {
                 if(++count < args.length)
                 {
-                    m_exampleOption = args[count++];
+                    m_exampleOption = args[count];
 
                     if(!m_exampleOption.equals("i86Win32VS2010") &&
                             !m_exampleOption.equals("x64Win64VS2010") &&
@@ -167,16 +167,16 @@ public class eBuffers
             {        
                 System.out.println("Genering makefile solution");
 
-                /*if(exampleOption.startsWith("i86"))
+                if(m_exampleOption.startsWith("i86"))
                 {
-                    returnedValue = genMakefile(ifc, "32");
+                    returnedValue = genMakefile("32");
                 }
-                else if(exampleOption.startsWith("x64"))
+                else if(m_exampleOption.startsWith("x64"))
                 {
-                    returnedValue = genMakefile(ifc, "64");
+                    returnedValue = genMakefile("64");
                 }
                 else
-                    returnedValue = -1;*/
+                    returnedValue = false;
             }
         }
 
@@ -234,75 +234,6 @@ public class eBuffers
                 
                 returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".sln", solution, m_replace);
             }
-
-            /*stringBuf.delete(ifc.getName().length(), stringBuf.length());
-            stringBuf.append("Client");
-            String clientGuid = GUIDGenerator.genGUID(stringBuf.toString());
-            solution.setAttribute("projects.{name, guid, dependsOn, example}", stringBuf.toString(),clientGuid, serverGuid, exampleOption);
-            projectClient.setAttribute("interfaceName", ifc.getName());
-            projectClient.setAttribute("guid", clientGuid);
-            projectClient.setAttribute("name",stringBuf.toString());
-            projectClient.setAttribute("example", exampleOption);
-            projectClient.setAttribute("arch", arch);
-            projectClient.setAttribute("client", "client");
-            projectFilesClient.setAttribute("interfaceName", ifc.getName());
-            projectFilesClient.setAttribute("client", "client");
-
-            // project configurations   
-            for(int index = 0; index < configurations.length; index++){
-                solution.setAttribute("configurations", configurations[index]);
-                projectClient.setAttribute("configurations", configurations[index]);
-                projectServer.setAttribute("configurations", configurations[index]);
-            }
-
-            if(externalDirLength > 0)
-            {
-                externalDir.append("/");    
-            }
-            externalDir.append(ifc.getName()).append("-" + exampleOption + ".sln");
-            if(writeFile(externalDir.toString(), solution) == 0)
-            {
-                externalDir.delete(externalDirLength, externalDir.length());
-
-                //System.out.println(request.toString());
-                if(externalDirLength > 0)
-                {
-                    externalDir.append("/");    
-                }
-                externalDir.append(ifc.getName()).append("Client-" + exampleOption + ".vcxproj");
-                if(writeFile(externalDir.toString(), projectClient) == 0)
-                {
-                    externalDir.delete(externalDirLength, externalDir.length());
-
-                    if(externalDirLength > 0)
-                    {
-                        externalDir.append("/");    
-                    }
-                    externalDir.append(ifc.getName()).append("Server-" + exampleOption + ".vcxproj");
-                    if(writeFile(externalDir.toString(), projectServer) == 0)
-                    {
-                        externalDir.delete(externalDirLength, externalDir.length());
-                        
-                        if(externalDirLength > 0)
-                        {
-                            externalDir.append("/");
-                        }
-                        externalDir.append(ifc.getName()).append("Client-" + exampleOption + ".vcxproj.filters");
-                        if(writeFile(externalDir.toString(), projectFilesClient) == 0)
-                        {
-                            externalDir.delete(externalDirLength, externalDir.length());
-                            
-                            if(externalDirLength > 0)
-                            {
-                                externalDir.append("/");
-                            }
-                            externalDir.append(ifc.getName()).append("Server-" + exampleOption + ".vcxproj.filters");
-                            returnedValue = writeFile(externalDir.toString(), projectFilesServer);
-                            externalDir.delete(externalDirLength, externalDir.length());
-                        }
-                    }
-                }
-            }*/
         }
         else
         {
@@ -310,6 +241,35 @@ public class eBuffers
         }
         
         return returnedValue;
+    }
+    
+    private boolean genMakefile(String arch)
+    {
+    	boolean returnedValue = false;
+    	String idlFilename = null;
+    	StringTemplate makecxx = null;
+    	
+    	StringTemplateGroup makeTemplates = StringTemplateGroup.loadGroup("makefile", DefaultTemplateLexer.class, null);
+    	
+    	if(makeTemplates != null)
+    	{
+    		makecxx = makeTemplates.getInstanceOf("makecxx");
+    		
+    		returnedValue = true;
+            for(int count = 0; returnedValue && (count < m_idlFiles.size()); ++count)
+            {
+            	idlFilename = Utils.getIDLFileNameOnly(m_idlFiles.get(count));
+	    			
+	    		makecxx.setAttribute("projnames", idlFilename);	
+            }
+            
+            makecxx.setAttribute("example", m_exampleOption);
+    		makecxx.setAttribute("arch", arch);	
+            
+            returnedValue = Utils.writeFile(m_outputDir + "makefile_" + m_exampleOption, makecxx, m_replace);
+    	}
+    	
+    	return returnedValue;
     }
     
     public static void printHelp()
