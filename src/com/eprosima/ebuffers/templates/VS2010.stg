@@ -72,7 +72,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
       <WarningLevel>Level3</WarningLevel>
       <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
       <AdditionalIncludeDirectories>\$(FAST_CDR_BUFFER)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_CPP_DLL_VARIABLE$endif$$if(it.debug)$_DEBUG$else$NDEBUG$endif$</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_CPP_DLL_VARIABLE;USER_CPP_DLL_EXPORT;$endif$$if(it.debug)$_DEBUG;$else$NDEBUG;$endif$</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>

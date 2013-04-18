@@ -7,7 +7,10 @@ main(ctx, blocks) ::= <<
 #include "$ctx.filename$.h"
 #include "cpp/Cdr.h"
 
-class $ctx.filename$CDR : public eProsima::CDR
+/*!
+ * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file.
+ */
+class user_cpp_DllExport $ctx.filename$CDR : public eProsima::CDR
 { 
 public:
     $ctx.filename$CDR(eProsima::CDRBuffer &cdrBuffer);

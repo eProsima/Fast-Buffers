@@ -275,7 +275,18 @@ public class eBuffers
     public static void printHelp()
     {
         System.out.println("eBuffers usage:");
-        System.out.println("\teBuffers [-o <dir>] <IDL file> [<IDL file> ...]");
+        System.out.println("\teBuffers [<options>] <IDL file> [<IDL file> ...]");
+        System.out.println("\twhere the options are:");
+        System.out.println("\t\t-help: Show help.");
+        System.out.println("\t\t-version: shows the current version of RPCDDS.");
+        System.out.println("\t\t-o <directory>: Output directory where the generated files will be put.");         
+        System.out.println("\t\t-example <platform>: Generate solution for specific platform (example: x64Win64VS2010)\n" +
+        "                        Platforms supported:\n" +
+        "                         * i86Win32VS2010\n" +
+        "                         * x64Win64VS2010\n" +
+        "                         * i86Linux2.6gcc4.4.5\n" +
+        "                         * x64Linux2.6gcc4.4.5\n");
+        System.out.println("\t\t-replace: replace generated files if they exits.");
     }
     
     public static void main(String[] args) throws Exception

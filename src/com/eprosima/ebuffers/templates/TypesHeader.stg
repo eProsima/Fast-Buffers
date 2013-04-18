@@ -9,6 +9,16 @@ main(ctx, blocks) ::= <<
 #include <string>
 #include <vector>
 
+#if defined(WIN32)
+#if defined(USER_CPP_DLL_EXPORT)
+#define user_cpp_DllExport __declspec( dllexport )
+#else
+#define user_cpp_DllExport
+#endif
+#else
+#define user_cpp_DllExport
+#endif
+
 $blocks; separator="\n"$
 
 #endif // _$ctx.filename$_H_
@@ -26,7 +36,10 @@ $definitions; separator="\n"$
 >>
 
 struct_type(ctx, struct) ::= <<
-class $struct.name$
+/*!
+ * @brief This class represents the structure $struct.name$ defined by the user in the IDL file.
+ */
+class user_cpp_DllExport $struct.name$
 {
 public:
     $struct.name$();
@@ -104,7 +117,10 @@ $typecode.typename$ m_$name$;
 >>
 
 union_type(ctx, union) ::= <<
-class $union.name$
+/*!
+ * @brief This class represents the union $union.name$ defined by the user in the IDL file.
+ */
+class user_cpp_DllExport $union.name$
 {
 public:
     $union.name$();
@@ -126,6 +142,9 @@ private:
 >>
 
 enum_type(ctx, enum) ::= <<
+/*!
+ * @brief This class represents the enumeration $enum.name$ defined by the user in the IDL file.
+ */
 enum $enum.name$ : uint32_t
 {
     $enum.members:{$it.name$}; separator=",\n"$
