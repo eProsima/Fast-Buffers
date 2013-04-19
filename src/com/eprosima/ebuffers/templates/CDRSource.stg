@@ -2,6 +2,7 @@ group CDRSource;
 
 main(ctx, blocks) ::= <<
 #include "$ctx.filename$CDR.h"
+#include "cpp/exceptions/BadParamException.h"
 
 $ctx.filename$CDR::$ctx.filename$CDR(eProsima::CDRBuffer &cdrBuffer) : CDR(cdrBuffer)
 {
@@ -19,22 +20,18 @@ $definitions; separator="\n"$
 >>
 
 struct_type(ctx, struct) ::= <<
-bool $ctx.filename$CDR::serialize(const $struct.scopedname$ &x)
+$ctx.filename$CDR& $ctx.filename$CDR::serialize(const $struct.scopedname$ &x)
 {
-    bool returnedValue = true;
-    
     $struct.members:{$member_serialization(it)$}; separator="\n"$
     
-    return returnedValue;
+    return *this;
 }
 
-bool $ctx.filename$CDR::deserialize($struct.scopedname$ &x)
-{
-    bool returnedValue = true;
-    
+$ctx.filename$CDR& $ctx.filename$CDR::deserialize($struct.scopedname$ &x)
+{  
     $struct.members:{$member_deserialization(it)$}; separator="\n"$
     
-    return returnedValue;
+    return *this;
 }
 >>
 
@@ -42,46 +39,39 @@ member_serialization(member) ::= <<
 $if(member.typecode.maxsize)$
 if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
     
-$endif$returnedValue &= $basicCDRTypes.(member.typecode.striptypename)$serialize(x.$member.name$());
+$endif$$basicCDRTypes.(member.typecode.striptypename)$serialize(x.$member.name$());
 $if(member.typecode.maxsize)$
 else
-    return false; //Change
+    throw eProsima::BadParamException(std::string("The maximum length was exceeded"));
 $endif$
 >>
 
 member_deserialization(member) ::= <<
-returnedValue &= $basicCDRTypes.(member.typecode.striptypename)$deserialize(x.$member.name$());
+$basicCDRTypes.(member.typecode.striptypename)$deserialize(x.$member.name$());
 >>
 
 union_type(ctx, union) ::= <<
-bool $ctx.filename$CDR::serialize(const $union.scopedname$ &x)
-{
-    bool returnedValue = true;
+$ctx.filename$CDR& $ctx.filename$CDR::serialize(const $union.scopedname$ &x)
+{ 
+    CDR::serialize(x._d());
     
-    if(CDR::serialize(x._d()))
+    switch(x._d())
     {
-        switch(x._d())
-        {
-            $union.members:{$unionmember_case_selection_se(it)$}; separator="\n"$
-        }
+        $union.members:{$unionmember_case_selection_se(it)$}; separator="\n"$
     }
     
-    return returnedValue;
+    return *this;
 }
 
-bool $ctx.filename$CDR::deserialize($union.scopedname$ &x)
+$ctx.filename$CDR& $ctx.filename$CDR::deserialize($union.scopedname$ &x)
 {
-    bool returnedValue = true;
-    
-    if(CDR::deserialize(x._d()))
+    CDR::deserialize(x._d());
+    switch(x._d())
     {
-        switch(x._d())
-        {
-            $union.members:{$unionmember_case_selection_de(it)$}; separator="\n"$
-        }
+        $union.members:{$unionmember_case_selection_de(it)$}; separator="\n"$
     }
     
-    return returnedValue;
+    return *this;
 }
 >>
 

@@ -33,22 +33,22 @@ membered_type(ctx, mtype) ::=<<
 /*!
  * @brief This function serialize type $mtype.scopedname$.
  */
-inline bool operator<<(const $mtype.scopedname$ &x){return serialize(x);}
+inline $ctx.filename$CDR& operator<<(const $mtype.scopedname$ &x){return serialize(x);}
 
 /*!
  * @brief This function serialize type $mtype.scopedname$.
  */
-bool serialize(const $mtype.scopedname$ &x);
+$ctx.filename$CDR& serialize(const $mtype.scopedname$ &x);
 
 /*!
  * @brief This function deserialize type $mtype.scopedname$.
  */
-inline bool operator$ctx.sersym$($mtype.scopedname$ &x){return deserialize(x);}
+inline $ctx.filename$CDR& operator$ctx.sersym$($mtype.scopedname$ &x){return deserialize(x);}
 
 /*!
  * @brief This function deserialize type $mtype.scopedname$.
  */
-bool deserialize($mtype.scopedname$ &x);
+$ctx.filename$CDR& deserialize($mtype.scopedname$ &x);
 >>
 
 struct_type(ctx, struct) ::= <<
