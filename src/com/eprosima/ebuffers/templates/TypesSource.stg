@@ -26,24 +26,24 @@ $struct.scopedname$::~$struct.name$()
 {
 }
 
-$struct.scopedname$::$struct.name$(const $struct.scopedname$ &x)
+$struct.scopedname$::$struct.name$(const $struct.name$ &x)
 {
     $struct.members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
 }
 
-$struct.scopedname$::$struct.name$($struct.scopedname$ &&x)
+$struct.scopedname$::$struct.name$($struct.name$ &&x)
 {
     $struct.members:{$structmember_move(it)$}; separator="\n"$
 }
 
-$struct.scopedname$& $struct.scopedname$::operator=(const $struct.scopedname$ &x)
+$struct.scopedname$& $struct.scopedname$::operator=(const $struct.name$ &x)
 {
     $struct.members:{m_$it.name$ = x.m_$it.name$;}; separator="\n"$
     
     return *this;
 }
 
-$struct.scopedname$& $struct.scopedname$::operator=($struct.scopedname$ &&x)
+$struct.scopedname$& $struct.scopedname$::operator=($struct.name$ &&x)
 {
     $struct.members:{$structmember_move(it)$}; separator="\n"$
     
@@ -62,7 +62,7 @@ $union.scopedname$::~$union.name$()
 {
 }
 
-$union.scopedname$::$union.name$(const $union.scopedname$ &x)
+$union.scopedname$::$union.name$(const $union.name$ &x)
 {
     m__d = x.m__d;
     
@@ -72,7 +72,7 @@ $union.scopedname$::$union.name$(const $union.scopedname$ &x)
     }
 }
 
-$union.scopedname$::$union.name$($union.scopedname$ &&x)
+$union.scopedname$::$union.name$($union.name$ &&x)
 {
     m__d = x.m__d;
     
@@ -82,7 +82,7 @@ $union.scopedname$::$union.name$($union.scopedname$ &&x)
     }
 }
 
-$union.scopedname$& $union.scopedname$::operator=(const $union.scopedname$ &x)
+$union.scopedname$& $union.scopedname$::operator=(const $union.name$ &x)
 {
     m__d = x.m__d;
     
@@ -94,7 +94,7 @@ $union.scopedname$& $union.scopedname$::operator=(const $union.scopedname$ &x)
     return *this;
 }
 
-$union.scopedname$& $union.scopedname$::operator=($union.scopedname$ &&x)
+$union.scopedname$& $union.scopedname$::operator=($union.name$ &&x)
 {
     m__d = x.m__d;
     

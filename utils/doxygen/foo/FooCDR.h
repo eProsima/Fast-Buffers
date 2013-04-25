@@ -6,6 +6,7 @@
 
 /*!
  * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eProsima::CDRBuffer.
+ * @ingroup FOOEXAMPLE
  */
 class user_cpp_DllExport FooCDR : public eProsima::CDR
 { 

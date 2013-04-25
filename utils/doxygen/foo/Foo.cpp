@@ -12,19 +12,19 @@ Foo::Foo::~Foo()
 {
 }
 
-Foo::Foo::Foo(const Foo::Foo &x)
+Foo::Foo::Foo(const Foo &x)
 {
     m_id = x.m_id;
     m_message = x.m_message;
 }
 
-Foo::Foo::Foo(Foo::Foo &&x)
+Foo::Foo::Foo(Foo &&x)
 {
     m_id = x.m_id;
     m_message = std::move(x.m_message);
 }
 
-Foo::Foo& Foo::Foo::operator=(const Foo::Foo &x)
+Foo::Foo& Foo::Foo::operator=(const Foo &x)
 {
     m_id = x.m_id;
     m_message = x.m_message;
@@ -32,7 +32,7 @@ Foo::Foo& Foo::Foo::operator=(const Foo::Foo &x)
     return *this;
 }
 
-Foo::Foo& Foo::Foo::operator=(Foo::Foo &&x)
+Foo::Foo& Foo::Foo::operator=(Foo &&x)
 {
     m_id = x.m_id;
     m_message = std::move(x.m_message);
