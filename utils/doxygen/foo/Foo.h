@@ -20,7 +20,6 @@ namespace Foo
 {
     /*!
      * @brief This class represents the structure Foo defined by the user in the IDL file.
-     * @ingroup FOOEXAMPLE
      */
     class user_cpp_DllExport Foo
     {

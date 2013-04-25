@@ -2,7 +2,7 @@ group makefile;
 
 makecxx(projnames, example, arch) ::= <<
 CPP= g++
-CXXFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x
+CXXFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x -DEPROSIMA_LINUX
 CXXFLAGS_DEBUG = \$(CXXFLAGS) -g
 LN= g++
 AR=ar

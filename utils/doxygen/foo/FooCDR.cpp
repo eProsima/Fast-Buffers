@@ -1,27 +1,42 @@
 #include "FooCDR.h"
+#include "cpp/exceptions/BadParamException.h"
 
 FooCDR::FooCDR(eProsima::CDRBuffer &cdrBuffer) : CDR(cdrBuffer)
 {
 }
 
-bool FooCDR::serialize(const Foo::Foo &x)
+FooCDR& FooCDR::serialize(const Foo::Foo &x)
 {
-    bool returnedValue = true;
-    
-    returnedValue &= CDR::serialize(x.id());
+    CDR::serialize(x.id());
 
-    returnedValue &= CDR::serialize(x.message());
+    CDR::serialize(x.message());
 
     
-    return returnedValue;
+    return *this;
 }
 
-bool FooCDR::deserialize(Foo::Foo &x)
+FooCDR& FooCDR::serializeFast(const Foo::Foo &x)
 {
-    bool returnedValue = true;
+    CDR::serializeFast(x.id());
+
+    CDR::serializeFast(x.message());
+
     
-    returnedValue &= CDR::deserialize(x.id());
-    returnedValue &= CDR::deserialize(x.message());
+    return *this;
+}
+
+FooCDR& FooCDR::deserialize(Foo::Foo &x)
+{  
+    CDR::deserialize(x.id());
+    CDR::deserialize(x.message());
     
-    return returnedValue;
+    return *this;
+}
+
+FooCDR& FooCDR::deserializeFast(Foo::Foo &x)
+{  
+    CDR::deserializeFast(x.id());
+    CDR::deserializeFast(x.message());
+    
+    return *this;
 }

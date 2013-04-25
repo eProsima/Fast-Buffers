@@ -27,9 +27,23 @@ $ctx.filename$CDR& $ctx.filename$CDR::serialize(const $struct.scopedname$ &x)
     return *this;
 }
 
+$ctx.filename$CDR& $ctx.filename$CDR::serializeFast(const $struct.scopedname$ &x)
+{
+    $struct.members:{$member_serialization_fast(it)$}; separator="\n"$
+    
+    return *this;
+}
+
 $ctx.filename$CDR& $ctx.filename$CDR::deserialize($struct.scopedname$ &x)
 {  
     $struct.members:{$member_deserialization(it)$}; separator="\n"$
+    
+    return *this;
+}
+
+$ctx.filename$CDR& $ctx.filename$CDR::deserializeFast($struct.scopedname$ &x)
+{  
+    $struct.members:{$member_deserialization_fast(it)$}; separator="\n"$
     
     return *this;
 }
@@ -46,8 +60,23 @@ else
 $endif$
 >>
 
+member_serialization_fast(member) ::= <<
+$if(member.typecode.maxsize)$
+if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
+    
+$endif$$basicCDRTypes.(member.typecode.striptypename)$serializeFast(x.$member.name$());
+$if(member.typecode.maxsize)$
+else
+    throw eProsima::BadParamException(std::string("The maximum length was exceeded"));
+$endif$
+>>
+
 member_deserialization(member) ::= <<
 $basicCDRTypes.(member.typecode.striptypename)$deserialize(x.$member.name$());
+>>
+
+member_deserialization_fast(member) ::= <<
+$basicCDRTypes.(member.typecode.striptypename)$deserializeFast(x.$member.name$());
 >>
 
 union_type(ctx, union) ::= <<
