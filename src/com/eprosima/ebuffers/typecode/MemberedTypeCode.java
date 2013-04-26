@@ -31,7 +31,7 @@ public abstract class MemberedTypeCode extends TypeCode
     protected int addMember(Member member)
     {
         m_members.add(member);
-        return m_members.size() -1 ;
+        return m_members.size() - 1;
     }
     
     public abstract String getTypename();

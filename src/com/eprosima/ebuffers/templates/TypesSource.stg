@@ -2,6 +2,7 @@ group TypesSource;
 
 main(ctx, blocks) ::= <<
 #include "$ctx.filename$.h"
+#include "cpp/exceptions/BadParamException.h"
 
 #include <utility>
 
@@ -115,7 +116,7 @@ void $union.scopedname$::_d($union.discriminator.typename$ __d)
         $union.members:{$unionmember_discriminator_case(member=it, totallabels=union.totallabels)$}; separator="\n"$
     }
     
-    if(!b) /*TODO*/printf("ERROR: BAD_PARAM Exception in union");
+    if(!b) throw eProsima::BadParamException("Discriminator doesn't correspond with the selected union member");
     
     m__d = __d;
 }
@@ -271,7 +272,7 @@ switch(m__d)
 }
 $endif$
     
-if(!b) /*TODO*/printf("ERROR: BAD_PARAM Exception in union");
+if(!b) throw eProsima::BadParamException("This member is not been selected");
 >>
 
 enum_type(ctx, enum) ::= <<>>

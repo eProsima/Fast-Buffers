@@ -2,6 +2,8 @@ package com.eprosima.ebuffers.typecode;
 
 import org.antlr.stringtemplate.StringTemplate;
 
+import com.eprosima.ebuffers.util.Pair;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -70,6 +72,60 @@ public class UnionTypeCode extends MemberedTypeCode
         }
         
         return returnList;
+    }
+    
+    public Pair<Integer, Integer> getMaxSerializedSize(int currentSize, int lastDataAligned)
+    {
+        List<Member> members = getMembers();
+        int lcurrentSize = currentSize, lmaxSize = 0;
+        int llastDataAligned = 0;
+        
+        Pair<Integer, Integer> dpair = m_discriminatorTypeCode.getMaxSerializedSize(lcurrentSize, lastDataAligned);
+        lcurrentSize = dpair.first();
+        
+        for(int count = 0; count < members.size(); ++count)
+        {
+            Pair<Integer, Integer> pair = members.get(count).getTypecode().getMaxSerializedSize(lcurrentSize, dpair.second());
+
+            if(pair.first() > lmaxSize)
+            {
+                lmaxSize = pair.first();
+                llastDataAligned = pair.second();
+            }
+        }
+        
+        return new Pair<Integer, Integer>(lmaxSize, llastDataAligned);
+    }
+    
+    public int getMaxSerializedSizeWithoutAlignment(int currentSize)
+    {
+        List<Member> members = getMembers();
+        int lcurrentSize = currentSize, lmaxSize = 0;
+        
+        lcurrentSize = m_discriminatorTypeCode.getMaxSerializedSizeWithoutAlignment(lcurrentSize);
+        
+        for(int count = 0; count < members.size(); ++count)
+        {
+            int aux = members.get(count).getTypecode().getMaxSerializedSizeWithoutAlignment(lcurrentSize);
+            
+            if(aux > lmaxSize)
+            {
+                lmaxSize = aux;
+            }
+        }
+        
+        return lmaxSize;
+    }
+    
+    public String getMaxSerializedSize()
+    {
+        Pair<Integer, Integer> pair = getMaxSerializedSize(0, 0);
+        return pair.first().toString();
+    }
+    
+    public String getMaxSerializedSizeWithoutAlignment()
+    {
+        return Integer.toString(getMaxSerializedSizeWithoutAlignment(0));
     }
     
     private TypeCode m_discriminatorTypeCode = null;

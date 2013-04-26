@@ -42,14 +42,44 @@ struct_type(ctx, struct) ::= <<
 class user_cpp_DllExport $struct.name$
 {
 public:
+
+    /*!
+     * @brief Default constructor.
+     */
     $struct.name$();
+    
+    /*!
+     * @brief Default destructor.
+     */
     ~$struct.name$();
+    
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object $struct.scopedname$ that will be copied.
+     */
     $struct.name$(const $struct.name$ &x);
+    
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object $struct.scopedname$ that will be copied.
+     */
     $struct.name$($struct.name$ &&x);
+    
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object $struct.scopedname$ that will be copied.
+     */
     $struct.name$& operator=(const $struct.name$ &x);
+    
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object $struct.scopedname$ that will be copied.
+     */
     $struct.name$& operator=($struct.name$ &&x);
     
     $struct.members:{$public_structmember_declaration(it)$}; separator="\n"$
+    
+    $size_functions(struct)$
     
 private:
     $struct.members:{$private_member_declaration(it)$}; separator="\n"$
@@ -58,36 +88,64 @@ private:
 
 public_structmember_declaration(member) ::= <<
 $if(member.typecode.primitive)$
+/*!
+ * @brief This function sets a value in member $member.name$
+ * @param _$member.name$ New value for member $member.name$
+ */
 inline void $member.name$($member.typecode.typename$ _$member.name$)
 {
     m_$member.name$ = _$member.name$;
 }
 
+/*!
+ * @brief This function returns the value of member $member.name$
+ * @return Value of member $member.name$
+ */
 inline $member.typecode.typename$ $member.name$() const
 {
     return m_$member.name$;
 }
 
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ */
 inline $member.typecode.typename$& $member.name$()
 {
     return m_$member.name$;
 }
 $else$
+/*!
+ * @brief This function copies the value in member $member.name$
+ * @param _$member.name$ New value to be copied in member $member.name$
+ */
 inline void $member.name$(const $member.typecode.typename$ &_$member.name$)
 {
     m_$member.name$ = _$member.name$;
 }
 
+/*!
+ * @brief This function moves the value in member $member.name$
+ * @param _$member.name$ New value to be moved in member $member.name$
+ */
 inline void $member.name$($member.typecode.typename$ &&_$member.name$)
 {
     m_$member.name$ = std::move(_$member.name$);
 }
 
+/*!
+ * @brief This function returns a constant reference to member $member.name$
+ * @return Constant reference to member $member.name$
+ */
 inline const $member.typecode.typename$& $member.name$() const
 {
     return m_$member.name$;
 }
 
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ */
 inline $member.typecode.typename$& $member.name$()
 {
     return m_$member.name$;
@@ -97,18 +155,53 @@ $endif$
 
 private_member_declaration(member) ::= <<$private_declaration(typecode=member.typecode, name=member.name)$>>
 
-public_member_declaration(member) ::= <<$public_declaration(typecode=member.typecode, name=member.name)$>>
+public_unionmember_declaration(member) ::= <<
+$if(member.typecode.primitive)$
+/*!
+ * @brief This function sets a value in member $member.name$
+ * @param _$member.name$ New value for member $member.name$
+ */
+void $member.name$($member.typecode.typename$ _$member.name$);
 
-public_declaration(typecode, name) ::= <<
-$if(typecode.primitive)$
-void $name$($typecode.typename$ _$name$);
-$typecode.typename$ $name$() const;
-$typecode.typename$& $name$();
+/*!
+ * @brief This function returns the value of member $member.name$
+ * @return Value of member $member.name$
+ * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+$member.typecode.typename$ $member.name$() const;
+
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+$member.typecode.typename$& $member.name$();
 $else$
-void $name$(const $typecode.typename$ &_$name$);
-void $name$($typecode.typename$ &&_$name$);
-const $typecode.typename$& $name$() const;
-$typecode.typename$& $name$();
+/*!
+ * @brief This function copies the value in member $member.name$
+ * @param _$member.name$ New value to be copied in member $member.name$
+ */
+void $member.name$(const $member.typecode.typename$ &_$member.name$);
+
+/*!
+ * @brief This function moves the value in member $member.name$
+ * @param _$member.name$ New value to be moved in member $member.name$
+ */
+void $member.name$($member.typecode.typename$ &&_$member.name$);
+
+/*!
+ * @brief This function returns a constant reference to member $member.name$
+ * @return Constant reference to member $member.name$
+ * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+const $member.typecode.typename$& $member.name$() const;
+
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+$member.typecode.typename$& $member.name$();
 $endif$
 >>
 
@@ -123,16 +216,63 @@ union_type(ctx, union) ::= <<
 class user_cpp_DllExport $union.name$
 {
 public:
+
+    /*!
+     * @brief Default constructor.
+     */
     $union.name$();
+    
+    /*!
+     * @brief Default destructor.
+     */
     ~$union.name$();
+    
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
     $union.name$(const $union.name$ &x);
+    
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
     $union.name$($union.name$ &&x);
+    
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
     $union.name$& operator=(const $union.name$ &x);
+    
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
     $union.name$& operator=($union.name$ &&x);
     
-    $public_declaration(typecode=union.discriminator, name="_d")$
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eProsima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    void _d($union.discriminator.typename$ __d);
     
-    $union.members:{$public_member_declaration(it)$}; separator="\n"$
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    $union.discriminator.typename$ _d() const;
+    
+    /*!
+     * @brief This function returns a reference to the discriminator.
+     * @return Reference to the discriminator.
+     */
+    $union.discriminator.typename$& _d();
+    
+    $union.members:{$public_unionmember_declaration(it)$}; separator="\n"$
+    
+    $size_functions(union)$
     
 private:
     $private_declaration(typecode=union.discriminator, name="_d")$
@@ -149,4 +289,22 @@ enum $enum.name$ : uint32_t
 {
     $enum.members:{$it.name$}; separator=",\n"$
 };
+>>
+
+size_functions(type) ::= <<
+/*!
+ * @brief This function calculates the space needed to serialize a type $type.scopedname$.
+ *        For all types with a variable size (strings, sequences) and without a maximum limit, this function uses
+ *        255 as maximum limit.
+ */
+ inline
+ size_t getMaxSerializedSize() { return $type.maxSerializedSize$;}
+ 
+ /*!
+ * @brief This function calculates the space needed to serialize a type $type.scopedname$ without alignment.
+ *        For all types with a variable size (strings, sequences) and without a maximum limit, this function uses
+ *        255 as maximum limit.
+ */
+ inline
+ size_t getMaxSerializedSizeWithoutAlign(){ return $type.maxSerializedSizeWithoutAlignment$;}
 >>

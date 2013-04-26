@@ -5,6 +5,7 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 
 import com.eprosima.ebuffers.templates.TemplateUtil;
+import com.eprosima.ebuffers.util.Pair;
 
 public abstract class TypeCode
 {
@@ -70,6 +71,15 @@ public abstract class TypeCode
     {
         return null;
     }
+    
+    protected int getSize()
+    {
+        return 0;
+    }
+    
+    public abstract Pair<Integer, Integer> getMaxSerializedSize(int currentSize, int lastDataAligned);
+    
+    public abstract int getMaxSerializedSizeWithoutAlignment(int currentSize);
     
     private int m_kind = KIND_NULL;
 }

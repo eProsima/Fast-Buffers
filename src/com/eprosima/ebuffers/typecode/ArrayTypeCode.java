@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import org.antlr.stringtemplate.StringTemplate;
 
+import com.eprosima.ebuffers.util.Pair;
+
 public class ArrayTypeCode extends ContainerTypeCode
 {
     public ArrayTypeCode()
@@ -50,6 +52,41 @@ public class ArrayTypeCode extends ContainerTypeCode
     public void addDimension(String dimension)
     {
         m_dimensions.add(dimension);
+    }
+    
+    public Pair<Integer, Integer> getMaxSerializedSize(int currentSize, int lastDataAligned)
+    {
+        int lcontainTypeSize = getContentTypeCode().getSize();
+        int lcontainTypeAlign = 0;
+        int larraySize = 1;
+        
+        // Element contained type.
+        if(lcontainTypeSize > 4)
+        {
+            lcontainTypeAlign = (lcontainTypeSize - (currentSize % lcontainTypeSize)) & (lcontainTypeSize - 1);
+        }
+        
+        // Calculate array size.
+        for(int count = 0; count < m_dimensions.size(); ++count)
+        {     
+            larraySize *= Integer.parseInt(m_dimensions.get(count));
+        }
+        
+        return new Pair<Integer, Integer>(currentSize + lcontainTypeAlign + (larraySize *  lcontainTypeSize), lcontainTypeSize);
+    }
+    
+    public int getMaxSerializedSizeWithoutAlignment(int currentSize)
+    {
+        int lcontainTypeSize = getContentTypeCode().getSize();
+        int larraySize = 1;
+        
+        // Calculate array size.
+        for(int count = 0; count < m_dimensions.size(); ++count)
+        {     
+            larraySize *= Integer.parseInt(m_dimensions.get(count));
+        }
+        
+        return currentSize + (larraySize * lcontainTypeSize);
     }
     
     private List<String> m_dimensions;
