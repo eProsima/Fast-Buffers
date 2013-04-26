@@ -1,4 +1,5 @@
 #include "Foo.h"
+#include "cpp/exceptions/BadParamException.h"
 
 #include <utility>
 

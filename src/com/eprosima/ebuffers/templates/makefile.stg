@@ -15,9 +15,9 @@ OUTDIR_RELEASE= \$(OUTDIR)/release
 SED_OUTPUT_DIR_DEBUG= \$(subst /,\\\\/,\$(OUTDIR_DEBUG))
 SED_OUTPUT_DIR_RELEASE= \$(subst /,\\\\/,\$(OUTDIR_RELEASE))
 
-INCLUDE_DIRS= -I. -I\$(FAST_CDR_BUFFER)/include
+INCLUDE_DIRS= -I. -I\$(FAST_BUFFERS)/include
 
-LIBRARY_PATH= -L\$(FAST_CDR_BUFFER)/lib/$example$
+LIBRARY_PATH= -L\$(FAST_BUFFERS)/lib/$example$
 LIBS= -lcdr
 LIBS_DEBUG= -lcdrd
 

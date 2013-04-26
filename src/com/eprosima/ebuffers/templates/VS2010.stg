@@ -71,7 +71,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
-      <AdditionalIncludeDirectories>\$(FAST_CDR_BUFFER)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_CPP_DLL_VARIABLE;USER_CPP_DLL_EXPORT;$endif$$if(it.debug)$_DEBUG;$else$NDEBUG;$endif$</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -82,7 +82,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
       <AdditionalDependencies>$if(it.dll)$CDR$if(it.debug)$d$endif$.lib$endif$;%(AdditionalDependencies)</AdditionalDependencies>
       $if(it.dll)$
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>\$(FAST_CDR_BUFFER)\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>\$(FAST_BUFFERS)\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>\$(TargetDir)\$(TargetName).lib</ImportLibrary>
       $endif$   
     </Link>
