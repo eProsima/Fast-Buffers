@@ -1,0 +1,36 @@
+CC=gcc
+CPP=g++
+LN=g++
+AR=ar
+CP=cp
+
+CPPFLAGS= -c -Wall -DEPROSIMA_LINUX -m64 -fpic -std=c++11
+LDFLAGS=-m64
+
+INCLUDES = -I. -I$(FAST_BUFFERS)/include
+
+LIBS =  -L$(FAST_BUFFERS)/lib/x64Linux2.6gcc4.4.5 -L./lib/x64Linux2.6gcc4.4.5 \
+	-lHelloWorldz -lcdrz 
+
+CPPSOURCES = HelloWorldExample.cpp
+
+DIRECTORIES   = output.dir output/x64Linux2.6gcc4.4.5.dir bin.dir bin/x64Linux2.6gcc4.4.5.dir
+OBJS    = $(CPPSOURCES:%.cpp=output/x64Linux2.6gcc4.4.5/%.o)
+EXEC    = bin/x64Linux2.6gcc4.4.5/HelloWorldExample
+
+example: $(DIRECTORIES) $(OBJS) $(EXEC)
+
+$(EXEC) : 
+	$(LN) $(LDFLAGS) -o $(@:%.out=%) $(OBJS) $(LIBS)
+
+output/x64Linux2.6gcc4.4.5/%.o : %.cpp
+	$(CPP) $(CPPFLAGS)  -o $@ $(INCLUDES) -c $<
+
+# Here is how we create those subdirectories automatically.
+%.dir : 
+	@echo "Checking directory $*"
+	@if [ ! -d $* ]; then \
+		echo "Making directory $*"; \
+		mkdir -p $* ; \
+	fi;
+

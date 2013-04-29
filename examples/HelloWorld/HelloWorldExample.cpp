@@ -29,7 +29,7 @@ int main()
     // Deserialization.
     helloCDR_des >> hello_des;
 
-    std::cout << hello_des.message();
+    std::cout << hello_des.message() << std::endl;
 
     return 0;
 }
