@@ -7,5 +7,5 @@ if [ x$JAVA_HOME = x ]; then
 	exit 1
 fi
 
-exec "${JAVA_HOME}/bin/java" -Djava.ext.dirs="$dir/../lib" com.eprosima.ebuffers.eBuffers "$@"
+exec "${JAVA_HOME}/bin/java" -Djava.ext.dirs="$dir/../lib" com.eprosima.fastbuffers.FastBuffers "$@"
 

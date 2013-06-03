@@ -1,12 +1,12 @@
 header {
-    package com.eprosima.ebuffers.parser;
+    package com.eprosima.fastbuffers.parser;
     
-    import com.eprosima.ebuffers.templates.TemplateManager;
-    import com.eprosima.ebuffers.templates.TemplateGroup;
-    import com.eprosima.ebuffers.templates.TemplateUtil;
-    import com.eprosima.ebuffers.typecode.*;
-    import com.eprosima.ebuffers.util.Pair;
-    import com.eprosima.ebuffers.Utils;
+    import com.eprosima.fastbuffers.templates.TemplateManager;
+    import com.eprosima.fastbuffers.templates.TemplateGroup;
+    import com.eprosima.fastbuffers.templates.TemplateUtil;
+    import com.eprosima.fastbuffers.typecode.*;
+    import com.eprosima.fastbuffers.util.Pair;
+    import com.eprosima.fastbuffers.Utils;
     
     import org.antlr.stringtemplate.StringTemplate;
    
@@ -108,7 +108,7 @@ specification [String outdir, String idlFilename, boolean replace] returns [bool
     ctx = new Context(idlFilename);
     
     // Create template manager
-    tmanager = new TemplateManager("com/eprosima/ebuffers/templates");
+    tmanager = new TemplateManager("com/eprosima/fastbuffers/templates");
     // Load types header template.
     tmanager.addGroup("TypesHeader");
     // Load types source template.

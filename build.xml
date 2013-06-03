@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="eBuffers" default="jar" basedir=".">
+<project name="FastBuffers" default="jar" basedir=".">
 	<macrodef name="antlr">
 		<attribute name="base"/>
 		<attribute name="grammar"/>
@@ -88,7 +88,7 @@
 	<target name="compile" depends="init, prepare-sources" description="Compiles the sources. (Default)">
 		<!-- Echo compilation properties -->
 		<echo>Building ANTLR grammars... Some warnings are expected...</echo>
-		<antlr base="${src.java}${file.separator}com/eprosima/ebuffers/parser" grammar="${grammar.dir}${file.separator}idl.g"/>
+		<antlr base="${src.java}${file.separator}com/eprosima/fastbuffers/parser" grammar="${grammar.dir}${file.separator}idl.g"/>
 		<echo>Compiling java code...</echo>
 		<mkdir dir="${build.classes}"/>
 		<javac srcdir="${src.java}"
