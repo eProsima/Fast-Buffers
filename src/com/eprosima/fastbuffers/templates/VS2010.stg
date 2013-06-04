@@ -94,11 +94,11 @@ project(name, guid, example, arch, configurations, client) ::= <<
   </ItemDefinitionGroup>};separator="\n"$
   <ItemGroup>
     <ClCompile Include="$name$.cpp" />
-    <ClCompile Include="$name$CDR.cpp" />
+    <ClCompile Include="$name$Ser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$name$.h" />
-    <ClInclude Include="$name$CDR.h" />
+    <ClInclude Include="$name$Ser.h" />
   </ItemGroup>
   <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -123,7 +123,7 @@ projectFiles(name) ::= <<
     <ClCompile Include="$name$.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$name$CDR.cpp">
+    <ClCompile Include="$name$Ser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -131,7 +131,7 @@ projectFiles(name) ::= <<
     <ClInclude Include="$name$.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="$name$CDR.h">
+    <ClInclude Include="$name$Ser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

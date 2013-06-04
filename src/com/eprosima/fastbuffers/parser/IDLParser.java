@@ -135,7 +135,7 @@ public IDLParser(ParserSharedInputState state) {
 }
 
 	public final boolean  specification(
-		String outdir, String idlFilename, boolean replace
+		String outdir, String idlFilename, String serType, boolean replace
 	) throws RecognitionException, TokenStreamException {
 		boolean returnedValue = false;
 		
@@ -150,9 +150,9 @@ public IDLParser(ParserSharedInputState state) {
 		// Load types source template.
 		tmanager.addGroup("TypesSource");
 		// Load CDR header template.
-		tmanager.addGroup("CDRHeader");
+		tmanager.addGroup(serType + "Header");
 		// Load CDR header template.
-		tmanager.addGroup("CDRSource");
+		tmanager.addGroup(serType + "Source");
 		TemplateGroup maintemplates = tmanager.createTemplateGroup("main");
 		maintemplates.setAttribute("ctx", ctx);
 		
@@ -195,9 +195,9 @@ public IDLParser(ParserSharedInputState state) {
 				{
 				if(Utils.writeFile(outdir + idlFilename + ".cpp", maintemplates.getTemplate("TypesSource"), replace))
 				{
-				if(Utils.writeFile(outdir + idlFilename + "CDR.h", maintemplates.getTemplate("CDRHeader"), replace))
+				if(Utils.writeFile(outdir + idlFilename + "Ser.h", maintemplates.getTemplate(serType + "Header"), replace))
 				{
-				if(Utils.writeFile(outdir + idlFilename + "CDR.cpp", maintemplates.getTemplate("CDRSource"), replace))
+				if(Utils.writeFile(outdir + idlFilename + "Ser.cpp", maintemplates.getTemplate(serType + "Source"), replace))
 				{
 				returnedValue = true;
 				}

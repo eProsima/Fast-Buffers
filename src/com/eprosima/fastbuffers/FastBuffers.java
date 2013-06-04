@@ -16,6 +16,7 @@ public class FastBuffers
     private Vector<String> m_idlFiles;
     private String m_outputDir = "." + File.separator;
     private String m_exampleOption = null;
+    private String m_serType = "CDR";
     private boolean m_replace = false;
     
     private static VSConfiguration m_vsconfigurations[]={new VSConfiguration("Debug DLL", "Win32", true, true),
@@ -59,6 +60,28 @@ public class FastBuffers
                 else
                 {
                     throw new BadArgumentException("No platform after -example argument.");
+                }
+            }
+            else if(args[count].equals("-ser"))
+            {
+                if(++count < args.length)
+                {
+                    if(args[count].equals("cdr"))
+                    {
+                        m_serType = "CDR";
+                    }
+                    else if(args[count].equals("fastcdr"))
+                    {
+                        m_serType = "FastCDR";
+                    }
+                    else
+                    {
+                        throw new BadArgumentException("No serialization type after -ser argument.");
+                    }
+                }
+                else
+                {
+                    throw new BadArgumentException("No platform after -ser argument.");
                 }
             }
             else if(args[count].equals("-replace"))
@@ -121,7 +144,7 @@ public class FastBuffers
             IDLLexer lexer = new IDLLexer(input);
             IDLParser parser = new IDLParser(lexer);
             // Pass the filename without the extension.
-            returnedValue = parser.specification(m_outputDir, Utils.getIDLFileNameOnly(idlFilename), m_replace);
+            returnedValue = parser.specification(m_outputDir, Utils.getIDLFileNameOnly(idlFilename), m_serType,  m_replace);
         }
         catch(FileNotFoundException ex)
         {
@@ -286,6 +309,10 @@ public class FastBuffers
         "                         * x64Win64VS2010\n" +
         "                         * i86Linux2.6gcc4.4.5\n" +
         "                         * x64Linux2.6gcc4.4.5\n");
+        System.out.println("\t\t-ser <serialization>: Serialization type (default: cdr)\n" +
+                "                        Serialization type supported:\n" +
+                "                         * cdr\n" +
+                "                         * fastcdr\n");
         System.out.println("\t\t-replace: replace generated files if they exits.");
     }
     

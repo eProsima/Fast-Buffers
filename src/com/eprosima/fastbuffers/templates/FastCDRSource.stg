@@ -4,7 +4,7 @@ main(ctx, blocks) ::= <<
 #include "$ctx.filename$Ser.h"
 #include "cpp/exceptions/BadParamException.h"
 
-$ctx.filename$Ser::$ctx.filename$Ser(eProsima::FastBuffer &buffer) : Cdr(buffer)
+$ctx.filename$Ser::$ctx.filename$Ser(eProsima::FastBuffer &buffer) : FastCdr(buffer)
 {
 }
 
@@ -68,7 +68,7 @@ $basicCDRTypes.(member.typecode.striptypename)$deserializeFast(x.$member.name$()
 union_type(ctx, union) ::= <<
 $ctx.filename$Ser& $ctx.filename$Ser::serialize(const $union.scopedname$ &x)
 { 
-    Cdr::serialize(x._d());
+    FastCdr::serialize(x._d());
     
     switch(x._d())
     {
@@ -80,7 +80,7 @@ $ctx.filename$Ser& $ctx.filename$Ser::serialize(const $union.scopedname$ &x)
 
 $ctx.filename$Ser& $ctx.filename$Ser::deserialize($union.scopedname$ &x)
 {
-    Cdr::deserialize(x._d());
+    FastCdr::deserialize(x._d());
     switch(x._d())
     {
         $union.members:{$unionmember_case_selection_de(it)$}; separator="\n"$
@@ -111,23 +111,23 @@ break;
 enum_type(ctx, enum) ::= <<>>
 
 basicCDRTypes ::= [
-        "float":"Cdr::",
-        "double":"Cdr::",
-        "long double":"Cdr::",
-        "int16_t":"Cdr::",
-        "int32_t":"Cdr::",
-        "int64_t":"Cdr::",
-        "uint16_t":"Cdr::",
-        "uint32_t":"Cdr::",
-        "uint64_t":"Cdr::",
-        "char":"Cdr::",
-        "wchar_t":"Cdr::",
-        "bool":"Cdr::",
-        "uint8_t":"Cdr::",
-        "std::array":"Cdr::",
-        "std::vector":"Cdr::",
-        "std::string":"Cdr::",
-        "std::wstring":"Cdr::",
+        "float":"FastCdr::",
+        "double":"FastCdr::",
+        "long double":"FastCdr::",
+        "int16_t":"FastCdr::",
+        "int32_t":"FastCdr::",
+        "int64_t":"FastCdr::",
+        "uint16_t":"FastCdr::",
+        "uint32_t":"FastCdr::",
+        "uint64_t":"FastCdr::",
+        "char":"FastCdr::",
+        "wchar_t":"FastCdr::",
+        "bool":"FastCdr::",
+        "uint8_t":"FastCdr::",
+        "std::array":"FastCdr::",
+        "std::vector":"FastCdr::",
+        "std::string":"FastCdr::",
+        "std::wstring":"FastCdr::",
         default: // not basic type.
 ]
 
