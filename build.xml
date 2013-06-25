@@ -99,6 +99,12 @@
 		<copy todir="${build.classes}">
 		    <fileset dir="${src.dir}" includes="**/*.stg"/>
 		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${src.dir}">
+    			<include name="version.cpp"/>
+				<include name="platforms"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- =================================================================== -->

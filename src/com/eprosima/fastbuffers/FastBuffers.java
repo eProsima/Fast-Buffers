@@ -5,6 +5,7 @@ import com.eprosima.fastbuffers.parser.*;
 
 import java.io.*;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -12,7 +13,6 @@ import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 
 public class FastBuffers
 {
-    private static String m_version = "0.1.0";
     private Vector<String> m_idlFiles;
     private String m_outputDir = "." + File.separator;
     private String m_exampleOption = null;
@@ -23,6 +23,7 @@ public class FastBuffers
         new VSConfiguration("Release DLL", "Win32", false, true),
         new VSConfiguration("Debug", "Win32", true, false),
         new VSConfiguration("Release", "Win32", false, false)};
+    public static ArrayList<String> m_platforms = null;
     
     public FastBuffers(String[] args) throws BadArgumentException
     {
@@ -48,11 +49,8 @@ public class FastBuffers
                 if(++count < args.length)
                 {
                     m_exampleOption = args[count];
-
-                    if(!m_exampleOption.equals("i86Win32VS2010") &&
-                            !m_exampleOption.equals("x64Win64VS2010") &&
-                            !m_exampleOption.equals("i86Linux2.6gcc4.4.5") &&
-                            !m_exampleOption.equals("x64Linux2.6gcc4.4.5"))
+                    
+                    if(!m_platforms.contains(m_exampleOption))
                     {
                         throw new BadArgumentException("Unknown example arch " + m_exampleOption);
                     }
@@ -90,7 +88,7 @@ public class FastBuffers
             }
             else if(args[count].equals("-version"))
             {
-                System.out.println("FastBuffers Version " + m_version);
+                showVersion();
                 System.exit(0);
             }
             else
@@ -304,11 +302,10 @@ public class FastBuffers
         System.out.println("\t\t-version: shows the current version of RPCDDS.");
         System.out.println("\t\t-o <directory>: Output directory where the generated files will be put.");         
         System.out.println("\t\t-example <platform>: Generate solution for specific platform (example: x64Win64VS2010)\n" +
-        "                        Platforms supported:\n" +
-        "                         * i86Win32VS2010\n" +
-        "                         * x64Win64VS2010\n" +
-        "                         * i86Linux2.6gcc4.4.5\n" +
-        "                         * x64Linux2.6gcc4.4.5\n");
+        "                        Platforms supported:");
+        for(int count = 0; count < m_platforms.size(); ++count)
+        	System.out.println("                         * " + m_platforms.get(count));
+        System.out.println("");
         System.out.println("\t\t-ser <serialization>: Serialization type (default: cdr)\n" +
                 "                        Serialization type supported:\n" +
                 "                         * cdr\n" +
@@ -316,18 +313,67 @@ public class FastBuffers
         System.out.println("\t\t-replace: replace generated files if they exits.");
     }
     
+    public void showVersion()
+    {
+    	try
+    	{
+	    	InputStream input = this.getClass().getResourceAsStream("/version.cpp");
+	    	byte[] b = new byte[input.available()];
+	    	input.read(b);
+	    	String text = new String(b);
+	    	int beginindex = text.indexOf("\"");
+	    	int endindex = text.indexOf("\"", beginindex + 1);
+	    	String version = text.substring(beginindex + 1, endindex);
+	    	System.out.println("FastBuffers Version " + version);
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println("ERROR: Getting version. " + ex.getMessage());
+    	}
+    }
+    
+    public static boolean loadPlatforms()
+    {
+    	boolean returnedValue = false;
+    	
+    	FastBuffers.m_platforms = new ArrayList<String>();
+    	
+    	try
+    	{
+    		InputStream input = FastBuffers.class.getResourceAsStream("/platforms");
+    		InputStreamReader ir = new InputStreamReader(input);
+			BufferedReader reader = new BufferedReader(ir);
+			String line = null;
+			while((line = reader.readLine()) != null)
+			{
+				FastBuffers.m_platforms.add(line);
+			}
+			
+			returnedValue = true;
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println("ERROR: Getting platforms. " + ex.getMessage());
+    	}
+    	
+    	return returnedValue;
+    }
+    
     public static void main(String[] args) throws Exception
     {
-        try
-        {
-            FastBuffers main = new FastBuffers(args);
-            main.execute();
-        }
-        catch(BadArgumentException ex)
-        {
-            System.out.println("ERROR<BadArgumentException>: " + ex.getMessage());
-            printHelp();
-        }
+    	if(loadPlatforms())
+    	{
+	        try
+	        {
+	            FastBuffers main = new FastBuffers(args);
+	            main.execute();
+	        }
+	        catch(BadArgumentException ex)
+	        {
+	            System.out.println("ERROR<BadArgumentException>: " + ex.getMessage());
+	            printHelp();
+	        }
+    	}
         
         System.exit(-1);
     }
