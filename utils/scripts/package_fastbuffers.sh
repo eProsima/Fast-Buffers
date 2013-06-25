@@ -11,9 +11,6 @@
 
 errorstatus=0
 
-source $EPROSIMADIR/scripts/common_pack_functions.sh
-
-
 function setPlatform
 {
     platforms=`cat src/platforms`
@@ -72,10 +69,15 @@ function package
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # User manual
-    soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/Users Manual.odt,$version)"
+    soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/User Manual.odt,$version)"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ..
+
+    # Create README
+    soffice --headless "macro:///eProsima.documentation.changeVersionToHTML($PWD/README.odt,$version)"
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
 
     # Create doxygen information.
     #Export version
@@ -106,6 +108,9 @@ if [ "$EPROSIMADIR" == "" ]; then
     echo "environment.sh must to be run."
     exit -1
 fi
+
+# Load common packaging function.
+source $EPROSIMADIR/scripts/common_pack_functions.sh
 
 # Go to root
 cd ../..
