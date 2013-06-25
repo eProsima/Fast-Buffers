@@ -8,6 +8,9 @@
 # - ant
 # - doxygen
 # Also this script needs the eProsima.documentation.changeVersion macro installed in the system.
+#
+# Fedora 17: This script has to be run in a Fedora 17 x64.
+#            The system has to have installed: libgcc.i686 and libstdc++.i686
 
 errorstatus=0
 
