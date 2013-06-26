@@ -1,4 +1,4 @@
-#include "HelloWorldCDR.h"
+#include "HelloWorldSer.h"
 #include "cpp/exceptions/Exception.h"
 
 #include <iostream>
@@ -9,25 +9,24 @@ using namespace eProsima;
 
 int main()
 {
-    CDRBuffer cdrbuffer;
-    HelloWorldCDR helloCDR_ser(cdrbuffer);
+    FastBuffer fastbuffer;
+    HelloWorldSer hellocdr_ser(fastbuffer);
 
     // Structure to serialize.
     HelloWorld hello_ser;
     hello_ser.message("Hello World");
 
     // Serialization.
-    helloCDR_ser << hello_ser;
+    hellocdr_ser << hello_ser;
 
-    // Reset the reading position in the buffer to start deserialization.
-    cdrbuffer.reset();
-    HelloWorldCDR helloCDR_des(cdrbuffer);
+    // Reset the reading position in the serializer object to start deserialization.
+    hellocdr_ser.reset();
 
     // The buffer will be deserialized in the next structure.
     HelloWorld hello_des;
 
     // Deserialization.
-    helloCDR_des >> hello_des;
+    hellocdr_ser >> hello_des;
 
     std::cout << hello_des.message() << std::endl;
 

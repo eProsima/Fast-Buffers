@@ -19,7 +19,7 @@ $projnames:{
 $it$_TARGET= lib/$example$/lib$it$.so
 $it$_TARGET_Z= lib/$example$/lib$it$z.a
 
-$it$_SRC_CPPFILES= $it$.cpp $it$CDR.cpp
+$it$_SRC_CPPFILES= $it$.cpp $it$Ser.cpp
 
 $it$_OBJS = \$($it$_SRC_CPPFILES:%.cpp=output/$example$/%.o)
 
