@@ -69,6 +69,15 @@ set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
 :: Create doxygen information.
+:: Generate the examples
+:: CDR example
+call scripts\efastbuffers_local.bat -replace -ser cdr -o utils\doxygen\examples\cdr utils\doxygen\examples\cdr\FooCdr.idl
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+:: Fast CDR example
+call scripts\efastbuffers_local.bat -replace -ser fastcdr -o utils\doxygen\examples\fastcdr utils\doxygen\examples\fastcdr\FooFastCdr.idl
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
 :: Export version
 set VERSION_DOX=%VERSION%
 mkdir output
