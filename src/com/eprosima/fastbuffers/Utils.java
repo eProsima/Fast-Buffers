@@ -36,6 +36,12 @@ public class Utils
         return returnedValue;
     }
     
+    public static String stringTrimAll(String str)
+    {
+    	String trimstr = str.replaceAll("\\s+", "").toUpperCase();
+    	return trimstr;
+    }
+    
     public static boolean writeFile(String file, StringTemplate template, boolean replace)
     {
         boolean returnedValue = false;

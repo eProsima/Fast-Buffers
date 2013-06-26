@@ -14,7 +14,7 @@ function installer
 	cp "../../../doc/Installation Manual.pdf" tmp/$project/doc/pdf
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	cp "../../../doc/Users Manual.pdf" tmp/$project/doc/pdf
+	cp "../../../doc/User Manual.pdf" tmp/$project/doc/pdf
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	cp -r "../../../output/doxygen/html" tmp/$project/doc

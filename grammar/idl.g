@@ -29,17 +29,24 @@ options {
         public Context(String filename)
         {
             m_filename = filename;
+            m_trimfilename = Utils.stringTrimAll(filename);
             m_types = new HashMap<String, TypeCode>();
         }
         
         public void setFilename(String filename)
         {
             m_filename = filename;
+            m_trimfilename = Utils.stringTrimAll(filename);
         }
         
         public String getFilename()
         {
             return m_filename;
+        }
+        
+        public String getTrimfilename()
+        {
+        	return m_trimfilename;
         }
         
         public void setScope(String scope)
@@ -92,6 +99,7 @@ options {
         }
         
         private String m_filename = "";
+        private String m_trimfilename = "";
         private String m_scope = "";
         private String m_sersym = ">>";
         private String m_typelimitation = null;

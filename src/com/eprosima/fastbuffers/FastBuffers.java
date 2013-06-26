@@ -367,6 +367,7 @@ public class FastBuffers
 	        {
 	            FastBuffers main = new FastBuffers(args);
 	            main.execute();
+	            System.exit(0);
 	        }
 	        catch(BadArgumentException ex)
 	        {

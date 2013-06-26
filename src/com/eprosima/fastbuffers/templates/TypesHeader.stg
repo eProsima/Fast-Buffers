@@ -38,6 +38,7 @@ $definitions; separator="\n"$
 struct_type(ctx, struct) ::= <<
 /*!
  * @brief This class represents the structure $struct.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
  */
 class user_cpp_DllExport $struct.name$
 {
@@ -212,6 +213,7 @@ $typecode.typename$ m_$name$;
 union_type(ctx, union) ::= <<
 /*!
  * @brief This class represents the union $union.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
  */
 class user_cpp_DllExport $union.name$
 {
@@ -284,6 +286,7 @@ private:
 enum_type(ctx, enum) ::= <<
 /*!
  * @brief This class represents the enumeration $enum.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
  */
 enum $enum.name$ : uint32_t
 {

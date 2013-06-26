@@ -27,6 +27,11 @@
  */
 
  /*!
- * @defgroup FOOEXAMPLE Generated API example
- * @brief This group contains the generated API by the tool \e fastbuffers \e for an example Foo.idl.
+ * @defgroup FOOCDR Generated API example using CDR serialization
+ * @brief This group contains the generated API by the tool \e fastbuffers \e for an example FooCdr.idl. The serialization mechanism is CDR.
+ */
+
+ /*!
+ * @defgroup FOOFASTCDR Generated API example using Fast CDR serialization
+ * @brief This group contains the generated API by the tool \e fastbuffers \e for an example FooFastCdr.idl. The serialization mechanism is Fast CDR.
  */
