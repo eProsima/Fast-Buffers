@@ -1,4 +1,4 @@
-:: This script pack DDSRecorder library for any platform in Windows.
+:: This script pack FastBuffers library for any platform in Windows.
 ::
 :: This script needs the next environment variables to be run.
 :: - SVN_BIN_DIR: Directory with the subversion binaries.
@@ -38,7 +38,7 @@ set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\..\FastBuffers"
 
-:: Get the current vesion of DDSRecorder
+:: Get the current vesion of FastBuffers
 call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP
 
 :: Update and compile FastBuffers application.
