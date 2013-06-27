@@ -40,6 +40,7 @@ cd "..\..\..\FastBuffers"
 
 :: Get the current vesion of FastBuffers
 call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP
+if not %errorstatus%==0 goto :exit
 
 :: Update and compile FastBuffers application.
 :: Update FastBuffers application.
