@@ -59,14 +59,14 @@ function installer
 	# CDR headers
 	mkdir -p tmp/$project/include
 	cp -r ../../../../CDR/include/cpp tmp/$project/include
+	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	chmod 755 tmp/$project/scripts/efastbuffers.sh
 
 	# Copy eProsima header files
 	mkdir -p tmp/$project/include/eProsima_cpp
 	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_cpp_dll.h tmp/$project/include/eProsima_cpp
+	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	chmod 755 tmp/$project/scripts/efastbuffers.sh
 
 	# Copy CDR libraries
 	mkdir -p tmp/$project/lib
