@@ -32,6 +32,8 @@ svn update
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Compile CDR library.
+rmdir /S /Q lib\i86Win32VS2010
+rmdir /S /Q lib\x64Win64VS2010
 cd "utils\scripts"
 call build_cdr.bat
 set errorstatus=%ERRORLEVEL%
@@ -39,7 +41,7 @@ if not %errorstatus%==0 goto :exit
 cd "..\..\..\FastBuffers"
 
 :: Get the current vesion of FastBuffers
-call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP
+call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSION src\version.cpp
 if not %errorstatus%==0 goto :exit
 
 :: Update and compile FastBuffers application.
