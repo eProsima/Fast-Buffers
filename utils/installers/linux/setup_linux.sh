@@ -64,22 +64,25 @@ function installer
 
 	# Copy eProsima header files
 	mkdir -p tmp/$project/include/eProsima_cpp
-	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_cpp_dll.h tmp/$project/include/eProsima_cpp
-	errorstatus=$?
+	cp $EPROSIMADIR/code/eProsima_cpp/eProsimaMacros.h tmp/$project/include/eProsima_cpp
+    errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/eProsima_cpp
+    errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy CDR libraries
 	mkdir -p tmp/$project/lib
 
-	# Copy i86 CDR libraries.
+	# Copy i86 CDR libraries. Preserve links.
 	mkdir -p tmp/$project/lib/i86Linux2.6gcc${gccversion}
-	cp ../../../../CDR/lib/i86Linux2.6gcc${gccversion}/* tmp/$project/lib/i86Linux2.6gcc${gccversion}
+	cp -d ../../../../CDR/lib/i86Linux2.6gcc${gccversion}/* tmp/$project/lib/i86Linux2.6gcc${gccversion}
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
-	# Copy x64 CDR libraries.
+	# Copy x64 CDR libraries. Preserve links.
 	mkdir -p tmp/$project/lib/x64Linux2.6gcc${gccversion}
-	cp ../../../../CDR/lib/x64Linux2.6gcc${gccversion}/* tmp/$project/lib/x64Linux2.6gcc${gccversion}
+	cp -d ../../../../CDR/lib/x64Linux2.6gcc${gccversion}/* tmp/$project/lib/x64Linux2.6gcc${gccversion}
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

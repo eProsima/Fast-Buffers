@@ -36,19 +36,23 @@ function package
     # Compile CDR library for i86.
     rm -rf output
     EPROSIMA_TARGET="i86Linux2.6gcc${gccversion}"
+    rm -r lib/$EPROSIMA_TARGET
     make
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Compile CDR library for x64.
     rm -rf output
     EPROSIMA_TARGET="x64Linux2.6gcc${gccversion}"
+    rm -r lib/$EPROSIMA_TARGET
     make
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ../FastBuffers
 
     # Get the current version of FastBuffers
-    getVersionFromCPP
+    getVersionFromCPP fastbuffersversion src/version.cpp
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
 
     # Try to add platform
     setPlatform "i86Linux2.6gcc${gccversion}"
@@ -68,17 +72,17 @@ function package
     # Create PDFS from documentation.
     cd doc
     # Installation manual
-    soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/Installation Manual.odt,$version)"
+    soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/Installation Manual.odt,$fastbuffersversion)"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # User manual
-    soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/User Manual.odt,$version)"
+    soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/User Manual.odt,$fastbuffersversion)"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ..
 
     # Create README
-    soffice --headless "macro:///eProsima.documentation.changeVersionToHTML($PWD/README.odt,$version)"
+    soffice --headless "macro:///eProsima.documentation.changeVersionToHTML($PWD/README.odt,$fastbuffersversion)"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
@@ -93,7 +97,7 @@ function package
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     #Export version
-    export VERSION_DOX=$version
+    export VERSION_DOX=$fastbuffersversion
     mkdir -p output
     mkdir -p output/doxygen
     doxygen utils/doxygen/doxyfile
@@ -108,7 +112,7 @@ function package
 
     # Create installers
     cd utils/installers/linux
-    ./setup_linux.sh $version
+    ./setup_linux.sh $fastbuffersversion
     errorstatus=$?
     cd ../../..
     if [ $errorstatus != 0 ]; then return; fi
