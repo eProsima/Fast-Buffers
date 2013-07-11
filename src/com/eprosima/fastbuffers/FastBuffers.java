@@ -216,7 +216,7 @@ public class FastBuffers
         if(vsTemplates != null)
         {
             StringTemplate solution = vsTemplates.getInstanceOf("solution");
-            StringTemplate project = null;
+            StringTemplate project = vsTemplates.getInstanceOf("project");;
             StringTemplate projectFiles = vsTemplates.getInstanceOf("projectFiles");
             
             returnedValue = true;
@@ -227,7 +227,6 @@ public class FastBuffers
                 
                 solution.setAttribute("projects.{name, guid, dependsOn, example}", idlFilename, guid, null, m_exampleOption);
                 
-                project = vsTemplates.getInstanceOf("project");
                 project.setAttribute("guid", guid);
                 project.setAttribute("name", idlFilename);
                 project.setAttribute("example", m_exampleOption);
@@ -243,6 +242,9 @@ public class FastBuffers
                 {
                     returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".vcxproj.filters", projectFiles, m_replace);
                 }
+                
+                project.reset();
+                projectFiles.reset();
             }
             
             // TODO Nombre del la solucion
