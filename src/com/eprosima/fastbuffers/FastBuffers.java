@@ -23,7 +23,7 @@ public class FastBuffers
         new VSConfiguration("Release DLL", "Win32", false, true),
         new VSConfiguration("Debug", "Win32", true, false),
         new VSConfiguration("Release", "Win32", false, false)};
-    public static ArrayList<String> m_platforms = null;
+    private static ArrayList<String> m_platforms = null;
     
     public FastBuffers(String[] args) throws BadArgumentException
     {
@@ -299,7 +299,7 @@ public class FastBuffers
         System.out.println("\tfastbuffers [<options>] <IDL file> [<IDL file> ...]");
         System.out.println("\twhere the options are:");
         System.out.println("\t\t-help: Show help.");
-        System.out.println("\t\t-version: shows the current version of RPCDDS.");
+        System.out.println("\t\t-version: shows the current version of Fast Buffers.");
         System.out.println("\t\t-o <directory>: Output directory where the generated files will be put.");         
         System.out.println("\t\t-example <platform>: Generate solution for specific platform (example: x64Win64VS2010)\n" +
         "                        Platforms supported:");
