@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # This scripts creates a tar.gz file with all the linux installation
+# @param The version of the project
 
 project="FastBuffers"
 
