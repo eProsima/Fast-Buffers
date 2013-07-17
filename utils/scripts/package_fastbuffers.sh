@@ -25,7 +25,7 @@ function setPlatform
 function package
 {
     # Get current version of GCC.
-    getGccVersion
+    . $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
 
     # Update and compile CDR library.
     cd ../CDR
@@ -50,7 +50,7 @@ function package
     cd ../FastBuffers
 
     # Get the current version of FastBuffers
-    getVersionFromCPP fastbuffersversion src/version.cpp
+    . $EPROSIMADIR/scripts/common_pack_functions.sh getVersionFromCPP fastbuffersversion src/version.cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
@@ -126,9 +126,6 @@ if [ "$EPROSIMADIR" == "" ]; then
     echo "environment.sh must to be run."
     exit -1
 fi
-
-# Load common packaging function.
-source $EPROSIMADIR/scripts/common_pack_functions.sh
 
 # Go to root
 cd ../..

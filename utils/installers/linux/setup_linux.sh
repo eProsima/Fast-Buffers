@@ -4,8 +4,6 @@
 
 project="FastBuffers"
 
-source $EPROSIMADIR/scripts/common_pack_functions.sh
-
 function installer
 {
 	# Copy documentation.
@@ -101,7 +99,7 @@ fi
 version=$1
 
 # Take GCC version
-getGccVersion
+. $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
 
 # Create the temporaly directory.
 mkdir tmp
