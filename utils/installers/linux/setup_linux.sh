@@ -92,7 +92,7 @@ function installer
 	if [ $errorstatus != 0 ]; then return; fi
 }
 
-if [ -z $1 ]; then
+if [ $# -lt 1 ]; then
 	echo "Needs as parameter the version of the product $project"
 	exit -1
 fi
