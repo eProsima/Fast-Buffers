@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This scripts creates a tar.gz file with all the linux installation in 64
+# This scripts creates a tar.gz file with all the linux installation
 
 project="FastBuffers"
 
