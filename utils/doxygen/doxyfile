@@ -666,8 +666,10 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = utils/doxygen/doxygenfiles \
-                         ../CDR/include/cpp \
-                         ../CDR/include/cpp/exceptions \
+                         ../CDR/include/cpp/cdr \
+                         ../Marshalling/include/cpp \
+                         ../Marshalling/include/cpp/storage \
+                         ../Marshalling/include/cpp/exceptions \
                          utils/doxygen/examples/cdr \
                          utils/doxygen/examples/fastcdr
 

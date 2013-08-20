@@ -4,7 +4,7 @@ main(ctx, blocks) ::= <<
 #include "$ctx.filename$Ser.h"
 #include "cpp/exceptions/BadParamException.h"
 
-$ctx.filename$Ser::$ctx.filename$Ser(eProsima::FastBuffer &buffer) : FastCdr(buffer)
+$ctx.filename$Ser::$ctx.filename$Ser(eProsima::storage::Storage &storage) : eProsima::marshalling::Cdr(storage)
 {
 }
 

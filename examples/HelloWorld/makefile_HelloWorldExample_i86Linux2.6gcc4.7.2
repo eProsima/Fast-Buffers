@@ -10,7 +10,7 @@ LDFLAGS=-m32
 INCLUDES = -I. -I$(FAST_BUFFERS)/include
 
 LIBS =  -L$(FAST_BUFFERS)/lib/i86Linux2.6gcc4.7.2 -L./lib/i86Linux2.6gcc4.7.2 \
-	-lHelloWorldz -lcdrz 
+	-lHelloWorld -lcdr 
 
 CPPSOURCES = HelloWorldExample.cpp
 
@@ -21,7 +21,7 @@ EXEC    = bin/i86Linux2.6gcc4.7.2/HelloWorldExample
 example: $(DIRECTORIES) $(OBJS) $(EXEC)
 
 $(EXEC) : 
-	$(LN) $(LDFLAGS) -o $(@:%.out=%) $(OBJS) $(LIBS)
+	$(LN) $(LDFLAGS) -o $(@:%.out=%) $(OBJS) -Wl,-Bstatic $(LIBS) -Wl,-Bdynamic
 
 output/i86Linux2.6gcc4.7.2/%.o : %.cpp
 	$(CPP) $(CPPFLAGS)  -o $@ $(INCLUDES) -c $<

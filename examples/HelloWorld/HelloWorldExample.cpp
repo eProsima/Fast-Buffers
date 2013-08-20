@@ -1,9 +1,11 @@
 #include "HelloWorldSer.h"
+#include "cpp/storage/FastBuffer.h"
 #include "cpp/exceptions/Exception.h"
 
 #include <iostream>
 
 using namespace eProsima;
+using namespace eProsima::storage;
 
 #define BUFFER_LENGTH 200
 
