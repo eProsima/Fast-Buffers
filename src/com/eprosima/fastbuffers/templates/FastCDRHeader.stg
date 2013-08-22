@@ -5,22 +5,22 @@ main(ctx, blocks) ::= <<
 #define _$ctx.filename$SER_H_
 
 #include "$ctx.filename$.h"
-#include "cpp/cdr/FastCdr.h"
+#include "cpp/FastCdr.h"
 
 /*!
  * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eProsima::FastBuffer.
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $ctx.filename$Ser : public eProsima::marshalling::FastCdr
+class user_cpp_DllExport $ctx.filename$Ser : public eProsima::FastCdr
 { 
 public:
     /*!
      * @brief This constructor creates a $ctx.filename$Ser object that could serialize/deserialize
      * the assigned buffer.
      *
-     * @param storage A reference to the storage mechanism that contains or will contain the CDR representation.
+     * @param buffer A reference to the buffer that contains or will contain the CDR representation.
      */
-    $ctx.filename$Ser(eProsima::storage::Storage &storage);
+    $ctx.filename$Ser(eProsima::FastBuffer &buffer);
     
     $blocks; separator="\n"$
 };

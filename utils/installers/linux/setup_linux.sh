@@ -60,14 +60,14 @@ function installer
 	cp -r ../../../../CDR/include/cpp tmp/$project/include
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	cp -r ../../../../Marshalling/include/cpp tmp/$project/include
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy eProsima header files
 	mkdir -p tmp/$project/include/eProsima_cpp
+	cp $EPROSIMADIR/code/eProsima_cpp/eProsimaMacros.h tmp/$project/include/eProsima_cpp
+    errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
 	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/eProsima_cpp
-	errorstatus=$?
+    errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy CDR libraries
@@ -86,7 +86,7 @@ function installer
 	if [ $errorstatus != 0 ]; then return; fi
 
 	cd tmp
-	tar cvzf "../${project}_${version}_${distroversion}.tar.gz" $project
+	tar cvzf "../${project}_${version}_Fedora17.tar.gz" $project
 	errorstatus=$?
 	cd ..
 	if [ $errorstatus != 0 ]; then return; fi
@@ -101,9 +101,6 @@ version=$1
 
 # Take GCC version
 . $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
-
-# Get distro version
-. $EPROSIMADIR/scripts/common_pack_functions.sh getDistroVersion
 
 # Create the temporaly directory.
 mkdir tmp

@@ -27,9 +27,6 @@ function package
     # Get current version of GCC.
     . $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
 
-    # Update Marshalling API
-    cd ../Marshalling
-    svn update
     # Update and compile CDR library.
     cd ../CDR
     # Update CDR library.
