@@ -1,0 +1,62 @@
+module MainTest
+{
+    struct ArraysAndSequences
+    {
+        octet ocarray[100];
+        char charray[100];
+        unsigned short usharray[100];
+        short sharray[100];
+        unsigned long ularray[100];
+        long larray[100];
+        unsigned long long ullarray[100];
+        long long llarray[100];
+        float farray[100];
+        double darray[100];
+
+        sequence<octet> ocseq;
+        sequence<char> chseq;
+        sequence<unsigned short> ushseq;
+        sequence<short> shseq;
+        sequence<unsigned long> ulseq;
+        sequence<long> lseq;
+        sequence<unsigned long long> ullseq;
+        sequence<long long> llseq;
+        sequence<float> fseq;
+        sequence<double> dseq;
+    };
+};
+
+module Bug94Test
+{
+    struct innerInner1Struct
+    {
+        char char_value;
+        string string_value;
+        long array_long[5];
+    };
+
+    struct innerInner2Struct
+    {
+        char char_value;
+        string string_value;
+        sequence<short> short_seq;
+    };
+
+    struct innerStructComplex2
+    {
+        long long longlong_value;
+        float float_value;
+        double double_value;
+        innerInner2Struct iis_value;
+        unsigned long ulong_value;
+    };
+
+    struct outerStructComplex2
+    {
+        short short_value;
+        char char_value;
+        innerInner1Struct is1_value;
+        innerInner2Struct is2_value;
+        innerStructComplex2 isc2_value;
+    };
+};

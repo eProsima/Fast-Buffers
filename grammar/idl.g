@@ -7,6 +7,7 @@ header {
     import com.eprosima.fastbuffers.typecode.*;
     import com.eprosima.fastbuffers.util.Pair;
     import com.eprosima.fastbuffers.Utils;
+    import com.eprosima.fastbuffers.exceptions.ParseException;
     
     import org.antlr.stringtemplate.StringTemplate;
    
@@ -586,7 +587,7 @@ simple_type_spec returns [TypeCode typecode = null]
 	       typecode = ctx.getTypeCode(literal);
 	       
 	       if(typecode == null)
-	           System.out.println("ERROR: Cannot find the typecode for " + literal);
+	           throw new ParseException(ctx.getFilename(), LT(0).getLine(), "The type " + literal + " cannot be found.");
 	   }
 	;
 

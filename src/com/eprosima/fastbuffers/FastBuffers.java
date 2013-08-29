@@ -122,9 +122,9 @@ public class FastBuffers
             returnedValue &= process(m_idlFiles.get(count));
         }
         
-        if(m_exampleOption != null)
+        if(returnedValue && (m_exampleOption != null))
         {
-            if(genSolution() == false)
+            if((returnedValue = genSolution()) == false)
                 System.out.println("ERROR: While the solution was being generated");
         }
         
@@ -147,6 +147,10 @@ public class FastBuffers
         catch(FileNotFoundException ex)
         {
             System.out.println("ERROR<FileNotFoundException>: The file " + idlFilename + "was not found.");
+        }
+        catch(ParseException ex)
+        {
+        	System.out.println("ERROR<ParseException>: " + ex.getMessage());
         }
         catch(Exception ex)
         {
@@ -368,8 +372,8 @@ public class FastBuffers
 	        try
 	        {
 	            FastBuffers main = new FastBuffers(args);
-	            main.execute();
-	            System.exit(0);
+	            if(main.execute())
+	            	System.exit(0);
 	        }
 	        catch(BadArgumentException ex)
 	        {

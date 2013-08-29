@@ -17,7 +17,7 @@ all: \$(DIRECTORIES) $projnames:{$it$}; separator=" "$
 
 $projnames:{
 $it$_TARGET= lib/$example$/lib$it$.so
-$it$_TARGET_Z= lib/$example$/lib$it$z.a
+$it$_TARGET_Z= lib/$example$/lib$it$.a
 
 $it$_SRC_CPPFILES= $it$.cpp $it$Ser.cpp
 

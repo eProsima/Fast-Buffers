@@ -1,0 +1,33 @@
+module Bug95Test
+{
+    struct innerInnerStructComplex
+    {
+        char char_value;
+        string string_value;
+        unsigned long long ulonglong_value;
+        short ushort_value;
+    };
+
+    struct innerStructComplex
+    {
+        long long longlongvalue;
+        long longvalue;
+        char char_value;
+        innerInnerStructComplex iis_value;
+        unsigned long ulong_value;
+        float float_value;
+        double double_value;
+        string string_value;
+    };
+
+    struct outerStructComplex
+    {
+        short short_value;
+        char char_value;
+        innerInnerStructComplex iis1_value;
+        unsigned short ushort_value;
+        double double_value;
+        innerInnerStructComplex iis2_value;
+        innerStructComplex is2_value;
+    };
+};
