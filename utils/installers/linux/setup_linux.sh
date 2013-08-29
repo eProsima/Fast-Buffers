@@ -44,7 +44,7 @@ function installer
 
 	# Copy Java classes.
 	mkdir -p tmp/$project/classes
-	cp ../../../lib/*.jar tmp/$project/classes
+	cp ../../../classes/*.jar tmp/$project/classes
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

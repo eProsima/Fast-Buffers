@@ -69,7 +69,7 @@ Section -Main SEC0000
     File /r "..\..\..\examples\*"
     # Copy java classes.
     SetOutPath $INSTDIR\classes
-    File /r "..\..\..\lib\*"
+    File /r "..\..\..\classes\*"
     # Copy script
     SetOutPath $INSTDIR\scripts
     File "..\..\..\scripts\efastbuffers.bat"

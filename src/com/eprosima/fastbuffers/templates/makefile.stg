@@ -2,7 +2,7 @@ group makefile;
 
 makecxx(projnames, example, arch) ::= <<
 CPP= g++
-CPPFLAGS = -c -Wall -fpic -m$arch$ -std=c++11 -DEPROSIMA_LINUX
+CPPFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x
 LN= g++
 AR=ar
 LDFLAGS = -m$arch$

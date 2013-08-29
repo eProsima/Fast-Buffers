@@ -4,7 +4,7 @@
 		<attribute name="base"/>
 		<attribute name="grammar"/>
 		<sequential>
-			<java classname="antlr.Tool" classpath="lib/antlr-2.7.7.jar">
+			<java classname="antlr.Tool" classpath="classes/antlr-2.7.7.jar">
 				<arg value="-o"/>
 				<arg value="@{base}"/>
 				<arg value="@{grammar}"/>
@@ -34,7 +34,7 @@
 		<!-- Source related properties -->
 		<property name="src.dir" value="${basedir}${file.separator}src"/>
 		<property name="src.java" value="${src.dir}"/>
-		<property name="lib.dir" value="${basedir}${file.separator}lib${file.separator}"/>
+		<property name="lib.dir" value="${basedir}${file.separator}classes${file.separator}"/>
 		<property name="grammar.dir" value="${basedir}${file.separator}grammar"/>
 		<property name="src.excludes" value=""/>
 
@@ -91,7 +91,7 @@
 		<antlr base="${src.java}${file.separator}com/eprosima/fastbuffers/parser" grammar="${grammar.dir}${file.separator}idl.g"/>
 		<echo>Compiling java code...</echo>
 		<mkdir dir="${build.classes}"/>
-		<javac srcdir="${src.java}"
+		<javac source="1.6" target="1.6" srcdir="${src.java}"
 	      destdir="${build.classes}"
 	      >
 			<classpath refid="build.classpath"/>
