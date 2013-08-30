@@ -96,7 +96,7 @@ bool FBug95Test()
 
     if(!compareOK)
     {
-        std::cout << "TEST FAILED<FBug95Test>: Wrong values in arrays" << std::endl;
+        std::cout << "TEST FAILED<FBug95Test>: Wrong values" << std::endl;
         free(buffer);
         return false;
     }

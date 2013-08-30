@@ -1,4 +1,4 @@
-group CDRSource;
+group FastCDRSource;
 
 main(ctx, blocks) ::= <<
 #include "$ctx.filename$Ser.h"
@@ -39,18 +39,7 @@ member_serialization(member) ::= <<
 $if(member.typecode.maxsize)$
 if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
     
-$endif$$basicCDRTypes.(member.typecode.striptypename)$serialize(x.$member.name$());
-$if(member.typecode.maxsize)$
-else
-    throw eProsima::BadParamException(std::string("The maximum length was exceeded"));
-$endif$
->>
-
-member_serialization_fast(member) ::= <<
-$if(member.typecode.maxsize)$
-if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
-    
-$endif$$basicCDRTypes.(member.typecode.striptypename)$serializeFast(x.$member.name$());
+$endif$$basicCDRTypes.(member.typecode.stType)$serialize(x.$member.name$());
 $if(member.typecode.maxsize)$
 else
     throw eProsima::BadParamException(std::string("The maximum length was exceeded"));
@@ -58,11 +47,7 @@ $endif$
 >>
 
 member_deserialization(member) ::= <<
-$basicCDRTypes.(member.typecode.striptypename)$deserialize(x.$member.name$());
->>
-
-member_deserialization_fast(member) ::= <<
-$basicCDRTypes.(member.typecode.striptypename)$deserializeFast(x.$member.name$());
+$basicCDRTypes.(member.typecode.stType)$deserialize($castingTypes.(member.typecode.stType)$x.$member.name$());
 >>
 
 union_type(ctx, union) ::= <<
@@ -111,24 +96,30 @@ break;
 enum_type(ctx, enum) ::= <<>>
 
 basicCDRTypes ::= [
-        "float":"FastCdr::",
-        "double":"FastCdr::",
-        "long double":"FastCdr::",
-        "int16_t":"FastCdr::",
-        "int32_t":"FastCdr::",
-        "int64_t":"FastCdr::",
-        "uint16_t":"FastCdr::",
-        "uint32_t":"FastCdr::",
-        "uint64_t":"FastCdr::",
-        "char":"FastCdr::",
-        "wchar_t":"FastCdr::",
-        "bool":"FastCdr::",
-        "uint8_t":"FastCdr::",
-        "std::array":"FastCdr::",
-        "std::vector":"FastCdr::",
-        "std::string":"FastCdr::",
-        "std::wstring":"FastCdr::",
+        "type_5":"FastCdr::",
+        "type_6":"FastCdr::",
+        "type_13":"FastCdr::",
+        "type_1":"FastCdr::",
+        "type_2":"FastCdr::",
+        "type_11":"FastCdr::",
+        "type_3":"FastCdr::",
+        "type_4":"FastCdr::",
+        "type_12":"FastCdr::",
+        "type_8":"FastCdr::",
+        "type_14":"FastCdr::",
+        "type_7":"FastCdr::",
+        "type_9":"FastCdr::",
+        "type_f":"FastCdr::",
+        "type_e":"FastCdr::",
+        "type_d":"FastCdr::",
+        "type_15":"FastCdr::",
+        "type_c":"FastCdr::",
         default: // not basic type.
+]
+
+castingTypes ::= [
+        "type_c":"(uint32_t&)",
+        default: // not casting
 ]
 
 sizeFunction ::= [

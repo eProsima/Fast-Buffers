@@ -1,4 +1,4 @@
-group CDRHeader;
+group FastCDRHeader;
 
 main(ctx, blocks) ::= <<
 #ifndef _$ctx.filename$SER_H_

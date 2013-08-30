@@ -1,0 +1,14 @@
+module Bug96Test
+{
+	enum Enumeration
+	{
+		RED,
+		GREEN,
+		BLUE
+	};
+
+	struct simpleStruct_6
+    {
+		Enumeration en;
+	};
+};

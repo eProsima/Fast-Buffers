@@ -54,6 +54,15 @@ public abstract class TypeCode
         return m_typesgr.getInstanceOf("type_" + Integer.toHexString(m_kind));
     }
     
+    /*!
+     * @brief This function returns the type as a string: "type_2", where the number is the type kind.
+     * This function is used in stringtemplates.
+     */
+    public String getStType()
+    {
+        return "type_" + Integer.toHexString(m_kind);
+    }
+    
     // Function used in stringtemplates
     public String getStriptypename()
     {

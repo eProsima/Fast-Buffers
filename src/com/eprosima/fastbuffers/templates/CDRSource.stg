@@ -39,18 +39,7 @@ member_serialization(member) ::= <<
 $if(member.typecode.maxsize)$
 if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
     
-$endif$$basicCDRTypes.(member.typecode.striptypename)$serialize(x.$member.name$());
-$if(member.typecode.maxsize)$
-else
-    throw eProsima::BadParamException(std::string("The maximum length was exceeded"));
-$endif$
->>
-
-member_serialization_fast(member) ::= <<
-$if(member.typecode.maxsize)$
-if(x.$member.name$().$sizeFunction.(member.typecode.striptypename)$ <= $member.typecode.maxsize$)
-    
-$endif$$basicCDRTypes.(member.typecode.striptypename)$serializeFast(x.$member.name$());
+$endif$$basicCDRTypes.(member.typecode.stType)$serialize(x.$member.name$());
 $if(member.typecode.maxsize)$
 else
     throw eProsima::BadParamException(std::string("The maximum length was exceeded"));
@@ -58,11 +47,7 @@ $endif$
 >>
 
 member_deserialization(member) ::= <<
-$basicCDRTypes.(member.typecode.striptypename)$deserialize(x.$member.name$());
->>
-
-member_deserialization_fast(member) ::= <<
-$basicCDRTypes.(member.typecode.striptypename)$deserializeFast(x.$member.name$());
+$basicCDRTypes.(member.typecode.stType)$deserialize($castingTypes.(member.typecode.stType)$x.$member.name$());
 >>
 
 union_type(ctx, union) ::= <<
@@ -111,24 +96,30 @@ break;
 enum_type(ctx, enum) ::= <<>>
 
 basicCDRTypes ::= [
-        "float":"Cdr::",
-        "double":"Cdr::",
-        "long double":"Cdr::",
-        "int16_t":"Cdr::",
-        "int32_t":"Cdr::",
-        "int64_t":"Cdr::",
-        "uint16_t":"Cdr::",
-        "uint32_t":"Cdr::",
-        "uint64_t":"Cdr::",
-        "char":"Cdr::",
-        "wchar_t":"Cdr::",
-        "bool":"Cdr::",
-        "uint8_t":"Cdr::",
-        "std::array":"Cdr::",
-        "std::vector":"Cdr::",
-        "std::string":"Cdr::",
-        "std::wstring":"Cdr::",
+        "type_5":"Cdr::",
+        "type_6":"Cdr::",
+        "type_13":"Cdr::",
+        "type_1":"Cdr::",
+        "type_2":"Cdr::",
+        "type_11":"Cdr::",
+        "type_3":"Cdr::",
+        "type_4":"Cdr::",
+        "type_12":"Cdr::",
+        "type_8":"Cdr::",
+        "type_14":"Cdr::",
+        "type_7":"Cdr::",
+        "type_9":"Cdr::",
+        "type_f":"Cdr::",
+        "type_e":"Cdr::",
+        "type_d":"Cdr::",
+        "type_15":"Cdr::",
+        "type_c":"Cdr::",
         default: // not basic type.
+]
+
+castingTypes ::= [
+        "type_c":"(uint32_t&)",
+        default: // not casting
 ]
 
 sizeFunction ::= [
