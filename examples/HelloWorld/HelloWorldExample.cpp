@@ -1,3 +1,11 @@
+/*************************************************************************
+ * Copyright (c) 2013 eProsima. All rights reserved.
+ *
+ * This copy of Fast Buffers is licensed to you under the terms described in the
+ * FAST_BUFFERS_LICENSE file included in this distribution.
+ *
+ *************************************************************************/
+
 #include "HelloWorldSer.h"
 #include "cpp/exceptions/Exception.h"
 

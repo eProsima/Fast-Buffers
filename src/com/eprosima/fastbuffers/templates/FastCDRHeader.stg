@@ -1,6 +1,8 @@
 group FastCDRHeader;
 
 main(ctx, blocks) ::= <<
+$fileHeader(file=[ctx.filename, "Ser.h"], description=["This header file contains the declaration of the serializer object."])$
+
 #ifndef _$ctx.filename$SER_H_
 #define _$ctx.filename$SER_H_
 

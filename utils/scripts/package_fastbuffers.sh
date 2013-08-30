@@ -69,6 +69,13 @@ function package
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
+    # Execute FastBuffers tests
+    cd utils/pcTests
+    ./exec_tests.sh $package_targets
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+    cd ../..
+
     # Create PDFS from documentation.
     cd doc
     # Installation manual

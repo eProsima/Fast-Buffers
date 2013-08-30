@@ -1,6 +1,8 @@
 group TypesHeader;
 
 main(ctx, blocks) ::= <<
+$fileHeader(file=[ctx.filename, ".h"], description=["This header file contains the declaration of the described types in the IDL file."])$
+
 #ifndef _$ctx.filename$_H_
 #define _$ctx.filename$_H_
 
