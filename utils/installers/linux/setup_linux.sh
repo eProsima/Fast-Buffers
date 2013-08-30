@@ -23,11 +23,18 @@ function installer
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
-	# Copy example.
+	# Copy example and create makefiles.
 	mkdir -p tmp/$project/examples
 	cp -r ../../../examples/HelloWorld tmp/$project/examples
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
+	sed "s/TARGET_TO_SUBSTITUTE/i86Linux2.6gcc${gccversion}/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_i86Linux2.6gcc${gccversion}
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	sed "s/TARGET_TO_SUBSTITUTE/x64Linux2.6gcc${gccversion}/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_x64Linux2.6gcc${gccversion}
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	rm tmp/$project/examples/HelloWorld/makefile_HelloWorldExample
 
 	# Copy licenses.
 	cp ../../../doc/licencias/FAST_BUFFERS_LICENSE.txt tmp/$project

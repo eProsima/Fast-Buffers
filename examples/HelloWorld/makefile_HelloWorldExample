@@ -4,26 +4,26 @@ LN=g++
 AR=ar
 CP=cp
 
-CPPFLAGS= -c -Wall -DEPROSIMA_LINUX -m32 -fpic -std=c++11
-LDFLAGS=-m32
+CPPFLAGS= -c -Wall -DEPROSIMA_LINUX -m64 -fpic -std=c++11
+LDFLAGS=-m64
 
 INCLUDES = -I. -I$(FAST_BUFFERS)/include
 
-LIBS =  -L$(FAST_BUFFERS)/lib/i86Linux2.6gcc4.7.2 -L./lib/i86Linux2.6gcc4.7.2 \
+LIBS =  -L$(FAST_BUFFERS)/lib/TARGET_TO_SUBSTITUTE -L./lib/TARGET_TO_SUBSTITUTE \
 	-lHelloWorldz -lcdrz 
 
 CPPSOURCES = HelloWorldExample.cpp
 
-DIRECTORIES   = output.dir output/i86Linux2.6gcc4.7.2.dir bin.dir bin/i86Linux2.6gcc4.7.2.dir
-OBJS    = $(CPPSOURCES:%.cpp=output/i86Linux2.6gcc4.7.2/%.o)
-EXEC    = bin/i86Linux2.6gcc4.7.2/HelloWorldExample
+DIRECTORIES   = output.dir output/TARGET_TO_SUBSTITUTE.dir bin.dir bin/TARGET_TO_SUBSTITUTE.dir
+OBJS    = $(CPPSOURCES:%.cpp=output/TARGET_TO_SUBSTITUTE/%.o)
+EXEC    = bin/TARGET_TO_SUBSTITUTE/HelloWorldExample
 
 example: $(DIRECTORIES) $(OBJS) $(EXEC)
 
 $(EXEC) : 
 	$(LN) $(LDFLAGS) -o $(@:%.out=%) $(OBJS) $(LIBS)
 
-output/i86Linux2.6gcc4.7.2/%.o : %.cpp
+output/TARGET_TO_SUBSTITUTE/%.o : %.cpp
 	$(CPP) $(CPPFLAGS)  -o $@ $(INCLUDES) -c $<
 
 # Here is how we create those subdirectories automatically.
