@@ -89,11 +89,11 @@ function package
     # Create doxygen information.
     # Generate the examples
     # CDR example
-    ./scripts/efastbuffers_local.sh -replace -ser cdr -o utils/doxygen/examples/cdr utils/doxygen/examples/cdr/FooCdr.idl
+    ./scripts/efastbuffers.sh -replace -ser cdr -o utils/doxygen/examples/cdr utils/doxygen/examples/cdr/FooCdr.idl
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Fast CDR example
-    ./scripts/efastbuffers_local.sh -replace -ser fastcdr -o utils/doxygen/examples/fastcdr utils/doxygen/examples/fastcdr/FooFastCdr.idl
+    ./scripts/efastbuffers.sh -replace -ser fastcdr -o utils/doxygen/examples/fastcdr utils/doxygen/examples/fastcdr/FooFastCdr.idl
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     #Export version
