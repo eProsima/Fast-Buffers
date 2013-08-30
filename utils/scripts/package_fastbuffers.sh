@@ -70,11 +70,14 @@ function package
     if [ $errorstatus != 0 ]; then return; fi
 
     # Execute FastBuffers tests
+    export FAST_BUFFERS_OLD=$FAST_BUFFERS
+    export FAST_BUFFERS=$PWD
     cd utils/pcTests
     ./exec_tests.sh $package_targets
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ../..
+    export FAST_BUFFERS=$FAST_BUFFERS_OLD
 
     # Create PDFS from documentation.
     cd doc
