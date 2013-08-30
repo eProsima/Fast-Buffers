@@ -10,7 +10,7 @@ LDFLAGS=-m64
 INCLUDES = -I. -I$(FAST_BUFFERS)/include
 
 LIBS =  -L$(FAST_BUFFERS)/lib/TARGET_TO_SUBSTITUTE -L./lib/TARGET_TO_SUBSTITUTE \
-	-lHelloWorldz -lcdrz 
+	-Wl,-Bstatic -lHelloWorld -lcdr -Wl,-Bdynamic
 
 CPPSOURCES = HelloWorldExample.cpp
 
