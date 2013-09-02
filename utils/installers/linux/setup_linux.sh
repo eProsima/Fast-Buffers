@@ -70,9 +70,6 @@ function installer
 
 	# Copy eProsima header files
 	mkdir -p tmp/$project/include/eProsima_cpp
-	cp $EPROSIMADIR/code/eProsima_cpp/eProsimaMacros.h tmp/$project/include/eProsima_cpp
-    errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
 	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/eProsima_cpp
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi

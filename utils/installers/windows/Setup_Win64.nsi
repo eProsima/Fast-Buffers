@@ -78,7 +78,6 @@ Section -Main SEC0000
     File /r "..\..\..\..\CDR\include\cpp"
     # Copy eProsima header files.
     SetOutPath $INSTDIR\include\eProsima_cpp
-    File "$%EPROSIMADIR%\code\eProsima_cpp\eProsimaMacros.h"
     File "$%EPROSIMADIR%\code\eProsima_cpp\eProsima_auto_link.h"
     # Copy licenses.
     SetOutPath $INSTDIR
@@ -169,7 +168,6 @@ Section /o -un.Main UNSEC0000
     # Delete CDR header files.
     RmDir /r /REBOOTOK "$INSTDIR\include\cpp"
     # Delete eProsima header files.
-    Delete /REBOOTOK "$INSTDIR\include\eProsima_cpp\eProsimaMacros.h"
     Delete /REBOOTOK "$INSTDIR\include\eProsima_cpp\eProsima_auto_link.h"
     # Delete licences.
     Delete /REBOOTOK $INSTDIR\LGPLv3_LICENSE.txt
