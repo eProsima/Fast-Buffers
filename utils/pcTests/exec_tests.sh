@@ -1,7 +1,7 @@
 #!/bin/bash
 # This scripts run the unit tests. Supports two optional parameters.
 # @param The unit test to be run. If it isn't set, then all unit tests are run.
-# Second parameter is the used architecture. Supported i86 and x64. If it isn't set all architectures are used.
+# @param Second parameter is the used architecture. Supported i86 and x64. If it isn't set all architectures are used.
 
 errorstatus=0
 test_selected=""
