@@ -85,7 +85,7 @@ if [ $# -ge 1 ] && [ -n $1 ]; then
             if [ "$2" == "i86" ] || [ "$2" == "x64" ]; then
                 test_targets=$2
             else
-                echo Error: Bad argument in second parameter. Valid values. i86, x64
+                echo Error: Bad argument in second parameter. Valid values: i86, x64
                 exit -1;
             fi
         fi
