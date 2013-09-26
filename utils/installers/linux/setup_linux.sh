@@ -25,7 +25,11 @@ function installer
 
 	# Copy example and create makefiles.
 	mkdir -p tmp/$project/examples
-	cp -r ../../../examples/HelloWorld tmp/$project/examples
+	mkdir -p tmp/$project/examples/HelloWorld
+	cp ../../../examples/HelloWorld/HelloWorldExample.cpp tmp/$project/examples/HelloWorld
+	cp ../../../examples/HelloWorld/HelloWorld.idl tmp/$project/examples/HelloWorld
+	cp ../../../examples/HelloWorld/makefile_HelloWorldExample tmp/$project/examples/HelloWorld
+	cp ../../../examples/HelloWorld/README.txt tmp/$project/examples/HelloWorld
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	sed "s/TARGET_TO_SUBSTITUTE/i86Linux2.6gcc${gccversion}/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_i86Linux2.6gcc${gccversion}
