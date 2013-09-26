@@ -79,7 +79,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$if(it.dll)$CDR$if(it.debug)$d$endif$.lib$endif$;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       $if(it.dll)$
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>\$(FAST_BUFFERS)\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
