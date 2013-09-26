@@ -71,6 +71,9 @@ function installer
 	cp -r ../../../../CDR/include/cpp tmp/$project/include
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
+        if [ -d tmp/$project/include/cpp/.svn ]; then
+            find tmp/$project/include/cpp -iname .svn -exec rm -rf {} \;
+        fi
 
 	# Copy eProsima header files
 	mkdir -p tmp/$project/include/eProsima_cpp
