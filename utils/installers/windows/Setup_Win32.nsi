@@ -66,7 +66,7 @@ Section -Main SEC0000
     File /r "..\..\..\output\doxygen\html\*"
     # Copy examples
     SetOutPath $INSTDIR\examples
-    File /r "..\..\..\examples\*"
+    File /r /x *makefile_HelloWorldExample "..\..\..\examples\*"
     # Copy java classes.
     SetOutPath $INSTDIR\classes
     File /r "..\..\..\classes\*"

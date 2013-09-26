@@ -6,7 +6,9 @@
 :: - NSIS_BIN_DIR: Directory with the NSIS installer libraries.
 :: - EPROSIMADIR: URL to the directory with common sources of eProsima.
 :: - ANT_BIN_DIR: Directory with the ant binaries.
-:: - DOXYGEN_BIN_DIR: Directory with the doxygen binaries. (Also pdflatex and graphviz)
+:: - DOXYGEN_BIN_DIR: Directory with the doxygen binaries.
+:: - GRAPHVIZ_BIN_DIR: Directory with the graphviz binaries.
+:: - TEXLIVE_BIN_DIR: Directory with the TexLive binaries.
 :: Also this script needs the eProsima.documentation.changeVersion macro installed in the system.
 
 setlocal EnableDelayedExpansion
@@ -50,6 +52,7 @@ svn update
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Compile FastBuffers for target.
+rmdir /S /Q build
 call ant jar
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
@@ -74,11 +77,11 @@ if not %errorstatus%==0 goto :exit
 :: Create doxygen information.
 :: Generate the examples
 :: CDR example
-call scripts\efastbuffers_local.bat -replace -ser cdr -o utils\doxygen\examples\cdr utils\doxygen\examples\cdr\FooCdr.idl
+call scripts\efastbuffers.bat -replace -ser cdr -o utils\doxygen\examples\cdr utils\doxygen\examples\cdr\FooCdr.idl
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Fast CDR example
-call scripts\efastbuffers_local.bat -replace -ser fastcdr -o utils\doxygen\examples\fastcdr utils\doxygen\examples\fastcdr\FooFastCdr.idl
+call scripts\efastbuffers.bat -replace -ser fastcdr -o utils\doxygen\examples\fastcdr utils\doxygen\examples\fastcdr\FooFastCdr.idl
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Export version
