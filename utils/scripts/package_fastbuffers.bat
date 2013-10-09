@@ -57,6 +57,16 @@ call ant jar
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
+:: Execute FastBuffers tests
+set FAST_BUFFERS_OLD=%FAST_BUFFERS%
+set FAST_BUFFERS=%CD%
+cd utils/pcTests
+call exec_tests.bat %package_targets%
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+cd ../..
+set FAST_BUFFERS=%FAST_BUFFERS_OLD%
+
 :: Create PDFS from documentation.
 cd "doc"
 :: Installation manual
@@ -99,12 +109,8 @@ cd ..\..\..
 
 :: Create installers.
 cd "utils\installers\windows"
-:: Win32 installer.
-makensis.exe /DVERSION="%VERSION%" Setup_Win32.nsi
-set errorstatus=%ERRORLEVEL%
-if not %errorstatus%==0 goto :exit
-:: Win64 installer.
-makensis.exe /DVERSION="%VERSION%" Setup_Win64.nsi
+:: Win installer.
+makensis.exe /DVERSION="%VERSION%" Setup.nsi
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\.."

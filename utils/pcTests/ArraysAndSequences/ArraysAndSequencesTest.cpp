@@ -1,6 +1,9 @@
 #include "ArraysAndSequencesSer.h"
 
+#ifdef __linux
 #include <unistd.h>
+#endif
+
 #include <malloc.h>
 #include <iostream>
 
