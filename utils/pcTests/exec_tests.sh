@@ -9,8 +9,7 @@ test_selected=""
 test_targets=""
 
 # This function execute a test in a directory.
-# @param Plaform for Visual Studio.
-# @param Name of the test
+# @param Name/Directory of the test
 function execTest
 {
     # CDR unit test
