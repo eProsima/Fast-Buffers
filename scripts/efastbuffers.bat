@@ -2,7 +2,6 @@
 setlocal
 
 set dir=%~dp0
-
 set args=%1
 
 :getarg
@@ -12,8 +11,19 @@ set args=%args% %1
 goto getarg
 
 :continue
-if "%JAVA_HOME%"=="" (
-   echo "JAVA_HOME environment variable was not set"
-   exit /B 65
+
+:: Check java binary.
+set java_exec=java
+
+java -version > NULL 2>&1
+
+if not %ERRORLEVEL%==0 (
+   if not "%JAVA_HOME%"=="" (
+      set java_exec="%JAVA_HOME%\bin\java"
+   ) else (
+      echo Java binary cannot be found. Please, make sure its location is in the PATH environment variable or set JAVA_HOME environment variable.
+      exit /B 65
+   )
 )
-"%JAVA_HOME%\bin\java" -Djava.ext.dirs="%dir%\..\classes" com.eprosima.fastbuffers.FastBuffers %args%
+
+%java_exec% -Djava.ext.dirs="%dir%\..\classes" com.eprosima.fastbuffers.FastBuffers %args%
