@@ -2,10 +2,14 @@
 
 dir="`dirname \"$0\"`"
 
-if [ x$JAVA_HOME = x ]; then
-	echo "JAVA_HOME environment variable was not set"
-	exit 1
+java_exec=java
+
+java -version &>/dev/null
+
+if [ $? != 0 ]; then
+    [ -z "$JAVA_HOME" ] && { echo "Java binary cannot be found. Please, make sure its location is in the PATH environment variable or set JAVA_HOME environment variable."; exit 1; }
+    java_exec="${JAVA_HOME}/bin/java"
 fi
 
-exec "${JAVA_HOME}/bin/java" -Djava.ext.dirs="$dir/../classes" com.eprosima.fastbuffers.FastBuffers "$@"
+exec $java_exec -Djava.ext.dirs="$dir/../classes" com.eprosima.fastbuffers.FastBuffers "$@"
 
