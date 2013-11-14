@@ -61,10 +61,10 @@ function installer
 
 	# Copy scripts
 	mkdir -p tmp/$project/scripts
-	cp ../../../scripts/efastbuffers.sh tmp/$project/scripts
+	cp ../../../scripts/fastbuffers.sh tmp/$project/scripts
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	chmod 755 tmp/$project/scripts/efastbuffers.sh
+	chmod 755 tmp/$project/scripts/fastbuffers.sh
 
 	# CDR headers
 	mkdir -p tmp/$project/include

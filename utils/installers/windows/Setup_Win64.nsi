@@ -72,7 +72,7 @@ Section -Main SEC0000
     File /r "..\..\..\classes\*"
     # Copy script
     SetOutPath $INSTDIR\scripts
-    File "..\..\..\scripts\efastbuffers.bat"
+    File "..\..\..\scripts\fastbuffers.bat"
     # Copy CDR header files.
     SetOutPath $INSTDIR\include
     File /r "..\..\..\..\CDR\include\cpp"
@@ -164,7 +164,7 @@ Section /o -un.Main UNSEC0000
     # Delete java classes.
     RmDir /r /REBOOTOK "$INSTDIR\classes"
     # Delete script.
-    Delete /REBOOTOK "$INSTDIR\scripts\efastbuffers.bat"
+    Delete /REBOOTOK "$INSTDIR\scripts\fastbuffers.bat"
     # Delete CDR header files.
     RmDir /r /REBOOTOK "$INSTDIR\include\cpp"
     # Delete eProsima header files.

@@ -18,7 +18,7 @@ function execTest
     # Info about test
     echo "EXECUTING $1 for $EPROSIMA_TARGET using CDR"
     # Generates the file with RPCDDS script
-    ../../scripts/efastbuffers.sh -o output -ser cdr -example $EPROSIMA_TARGET "$1/$1.idl"
+    ../../scripts/fastbuffers.sh -o output -ser cdr -example $EPROSIMA_TARGET "$1/$1.idl"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Compile the generated library
@@ -48,7 +48,7 @@ function execTest
     # Info about test
     echo "EXECUTING $1 for $EPROSIMA_TARGET using FastCDR"
     # Generates the file with RPCDDS script
-    ../../scripts/efastbuffers.sh -o output -ser fastcdr -example $EPROSIMA_TARGET "$1/$1.idl"
+    ../../scripts/fastbuffers.sh -o output -ser fastcdr -example $EPROSIMA_TARGET "$1/$1.idl"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Compile the generated library
