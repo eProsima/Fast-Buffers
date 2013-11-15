@@ -11,6 +11,10 @@ Name "Fast Buffers"
 # MUI Symbol Definitions
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install-colorful.ico"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
+!define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "eProsima\FastBuffers"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\README.html
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall-colorful.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -20,12 +24,16 @@ Name "Fast Buffers"
 !include MUI2.nsh
 !include EnvVarUpdate.nsh
 
+# Variables
+Var StartMenuGroup
+
 # Reserved Files
 ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE ..\..\..\doc\licencias\FAST_BUFFERS_LICENSE.txt
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -128,6 +136,11 @@ Section -post SEC0007
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall.exe
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    SetOutPath $SMPROGRAMS\$StartMenuGroup
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\README.lnk" $INSTDIR\README.html
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
+    !insertmacro MUI_STARTMENU_WRITE_END
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
@@ -204,10 +217,14 @@ SectionEnd
 
 Section -un.post UNSEC0007
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
+    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
+    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\README.lnk"
     Delete /REBOOTOK $INSTDIR\uninstall.exe
+    DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
     DeleteRegValue HKLM "${REGKEY}" Path
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
     DeleteRegKey /IfEmpty HKLM "${REGKEY}"
+    RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
     RmDir /r /REBOOTOK $INSTDIR
 SectionEnd
 
@@ -224,6 +241,7 @@ FunctionEnd
 # Uninstaller functions
 Function un.onInit
     ReadRegStr $INSTDIR HKLM "${REGKEY}" Path
+    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
     !insertmacro SELECT_UNSECTION "x64 libraries" ${UNSEC0001}
     !insertmacro SELECT_UNSECTION "i86 libraries" ${UNSEC0002}
