@@ -1,7 +1,12 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "HelloWorld.vcxproj", "{DB8AC1C2-59EB-89D4-A131-B253BACFCA5F}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorldExample", "HelloWorldExample.vcxproj", "{FE9A0BD7-55B0-15B0-5B89-F4FF14FE5AB2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DB8AC1C2-59EB-89D4-A131-B253BACFCA5F} = {DB8AC1C2-59EB-89D4-A131-B253BACFCA5F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug DLL|Win32 = Debug DLL|Win32

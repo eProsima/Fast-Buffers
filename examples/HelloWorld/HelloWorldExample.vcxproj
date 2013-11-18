@@ -298,10 +298,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-    <ItemGroup>
-    <ProjectReference Include=".\HelloWorld.vcxproj">
-      <Project>DB8AC1C2-59EB-89D4-A131-B253BACFCA5F</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
