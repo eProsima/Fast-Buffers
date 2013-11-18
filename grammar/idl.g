@@ -11,6 +11,7 @@ header {
     
     import org.antlr.stringtemplate.StringTemplate;
    
+    import java.util.Iterator;
     import java.util.Vector;
     import java.util.List;
     import java.util.ArrayList;
@@ -99,19 +100,42 @@ options {
             return returnedValue;
         }
         
+        public TypeCode getFirstStructure()
+        {
+            if(m_firstStructure == null)
+            {
+                Iterator it = m_types.entrySet().iterator();
+                
+                while(it.hasNext())
+                {
+                    Map.Entry e = (Map.Entry)it.next();
+                    TypeCode aux = (TypeCode)e.getValue();
+                    
+                    if(aux.getKind() == TypeCode.KIND_STRUCT)
+                    {
+                        m_firstStructure = aux;
+                        break;
+                    }
+                }
+            }
+            
+            return m_firstStructure;
+        }
+        
         private String m_filename = "";
         private String m_trimfilename = "";
         private String m_scope = "";
         private String m_sersym = ">>";
         private String m_typelimitation = null;
         private Map<String, TypeCode> m_types = null;
+        private TypeCode m_firstStructure = null;
     }; 
     
     private TemplateManager tmanager = null;
     private Context ctx = null;
 }
 
-specification [String outdir, String idlFilename, String serType, boolean replace] returns [boolean returnedValue = false]
+specification [String outdir, String idlFilename, String serType, boolean replace, boolean example] returns [boolean returnedValue = false]
 {
     // Create initial context.
     ctx = new Context(idlFilename);
@@ -126,6 +150,9 @@ specification [String outdir, String idlFilename, String serType, boolean replac
     tmanager.addGroup(serType + "Header");
     // Load CDR header template.
     tmanager.addGroup(serType + "Source");
+    // Load example.
+    if(example)
+        tmanager.addGroup("ExampleSource");
     TemplateGroup maintemplates = tmanager.createTemplateGroup("main");
     maintemplates.setAttribute("ctx", ctx);
     
@@ -141,7 +168,8 @@ specification [String outdir, String idlFilename, String serType, boolean replac
             {
                 if(Utils.writeFile(outdir + idlFilename + "Ser.cpp", maintemplates.getTemplate(serType + "Source"), replace))
                 {
-                    returnedValue = true;
+                    if(!example || Utils.writeFile(outdir + idlFilename + "Example.cpp", maintemplates.getTemplate("ExampleSource"), replace))
+                        returnedValue = true;
                 }
             }
         }
@@ -173,6 +201,7 @@ module returns [TemplateGroup moduleTemplates = tmanager.createTemplateGroup("mo
 	:    "module"^
 	     name=identifier
 	     {
+	       moduleTemplates.setAttribute("ctx", ctx);
 	       moduleTemplates.setAttribute("name", name);
 	       ctx.setScope(old_scope + name + "::");
 	     }	    

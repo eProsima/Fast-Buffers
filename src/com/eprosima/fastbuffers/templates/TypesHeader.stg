@@ -26,7 +26,7 @@ $blocks; separator="\n"$
 #endif // _$ctx.filename$_H_
 >>
 
-module(name, definition_list) ::= <<
+module(ctx, name, definition_list) ::= <<
 namespace $name$
 {
     $definition_list$
@@ -169,14 +169,14 @@ void $member.name$($member.typecode.typename$ _$member.name$);
 /*!
  * @brief This function returns the value of member $member.name$
  * @return Value of member $member.name$
- * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 $member.typecode.typename$ $member.name$() const;
 
 /*!
  * @brief This function returns a reference to member $member.name$
  * @return Reference to member $member.name$
- * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 $member.typecode.typename$& $member.name$();
 $else$
@@ -195,14 +195,14 @@ void $member.name$($member.typecode.typename$ &&_$member.name$);
 /*!
  * @brief This function returns a constant reference to member $member.name$
  * @return Constant reference to member $member.name$
- * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 const $member.typecode.typename$& $member.name$() const;
 
 /*!
  * @brief This function returns a reference to member $member.name$
  * @return Reference to member $member.name$
- * @exception eProsima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 $member.typecode.typename$& $member.name$();
 $endif$
@@ -258,7 +258,7 @@ public:
     /*!
      * @brief This function sets the discriminator value.
      * @param __d New value for the discriminator.
-     * @exception eProsima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     * @exception eprosima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
     void _d($union.discriminator.typename$ __d);
     

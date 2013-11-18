@@ -11,7 +11,7 @@ $fileHeader(file=[ctx.filename, ".cpp"], description=["This source file contains
 $blocks; separator="\n"$
 >>
 
-module(name, definition_list) ::= <<
+module(ctx, name, definition_list) ::= <<
 $definition_list$
 >>
 
@@ -118,7 +118,7 @@ void $union.scopedname$::_d($union.discriminator.typename$ __d)
         $union.members:{$unionmember_discriminator_case(member=it, totallabels=union.totallabels)$}; separator="\n"$
     }
     
-    if(!b) throw eProsima::BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b) throw eprosima::BadParamException("Discriminator doesn't correspond with the selected union member");
     
     m__d = __d;
 }
@@ -274,7 +274,7 @@ switch(m__d)
 }
 $endif$
     
-if(!b) throw eProsima::BadParamException("This member is not been selected");
+if(!b) throw eprosima::BadParamException("This member is not been selected");
 >>
 
 enum_type(ctx, enum) ::= <<>>

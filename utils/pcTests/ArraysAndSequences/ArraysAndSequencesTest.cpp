@@ -43,7 +43,7 @@ bool FMainTest()
 
     // Create the serializer object.
     char *buffer = (char*)calloc(1, as.getMaxSerializedSize());
-    eProsima::FastBuffer fbuffer(buffer, as.getMaxSerializedSize());
+    eprosima::FastBuffer fbuffer(buffer, as.getMaxSerializedSize());
     ArraysAndSequencesSer serializer(fbuffer);
 
     // Serialize structure.
@@ -51,7 +51,7 @@ bool FMainTest()
     {
         serializer << as;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FMainTest>: Serialization. " << ex.what() << std::endl;
         free(buffer);
@@ -69,7 +69,7 @@ bool FMainTest()
     {
         serializer >> asres;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FMainTest>: Deserialization. " << ex.what() << std::endl;
         free(buffer);
@@ -159,7 +159,7 @@ bool FBug94Test()
 
     // Create the serializer object.
     char *buffer = (char*)calloc(1, ox2.getMaxSerializedSize());
-    eProsima::FastBuffer fbuffer(buffer, ox2.getMaxSerializedSize());
+    eprosima::FastBuffer fbuffer(buffer, ox2.getMaxSerializedSize());
     ArraysAndSequencesSer serializer(fbuffer);
 
     // Serialize structure.
@@ -167,7 +167,7 @@ bool FBug94Test()
     {
         serializer << ox2;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FBug94Test>: Serialization. " << ex.what() << std::endl;
         free(buffer);
@@ -185,7 +185,7 @@ bool FBug94Test()
     {
         serializer >> ox2res;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FBug94Test>: Deserialization. " << ex.what() << std::endl;
         free(buffer);

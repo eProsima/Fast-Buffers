@@ -1,7 +1,7 @@
 #include "Performance_30Ser.h"
 #include "cpp/exceptions/BadParamException.h"
 
-Performance_30Ser::Performance_30Ser(eProsima::FastBuffer &buffer) : FastCdr(buffer)
+Performance_30Ser::Performance_30Ser(eprosima::FastBuffer &buffer) : FastCdr(buffer)
 {
 }
 

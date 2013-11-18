@@ -37,7 +37,7 @@ bool FBug95Test()
 
     // Create the serializer object.
     char *buffer = (char*)calloc(1, os.getMaxSerializedSize());
-    eProsima::FastBuffer fbuffer(buffer, os.getMaxSerializedSize());
+    eprosima::FastBuffer fbuffer(buffer, os.getMaxSerializedSize());
     NestedStructuresSer serializer(fbuffer);
 
     // Serialize structure.
@@ -45,7 +45,7 @@ bool FBug95Test()
     {
         serializer << os;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FBug95Test>: Serialization. " << ex.what() << std::endl;
         free(buffer);
@@ -63,7 +63,7 @@ bool FBug95Test()
     {
         serializer >> osres;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FBug95Test>: Deserialization. " << ex.what() << std::endl;
         free(buffer);

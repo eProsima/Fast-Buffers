@@ -15,7 +15,7 @@ bool FBug96Test()
 
     // Create the serializer object.
     char *buffer = (char*)calloc(1, si.getMaxSerializedSize());
-    eProsima::FastBuffer fbuffer(buffer, si.getMaxSerializedSize());
+    eprosima::FastBuffer fbuffer(buffer, si.getMaxSerializedSize());
     EnumerationsSer serializer(fbuffer);
 
     // Serialize structure.
@@ -23,7 +23,7 @@ bool FBug96Test()
     {
         serializer << si;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FBug96Test>: Serialization. " << ex.what() << std::endl;
         free(buffer);
@@ -41,7 +41,7 @@ bool FBug96Test()
     {
         serializer >> sires;
     }
-    catch(eProsima::Exception &ex)
+    catch(eprosima::Exception &ex)
     {
         std::cout << "TEST FAILED<FBug95Test>: Deserialization. " << ex.what() << std::endl;
         free(buffer);

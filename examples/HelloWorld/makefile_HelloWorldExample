@@ -1,36 +1,51 @@
-CC=gcc
-CPP=g++
-LN=g++
+CPP= g++
+CPPFLAGS = -c -Wall -fpic -m64 -std=c++0x
+LN= g++
 AR=ar
-CP=cp
+LDFLAGS = -m64
 
-CPPFLAGS= -c -Wall -DEPROSIMA_LINUX -m64 -fpic -std=c++11
-LDFLAGS=-m64
+INCLUDES= -I. -I$(FAST_BUFFERS)/include
 
-INCLUDES = -I. -I$(FAST_BUFFERS)/include
+LIBS= -L$(FAST_BUFFERS)/lib/TARGET_TO_SUBSTITUTE -lcdr
 
-LIBS =  -L$(FAST_BUFFERS)/lib/TARGET_TO_SUBSTITUTE -L./lib/TARGET_TO_SUBSTITUTE \
-	-Wl,-Bstatic -lHelloWorld -lcdr -Wl,-Bdynamic
+DIRECTORIES= output.dir output/TARGET_TO_SUBSTITUTE.dir lib.dir lib/TARGET_TO_SUBSTITUTE.dir bin.dir bin/TARGET_TO_SUBSTITUTE.dir
 
-CPPSOURCES = HelloWorldExample.cpp
+all: $(DIRECTORIES) HelloWorld
 
-DIRECTORIES   = output.dir output/TARGET_TO_SUBSTITUTE.dir bin.dir bin/TARGET_TO_SUBSTITUTE.dir
-OBJS    = $(CPPSOURCES:%.cpp=output/TARGET_TO_SUBSTITUTE/%.o)
-EXEC    = bin/TARGET_TO_SUBSTITUTE/HelloWorldExample
 
-example: $(DIRECTORIES) $(OBJS) $(EXEC)
+HelloWorld_TARGET= lib/TARGET_TO_SUBSTITUTE/libHelloWorld.so
+HelloWorld_TARGET_Z= lib/TARGET_TO_SUBSTITUTE/libHelloWorld.a
+HelloWorld_EXAMPLE_TARGET = bin/TARGET_TO_SUBSTITUTE/HelloWorld
 
-$(EXEC) : 
-	$(LN) $(LDFLAGS) -o $(@:%.out=%) $(OBJS) $(LIBS)
+HelloWorld_SRC_CPPFILES= HelloWorld.cpp HelloWorldSer.cpp
 
-output/TARGET_TO_SUBSTITUTE/%.o : %.cpp
-	$(CPP) $(CPPFLAGS)  -o $@ $(INCLUDES) -c $<
+HelloWorld_OBJS = $(HelloWorld_SRC_CPPFILES:%.cpp=output/TARGET_TO_SUBSTITUTE/%.o)
 
-# Here is how we create those subdirectories automatically.
+OBJS+= $(HelloWorld_OBJS)
+
+HelloWorld: $(HelloWorld_TARGET) $(HelloWorld_TARGET_Z) $(HelloWorld_EXAMPLE_TARGET)
+
+$(HelloWorld_TARGET): $(HelloWorld_OBJS)
+	$(LN) $(LDFLAGS) -shared -o $(HelloWorld_TARGET) $(HelloWorld_OBJS) $(LIBS)
+
+$(HelloWorld_TARGET_Z): $(HelloWorld_OBJS)
+	$(AR) -cru $(HelloWorld_TARGET_Z) $(HelloWorld_OBJS)
+	
+$(HelloWorld_EXAMPLE_TARGET): output/TARGET_TO_SUBSTITUTE/HelloWorldExample.o
+	$(LN) $(LDFLAGS) -o $(HelloWorld_EXAMPLE_TARGET) output/TARGET_TO_SUBSTITUTE/HelloWorldExample.o -Wl,-Bstatic $(LIBS) -Llib/TARGET_TO_SUBSTITUTE -lHelloWorld -Wl,-Bdynamic
+
+
+output/TARGET_TO_SUBSTITUTE/%.o:%.cpp
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $< -o $@
+
+.PHONY: HelloWorld
+
+clean:
+	@rm -f $(OBJS)
+
 %.dir : 
 	@echo "Checking directory $*"
 	@if [ ! -d $* ]; then \
 		echo "Making directory $*"; \
 		mkdir -p $* ; \
 	fi;
-

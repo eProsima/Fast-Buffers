@@ -142,7 +142,8 @@ public class FastBuffers
             IDLLexer lexer = new IDLLexer(input);
             IDLParser parser = new IDLParser(lexer);
             // Pass the filename without the extension.
-            returnedValue = parser.specification(m_outputDir, Utils.getIDLFileNameOnly(idlFilename), m_serType,  m_replace);
+            returnedValue = parser.specification(m_outputDir, Utils.getIDLFileNameOnly(idlFilename), m_serType,
+                    m_replace, (m_exampleOption != null ? true : false));
         }
         catch(FileNotFoundException ex)
         {

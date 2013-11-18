@@ -11,13 +11,14 @@ INCLUDES= -I. -I\$(FAST_BUFFERS)/include
 
 LIBS= -L\$(FAST_BUFFERS)/lib/$example$ -lcdr
 
-DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir
+DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
 
 all: \$(DIRECTORIES) $projnames:{$it$}; separator=" "$
 
 $projnames:{
 $it$_TARGET= lib/$example$/lib$it$.so
 $it$_TARGET_Z= lib/$example$/lib$it$.a
+$it$_EXAMPLE_TARGET = bin/$example$/$it$
 
 $it$_SRC_CPPFILES= $it$.cpp $it$Ser.cpp
 
@@ -25,13 +26,16 @@ $it$_OBJS = \$($it$_SRC_CPPFILES:%.cpp=output/$example$/%.o)
 
 OBJS+= \$($it$_OBJS)
 
-$it$: \$($it$_TARGET) \$($it$_TARGET_Z)
+$it$: \$($it$_TARGET) \$($it$_TARGET_Z) \$($it$_EXAMPLE_TARGET)
 
 \$($it$_TARGET): \$($it$_OBJS)
-	\$(LN) \$(LDFLAGS) -shared -o \$($it$_TARGET) \$(LIBS) \$($it$_OBJS)
+	\$(LN) \$(LDFLAGS) -shared -o \$($it$_TARGET) \$($it$_OBJS) \$(LIBS)
 
 \$($it$_TARGET_Z): \$($it$_OBJS)
 	\$(AR) -cru \$($it$_TARGET_Z) \$($it$_OBJS)
+	
+\$($it$_EXAMPLE_TARGET): output/$example$/$it$Example.o
+	\$(LN) \$(LDFLAGS) -o \$($it$_EXAMPLE_TARGET) output/$example$/$it$Example.o -Wl,-Bstatic \$(LIBS) -Llib/$example$ -l$it$ -Wl,-Bdynamic
 }; separator="\n"$
 
 output/$example$/%.o:%.cpp

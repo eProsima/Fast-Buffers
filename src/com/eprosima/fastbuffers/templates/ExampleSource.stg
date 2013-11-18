@@ -1,0 +1,52 @@
+group ExampleSource;
+
+main(ctx, blocks) ::= <<
+$fileHeader(file=[ctx.filename, "Example.cpp"], description=["This source file contains an example of serialization/deserialization using one data type in the IDL file."])$
+
+#include "$ctx.filename$Ser.h"
+#include "cpp/exceptions/Exception.h"
+
+using namespace eprosima;
+
+int main()
+{
+    FastBuffer fastbuffer;
+    $ctx.filename$Ser $ctx.filename$_ser(fastbuffer);
+    
+    // Structure to serialize.
+    $ctx.firstStructure.scopedname$ ser_var;
+    
+    // Here the structure has to be initialized.
+    
+    // Serialization.
+    $ctx.filename$_ser << ser_var;
+    
+    // Reset the reading position in the serializer object to start deserialization.
+    $ctx.filename$_ser.reset();
+    
+    // The buffer will be deserialized in the next structure.
+    $ctx.firstStructure.scopedname$ des_var;
+    
+    // Deserialization.
+    $ctx.filename$_ser $ctx.sersym$ des_var;
+    
+    return 0;
+}
+
+
+$blocks; separator="\n"$
+>>
+
+module(ctx, name, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>

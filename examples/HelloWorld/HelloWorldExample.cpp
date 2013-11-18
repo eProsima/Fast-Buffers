@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-using namespace eProsima;
+using namespace eprosima;
 
 #define BUFFER_LENGTH 200
 

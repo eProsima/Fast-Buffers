@@ -12,7 +12,7 @@ int main()
 
     boost::timer::auto_cpu_timer t;
 
-    eProsima::FastBuffer cdrbuffer(buffer, BUFFER_SIZE);
+    eprosima::FastBuffer cdrbuffer(buffer, BUFFER_SIZE);
     Performance_80Ser cdr(cdrbuffer);
     performance::Performance performance;
 
@@ -106,7 +106,7 @@ int main()
 		{
 			cdr.serialize(performance);
         }
-        catch(eProsima::Exception &ex)
+        catch(eprosima::Exception &ex)
 		{
             std::cout << "ERROR: " << ex.what() << std::endl;
 		}
@@ -115,7 +115,7 @@ int main()
 		{
 			cdr2.deserialize(performance2);
         }
-        catch(eProsima::Exception &ex)
+        catch(eprosima::Exception &ex)
 		{
             std::cout << "ERROR: " << ex.what() << std::endl;
 		}

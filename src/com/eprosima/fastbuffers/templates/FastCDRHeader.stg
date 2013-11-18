@@ -10,10 +10,10 @@ $fileHeader(file=[ctx.filename, "Ser.h"], description=["This header file contain
 #include "cpp/FastCdr.h"
 
 /*!
- * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eProsima::FastBuffer.
+ * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eprosima::FastBuffer.
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $ctx.filename$Ser : public eProsima::FastCdr
+class user_cpp_DllExport $ctx.filename$Ser : public eprosima::FastCdr
 { 
 public:
     /*!
@@ -22,7 +22,7 @@ public:
      *
      * @param buffer A reference to the buffer that contains or will contain the CDR representation.
      */
-    $ctx.filename$Ser(eProsima::FastBuffer &buffer);
+    $ctx.filename$Ser(eprosima::FastBuffer &buffer);
     
     $blocks; separator="\n"$
 };
@@ -30,7 +30,7 @@ public:
 #endif // _$ctx.filename$SER_H_
 >>
 
-module(name, definition_list) ::= <<
+module(ctx, name, definition_list) ::= <<
 $definition_list$
 >>
 

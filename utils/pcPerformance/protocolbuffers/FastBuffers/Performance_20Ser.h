@@ -5,9 +5,9 @@
 #include "cpp/FastCdr.h"
 
 /*!
- * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eProsima::FastBuffer.
+ * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eprosima::FastBuffer.
  */
-class user_cpp_DllExport Performance_20Ser : public eProsima::FastCdr
+class user_cpp_DllExport Performance_20Ser : public eprosima::FastCdr
 { 
 public:
     /*!
@@ -16,7 +16,7 @@ public:
      *
      * @param buffer A reference to the buffer that contains or will contain the CDR representation.
      */
-    Performance_20Ser(eProsima::FastBuffer &buffer);
+    Performance_20Ser(eprosima::FastBuffer &buffer);
     
     /*!
      * @brief This function serialize a type performance::Performance.
