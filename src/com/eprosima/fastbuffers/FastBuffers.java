@@ -213,7 +213,7 @@ public class FastBuffers
     {
         final String METHOD_NAME = "genVS2010";
         boolean returnedValue = false;
-        String idlFilename = null, guid = null;
+        String idlFilename = null, guid = null, guidExample = null;
         
         // first load main language template
         StringTemplateGroup vsTemplates = StringTemplateGroup.loadGroup("VS2010", DefaultTemplateLexer.class, null);
@@ -223,14 +223,17 @@ public class FastBuffers
             StringTemplate solution = vsTemplates.getInstanceOf("solution");
             StringTemplate project = vsTemplates.getInstanceOf("project");;
             StringTemplate projectFiles = vsTemplates.getInstanceOf("projectFiles");
+            StringTemplate projectExample = vsTemplates.getInstanceOf("projectExample");
+            StringTemplate projectExampleFiles = vsTemplates.getInstanceOf("projectExampleFiles");
             
             returnedValue = true;
             for(int count = 0; returnedValue && (count < m_idlFiles.size()); ++count)
             {
                 idlFilename = Utils.getIDLFileNameOnly(m_idlFiles.get(count));
                 guid = GUIDGenerator.genGUID(idlFilename);
+                guidExample = GUIDGenerator.genGUID("Example" + idlFilename);
                 
-                solution.setAttribute("projects.{name, guid, dependsOn, example}", idlFilename, guid, null, m_exampleOption);
+                solution.setAttribute("projects.{name, guid, guidExample, dependsOn, example}", idlFilename, guid, guidExample, null, m_exampleOption);
                 
                 project.setAttribute("guid", guid);
                 project.setAttribute("name", idlFilename);
@@ -238,14 +241,28 @@ public class FastBuffers
                 project.setAttribute("arch", arch);
                 projectFiles.setAttribute("name", idlFilename);
                 
+                projectExample.setAttribute("guid", guidExample);
+                projectExample.setAttribute("guidParent", guid);
+                projectExample.setAttribute("name", idlFilename);
+                projectExample.setAttribute("example", m_exampleOption);
+                projectExample.setAttribute("arch", arch);
+                projectExampleFiles.setAttribute("name", idlFilename);
+                
                 // project configurations   
                 for(int index = 0; index < m_vsconfigurations.length; index++){
                     project.setAttribute("configurations", m_vsconfigurations[index]);
+                    projectExample.setAttribute("configurations", m_vsconfigurations[index]);
                 }
                 
                 if(returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".vcxproj", project, m_replace))
                 {
-                    returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".vcxproj.filters", projectFiles, m_replace);
+                    if(returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".vcxproj.filters", projectFiles, m_replace))
+                    {
+                    	if(returnedValue = Utils.writeFile(m_outputDir + idlFilename +"Example-" + m_exampleOption + ".vcxproj", projectExample, m_replace))
+                        {
+                            returnedValue = Utils.writeFile(m_outputDir + idlFilename +"Example-" + m_exampleOption + ".vcxproj.filters", projectExampleFiles, m_replace);
+                        }
+                    }
                 }
                 
                 project.reset();

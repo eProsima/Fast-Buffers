@@ -35,55 +35,55 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>HelloWorldExample</ProjectName>
-    <ProjectGuid>{FE9A0BD7-55B0-15B0-5B89-F4FF14FE5AB2}</ProjectGuid>
-    <RootNamespace>HelloWorldExample</RootNamespace>
+    <ProjectName>HelloWorld</ProjectName>
+    <ProjectGuid>{DB8AC1C2-59EB-89D4-A131-B253BACFCA5F}</ProjectGuid>
+    <RootNamespace>HelloWorld</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>DynamicLibrary</ConfigurationType>
       <UseDebugLibraries>true</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>DynamicLibrary</ConfigurationType>
       <UseDebugLibraries>true</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>DynamicLibrary</ConfigurationType>
       <UseDebugLibraries>false</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>DynamicLibrary</ConfigurationType>
       <UseDebugLibraries>false</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>StaticLibrary</ConfigurationType>
       <UseDebugLibraries>true</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>StaticLibrary</ConfigurationType>
       <UseDebugLibraries>true</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>StaticLibrary</ConfigurationType>
       <UseDebugLibraries>false</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-      <ConfigurationType>Application</ConfigurationType>
+      <ConfigurationType>StaticLibrary</ConfigurationType>
       <UseDebugLibraries>false</UseDebugLibraries>
       <UseOfMfc>false</UseOfMfc>
       <CharacterSet>MultiByte</CharacterSet>
@@ -118,43 +118,43 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\i86Win32VS2010\</OutDir>
-      <TargetName>$(ProjectName)</TargetName>
+      <OutDir>.\lib\i86Win32VS2010\</OutDir>
+      <TargetName>$(ProjectName)d</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\x64Win64VS2010\</OutDir>
-      <TargetName>$(ProjectName)</TargetName>
+      <OutDir>.\lib\x64Win64VS2010\</OutDir>
+      <TargetName>$(ProjectName)d</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\i86Win32VS2010\</OutDir>
+      <OutDir>.\lib\i86Win32VS2010\</OutDir>
       <TargetName>$(ProjectName)</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\x64Win64VS2010\</OutDir>
+      <OutDir>.\lib\x64Win64VS2010\</OutDir>
       <TargetName>$(ProjectName)</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\i86Win32VS2010\</OutDir>
-      <TargetName>$(ProjectName)</TargetName>
+      <OutDir>.\lib\i86Win32VS2010\</OutDir>
+      <TargetName>$(ProjectName)zd</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\x64Win64VS2010\</OutDir>
-      <TargetName>$(ProjectName)</TargetName>
+      <OutDir>.\lib\x64Win64VS2010\</OutDir>
+      <TargetName>$(ProjectName)zd</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\i86Win32VS2010\</OutDir>
-      <TargetName>$(ProjectName)</TargetName>
+      <OutDir>.\lib\i86Win32VS2010\</OutDir>
+      <TargetName>$(ProjectName)z</TargetName>
     </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       <IntDir>$(Platform)\$(Configuration)\</IntDir>
-      <OutDir>.\bin\x64Win64VS2010\</OutDir>
-      <TargetName>$(ProjectName)</TargetName>
+      <OutDir>.\lib\x64Win64VS2010\</OutDir>
+      <TargetName>$(ProjectName)z</TargetName>
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
       <ClCompile>
@@ -168,9 +168,10 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorldd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
         <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>   
       </Link>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'">
@@ -185,9 +186,10 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorldd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
         <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>   
       </Link>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
@@ -202,9 +204,10 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
         <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>   
       </Link>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'">
@@ -219,9 +222,10 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
         <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>   
       </Link>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -236,10 +240,12 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorldzd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+     
       </Link>
+      <Lib>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+      </Lib>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <ClCompile>
@@ -253,10 +259,12 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorldzd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+     
       </Link>
+      <Lib>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+      </Lib>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       <ClCompile>
@@ -270,10 +278,12 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorldz.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+     
       </Link>
+      <Lib>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+      </Lib>
     </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       <ClCompile>
@@ -287,21 +297,22 @@
       </ClCompile>
       <Link>
         <GenerateDebugInformation>true</GenerateDebugInformation>
-        <AdditionalDependencies>HelloWorldz.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-        <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+     
       </Link>
+      <Lib>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+      </Lib>
     </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HelloWorldExample.cpp" />
+    <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="HelloWorldSer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HelloWorld.h" />
+    <ClInclude Include="HelloWorldSer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-    <ItemGroup>
-    <ProjectReference Include=".\HelloWorld.vcxproj">
-      <Project>DB8AC1C2-59EB-89D4-A131-B253BACFCA5F</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
