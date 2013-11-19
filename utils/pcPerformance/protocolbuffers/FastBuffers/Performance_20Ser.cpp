@@ -1,5 +1,5 @@
 #include "Performance_20Ser.h"
-#include "cpp/exceptions/BadParamException.h"
+#include "cdr/exceptions/BadParamException.h"
 
 Performance_20Ser::Performance_20Ser(eprosima::FastBuffer &buffer) : FastCdr(buffer)
 {

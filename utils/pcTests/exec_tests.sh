@@ -92,8 +92,8 @@ if [ $# -ge 1 ] && [ -n $1 ]; then
 fi
 
 # Create symbolic link to EPROSIMADIR in the CDR folder.
-if [ ! -e "../../../CDR/include/eProsima_cpp" ]; then
-    ln -s $EPROSIMADIR/code/eProsima_cpp ../../../CDR/include/eProsima_cpp
+if [ ! -e "../../../CDR/include/cdr/eProsima_cpp" ]; then
+    ln -s $EPROSIMADIR/code/eProsima_cpp ../../../CDR/include/cdr/eProsima_cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 fi
@@ -186,8 +186,8 @@ if [ -e ../../include ]; then
 fi
 
 # Remove symbolic link from EPROSIMADIR
-if [ -e ../../../CDR/include/eProsima_cpp ]; then
-    rm ../../../CDR/include/eProsima_cpp
+if [ -e ../../../CDR/include/cdr/eProsima_cpp ]; then
+    rm ../../../CDR/include/cdr/eProsima_cpp
 fi
 
 if [ $errorstatus == 0 ]; then

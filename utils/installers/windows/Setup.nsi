@@ -83,9 +83,9 @@ Section -Main SEC0000
     File "..\..\..\scripts\fastbuffers.bat"
     # Copy CDR header files.
     SetOutPath $INSTDIR\include
-    File /r "..\..\..\..\CDR\include\cpp"
+    File /r "..\..\..\..\CDR\include\cdr"
     # Copy eProsima header files.
-    SetOutPath $INSTDIR\include\eProsima_cpp
+    SetOutPath $INSTDIR\include\cdr\eProsima_cpp
     File "$%EPROSIMADIR%\code\eProsima_cpp\eProsima_auto_link.h"
     # Copy licenses.
     SetOutPath $INSTDIR
@@ -178,10 +178,10 @@ Section /o -un.Main UNSEC0000
     RmDir /r /REBOOTOK "$INSTDIR\classes"
     # Delete script.
     Delete /REBOOTOK "$INSTDIR\scripts\fastbuffers.bat"
-    # Delete CDR header files.
-    RmDir /r /REBOOTOK "$INSTDIR\include\cpp"
     # Delete eProsima header files.
-    Delete /REBOOTOK "$INSTDIR\include\eProsima_cpp\eProsima_auto_link.h"
+    Delete /REBOOTOK "$INSTDIR\include\cdr\eProsima_cpp\eProsima_auto_link.h"
+    # Delete CDR header files.
+    RmDir /r /REBOOTOK "$INSTDIR\include\cdr"
     # Delete licences.
     Delete /REBOOTOK $INSTDIR\LGPLv3_LICENSE.txt
     Delete /REBOOTOK $INSTDIR\FAST_BUFFERS_LICENSE.txt

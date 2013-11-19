@@ -4,7 +4,7 @@ main(ctx, blocks) ::= <<
 $fileHeader(file=[ctx.filename, "Ser.cpp"], description=["This source file contains the definition of the serializer object."])$
 
 #include "$ctx.filename$Ser.h"
-#include "cpp/exceptions/BadParamException.h"
+#include "cdr/exceptions/BadParamException.h"
 
 $ctx.filename$Ser::$ctx.filename$Ser(eprosima::FastBuffer &buffer) : Cdr(buffer)
 {

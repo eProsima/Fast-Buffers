@@ -4,7 +4,7 @@ main(ctx, blocks) ::= <<
 $fileHeader(file=[ctx.filename, "Example.cpp"], description=["This source file contains an example of serialization/deserialization using one data type in the IDL file."])$
 
 #include "$ctx.filename$Ser.h"
-#include "cpp/exceptions/Exception.h"
+#include "cdr/exceptions/Exception.h"
 
 using namespace eprosima;
 

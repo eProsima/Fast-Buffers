@@ -34,7 +34,7 @@ if %argC% geq 1 (
 )
 
 :: Create symbolic link to EPROSIMADIR in the CDR folder.
-if not exist ..\..\..\CDR\include\eProsima_cpp mklink /J ..\..\..\CDR\include\eProsima_cpp %EPROSIMADIR%\code\eProsima_cpp
+if not exist ..\..\..\CDR\include\cdr\eProsima_cpp mklink /J ..\..\..\CDR\include\cdr\eProsima_cpp %EPROSIMADIR%\code\eProsima_cpp
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
@@ -242,7 +242,7 @@ if exist ..\..\lib rmdir /Q ..\..\lib
 if exist ..\..\include rmdir /Q ..\..\include
 
 :: Remove symbolic link from EPROSIMADIR
-if exist ..\..\..\CDR\include\eProsima_cpp rmdir /Q ..\..\..\CDR\include\eProsima_cpp
+if exist ..\..\..\CDR\include\cdr\eProsima_cpp rmdir /Q ..\..\..\CDR\include\cdr\eProsima_cpp
 
 if %errorstatus%==0 (echo "TEST SUCCESFULLY") else (echo "TEST FAILED")
 exit /b %errorstatus%

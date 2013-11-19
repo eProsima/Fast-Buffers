@@ -68,16 +68,16 @@ function installer
 
 	# CDR headers
 	mkdir -p tmp/$project/include
-	cp -r ../../../../CDR/include/cpp tmp/$project/include
+	cp -r ../../../../CDR/include/cdr tmp/$project/include
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-        if [ -d tmp/$project/include/cpp/.svn ]; then
-            find tmp/$project/include/cpp -iname .svn -exec rm -rf {} \;
+        if [ -d tmp/$project/include/cdr/.svn ]; then
+            find tmp/$project/include/cdr -iname .svn -exec rm -rf {} \;
         fi
 
 	# Copy eProsima header files
-	mkdir -p tmp/$project/include/eProsima_cpp
-	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/eProsima_cpp
+	mkdir -p tmp/$project/include/cdr/eProsima_cpp
+	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/cdr/eProsima_cpp
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

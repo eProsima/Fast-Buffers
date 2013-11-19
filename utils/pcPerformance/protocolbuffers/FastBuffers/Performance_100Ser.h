@@ -2,7 +2,7 @@
 #define _Performance_100SER_H_
 
 #include "Performance_100.h"
-#include "cpp/FastCdr.h"
+#include "cdr/FastCdr.h"
 
 /*!
  * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eprosima::FastBuffer.
