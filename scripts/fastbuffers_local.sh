@@ -11,5 +11,5 @@ if [ $? != 0 ]; then
     java_exec="${JAVA_HOME}/bin/java"
 fi
 
-exec $java_exec com.eprosima.fastbuffers.FastBuffers "$@"
+exec $java_exec -Djava.ext.dirs="$dir/../classes" com.eprosima.fastbuffers.FastBuffers -local "$@"
 

@@ -18,6 +18,7 @@ public class FastBuffers
     private String m_exampleOption = null;
     private String m_serType = "CDR";
     private boolean m_replace = false;
+    private boolean m_local = false;
     
     private static VSConfiguration m_vsconfigurations[]={new VSConfiguration("Debug DLL", "Win32", true, true),
         new VSConfiguration("Release DLL", "Win32", false, true),
@@ -90,6 +91,10 @@ public class FastBuffers
             {
                 showVersion();
                 System.exit(0);
+            }
+            else if(args[count].equals("-local"))
+            {
+                m_local = true;
             }
             else
             {
@@ -309,7 +314,8 @@ public class FastBuffers
             }
             
             makecxx.setAttribute("example", m_exampleOption);
-    		makecxx.setAttribute("arch", arch);	
+    		makecxx.setAttribute("arch", arch);
+    		makecxx.setAttribute("local", m_local);   
             
             returnedValue = Utils.writeFile(m_outputDir + "makefile_" + m_exampleOption, makecxx, m_replace);
     	}

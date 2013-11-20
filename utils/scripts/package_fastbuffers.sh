@@ -24,39 +24,30 @@ function setPlatform
 
 function package
 {
-    # Get current version of GCC.
-    . $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
+    # Get current version of GCC. (Not more needed)
+    #. $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
 
-    # Update and compile CDR library.
+    # Update, compile and package the FastCDR library.
     cd ../CDR
-    # Update CDR library.
+    # Update FastCDR library.
     svn update
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    # Compile CDR library for i86.
-    rm -rf output
-    EPROSIMA_TARGET="i86Linux2.6gcc${gccversion}"
-    rm -r lib/$EPROSIMA_TARGET
-    make
+    cd utils/scripts
+    # Compile and packageing FastCDR library for all archictectures
+    ./package_fastcdr.sh
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    # Compile CDR library for x64.
-    rm -rf output
-    EPROSIMA_TARGET="x64Linux2.6gcc${gccversion}"
-    rm -r lib/$EPROSIMA_TARGET
-    make
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-    cd ../FastBuffers
+    cd ../../../FastBuffers
 
     # Get the current version of FastBuffers
     . $EPROSIMADIR/scripts/common_pack_functions.sh getVersionFromCPP fastbuffersversion src/version.cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
-    # Try to add platform
-    setPlatform "i86Linux2.6gcc${gccversion}"
-    setPlatform "x64Linux2.6gcc${gccversion}"
+    # Try to add platform (No more needed).
+    #setPlatform "i86Linux2.6gcc${gccversion}"
+    #setPlatform "x64Linux2.6gcc${gccversion}"
 
     # Update and compile FastBuffers application.
     # Update FastBuffers application
@@ -99,11 +90,11 @@ function package
     # Create doxygen information.
     # Generate the examples
     # CDR example
-    ./scripts/fastbuffers.sh -replace -ser cdr -o utils/doxygen/examples/cdr utils/doxygen/examples/cdr/FooCdr.idl
+    ./scripts/fastbuffers_local.sh -replace -ser cdr -o utils/doxygen/examples/cdr utils/doxygen/examples/cdr/FooCdr.idl
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Fast CDR example
-    ./scripts/fastbuffers.sh -replace -ser fastcdr -o utils/doxygen/examples/fastcdr utils/doxygen/examples/fastcdr/FooFastCdr.idl
+    ./scripts/fastbuffers_local.sh -replace -ser fastcdr -o utils/doxygen/examples/fastcdr utils/doxygen/examples/fastcdr/FooFastCdr.idl
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     #Export version

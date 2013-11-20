@@ -18,7 +18,7 @@ function execTest
     # Info about test
     echo "EXECUTING $1 for $EPROSIMA_TARGET using CDR"
     # Generates the file with RPCDDS script
-    ../../scripts/fastbuffers.sh -o output -ser cdr -example $EPROSIMA_TARGET "$1/$1.idl"
+    ../../scripts/fastbuffers_local.sh -o output -ser cdr -example $EPROSIMA_TARGET "$1/$1.idl"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Compile the generated library
@@ -48,7 +48,7 @@ function execTest
     # Info about test
     echo "EXECUTING $1 for $EPROSIMA_TARGET using FastCDR"
     # Generates the file with RPCDDS script
-    ../../scripts/fastbuffers.sh -o output -ser fastcdr -example $EPROSIMA_TARGET "$1/$1.idl"
+    ../../scripts/fastbuffers_local.sh -o output -ser fastcdr -example $EPROSIMA_TARGET "$1/$1.idl"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Compile the generated library
@@ -89,27 +89,6 @@ if [ $# -ge 1 ] && [ -n $1 ]; then
             fi
         fi
     fi
-fi
-
-# Create symbolic link to EPROSIMADIR in the CDR folder.
-if [ ! -e "../../../CDR/include/cdr/eProsima_cpp" ]; then
-    ln -s $EPROSIMADIR/code/eProsima_cpp ../../../CDR/include/cdr/eProsima_cpp
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-fi
-
-# Create symbolic link to CDR include directory in FastBuffers folder.
-if [ ! -e "../../include" ]; then
-    ln -s ../CDR/include ../../include
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-fi
-
-# Create symbolic link to CDR library directory in FastBuffers folder.
-if [ ! -e "../../lib" ]; then
-    ln -s ../CDR/lib ../../lib
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
 fi
 
 # Create output directory 
@@ -174,21 +153,6 @@ done
 
 # Remove output directory
 rm -r output
-
-# Remove symbolic link from CDR library directory
-if [ -e ../../lib ]; then
-    rm ../../lib
-fi
-
-# Remove symbolic link from CDR include directory
-if [ -e ../../include ]; then
-    rm ../../include
-fi
-
-# Remove symbolic link from EPROSIMADIR
-if [ -e ../../../CDR/include/cdr/eProsima_cpp ]; then
-    rm ../../../CDR/include/cdr/eProsima_cpp
-fi
 
 if [ $errorstatus == 0 ]; then
     echo "TEST SUCCESSFULLY"

@@ -1,15 +1,15 @@
 group makefile;
 
-makecxx(projnames, example, arch) ::= <<
+makecxx(projnames, example, arch, local) ::= <<
 CPP= g++
 CPPFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x
 LN= g++
 AR=ar
 LDFLAGS = -m$arch$
 
-INCLUDES= -I. -I\$(FAST_BUFFERS)/include
+INCLUDES= -I. $if(local)$-I\$(FASTCDR)/include -I\$(EPROSIMADIR)/code$endif$
 
-LIBS= -L\$(FAST_BUFFERS)/lib/$example$ -lcdr
+LIBS= $if(local)$-L\$(FASTCDR)/lib/$example$$endif$ -lfastcdr
 
 DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
 

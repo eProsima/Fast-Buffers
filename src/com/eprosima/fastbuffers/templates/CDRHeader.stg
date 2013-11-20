@@ -7,7 +7,7 @@ $fileHeader(file=[ctx.filename, "Ser.h"], description=["This header file contain
 #define _$ctx.filename$SER_H_
 
 #include "$ctx.filename$.h"
-#include "cdr/Cdr.h"
+#include "fastcdr/Cdr.h"
 
 /*!
  * @brief This class offers an interface to serialize/deserialize the defined types in the user's IDL file  using a eprosima::FastBuffer.
