@@ -32,10 +32,10 @@ function installer
 	cp ../../../examples/HelloWorld/README.txt tmp/$project/examples/HelloWorld
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	sed "s/TARGET_TO_SUBSTITUTE/i86Linux2.6gcc${gccversion}/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_i86Linux2.6gcc${gccversion}
+	sed "s/TARGET_TO_SUBSTITUTE/i86Linux2.6gcc/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_i86Linux2.6gcc
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	sed "s/TARGET_TO_SUBSTITUTE/x64Linux2.6gcc${gccversion}/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_x64Linux2.6gcc${gccversion}
+	sed "s/TARGET_TO_SUBSTITUTE/x64Linux2.6gcc/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_x64Linux2.6gcc
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	rm tmp/$project/examples/HelloWorld/makefile_HelloWorldExample
@@ -53,51 +53,42 @@ function installer
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
-	# Copy Java classes.
+	# Copy Java dependent classes.
 	mkdir -p tmp/$project/classes
-	cp ../../../classes/*.jar tmp/$project/classes
+	cp ../../../classes/antlr-2.7.7.jar tmp/$project/classes
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	cp ../../../classes/stringtemplate-3.2.1.jar tmp/$project/classes
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Copy build ant script
+	cp ../../../build.xml tmp/$project
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	cp ../../../manifest tmp/$project
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Copy grammar
+	cp -r ../../../grammar tmp/$project
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Copy code
+	cp -r ../../../src tmp/$project
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy scripts
 	mkdir -p tmp/$project/scripts
-	cp ../../../scripts/fastbuffers.sh tmp/$project/scripts
+	cp ../../../scripts/fastbuffers_local.sh tmp/$project/scripts/fastbuffers.sh
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	chmod 755 tmp/$project/scripts/fastbuffers.sh
 
-	# CDR headers
-	mkdir -p tmp/$project/include
-	cp -r ../../../../CDR/include/cdr tmp/$project/include
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-        if [ -d tmp/$project/include/cdr/.svn ]; then
-            find tmp/$project/include/cdr -iname .svn -exec rm -rf {} \;
-        fi
-
-	# Copy eProsima header files
-	mkdir -p tmp/$project/include/cdr/eProsima_cpp
-	cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/cdr/eProsima_cpp
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy CDR libraries
-	mkdir -p tmp/$project/lib
-
-	# Copy i86 CDR libraries. Preserve links.
-	mkdir -p tmp/$project/lib/i86Linux2.6gcc${gccversion}
-	cp -d ../../../../CDR/lib/i86Linux2.6gcc${gccversion}/* tmp/$project/lib/i86Linux2.6gcc${gccversion}
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy x64 CDR libraries. Preserve links.
-	mkdir -p tmp/$project/lib/x64Linux2.6gcc${gccversion}
-	cp -d ../../../../CDR/lib/x64Linux2.6gcc${gccversion}/* tmp/$project/lib/x64Linux2.6gcc${gccversion}
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
 	cd tmp
-	tar cvzf "../${project}_${version}_${distroversion}.tar.gz" $project
+	tar cvzf "../${project}_${version}.tar.gz" $project
 	errorstatus=$?
 	cd ..
 	if [ $errorstatus != 0 ]; then return; fi
@@ -109,9 +100,6 @@ if [ $# -lt 1 ]; then
 fi
 
 version=$1
-
-# Take GCC version
-. $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
 
 # Get distro version
 . $EPROSIMADIR/scripts/common_pack_functions.sh getDistroVersion

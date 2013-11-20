@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="FastBuffers" default="jar" basedir=".">
+<project name="fastbuffers" default="jar" basedir=".">
 	<macrodef name="antlr">
 		<attribute name="base"/>
 		<attribute name="grammar"/>

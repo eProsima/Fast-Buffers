@@ -4,9 +4,9 @@ LN= g++
 AR=ar
 LDFLAGS = -m64
 
-INCLUDES= -I. -I$(FAST_BUFFERS)/include
+INCLUDES= -I.
 
-LIBS= -L$(FAST_BUFFERS)/lib/TARGET_TO_SUBSTITUTE -lcdr
+LIBS= -lfastcdr
 
 DIRECTORIES= output.dir output/TARGET_TO_SUBSTITUTE.dir lib.dir lib/TARGET_TO_SUBSTITUTE.dir bin.dir bin/TARGET_TO_SUBSTITUTE.dir
 
