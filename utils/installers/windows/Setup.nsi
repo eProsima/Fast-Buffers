@@ -3,6 +3,9 @@
 
 Name "Fast Buffers"
 
+### Necesario para tener permisos de borrar ciertos ficheros al desinstalar
+RequestExecutionLevel admin
+
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
 !define COMPANY eProsima
@@ -23,6 +26,7 @@ Name "Fast Buffers"
 !include Sections.nsh
 !include MUI2.nsh
 !include EnvVarUpdate.nsh
+!include EnvVarPage.nsh
 
 # Variables
 Var StartMenuGroup
@@ -35,6 +39,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 !insertmacro MUI_PAGE_LICENSE ..\..\..\doc\licencias\FAST_BUFFERS_LICENSE.txt
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_COMPONENTS
+Page custom VariablesEntornoPage
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -113,26 +118,28 @@ SectionGroup "Target libraries" SECGRP0000
     SectionEnd
 SectionGroupEnd
 
-SectionGroup "Environment variables" SECGRP0001
-    Section "FAST_BUFFERS" SEC0003
-       ${EnvVarUpdate} $0 "FAST_BUFFERS" "P" "HKLM" "$INSTDIR"
-       WriteRegStr HKLM "${REGKEY}\Components" "FAST_BUFFERS" 1
-    SectionEnd
-    Section "Script location" SEC0004
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\scripts"
-       WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
-    SectionEnd
-    Section /o "x64 libraries location" SEC0005
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
-       WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
-    SectionEnd
-    Section /o "i86 libraries location" SEC0006
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
-       WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
-    SectionEnd
-SectionGroupEnd
+#SectionGroup "Environment variables" SECGRP0001
+#    Section "FAST_BUFFERS" SEC0003
+#       ${EnvVarUpdate} $0 "FAST_BUFFERS" "P" "HKLM" "$INSTDIR"
+#       WriteRegStr HKLM "${REGKEY}\Components" "FAST_BUFFERS" 1
+#    SectionEnd
+#    Section "Script location" SEC0004
+#       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\scripts"
+#       WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
+#    SectionEnd
+#    Section /o "x64 libraries location" SEC0005
+#       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
+#       WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
+#    SectionEnd
+#    Section /o "i86 libraries location" SEC0006
+#       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
+#       WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
+#    SectionEnd
+#SectionGroupEnd
 
 Section -post SEC0007
+    SetShellVarContext all
+
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall.exe
@@ -149,6 +156,25 @@ Section -post SEC0007
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
+    
+    ### Actualizamos las variables de entorno que se hayan marcado
+    ${If} $CheckboxFAST_BUFFERS_State == ${BST_CHECKED}
+       ${EnvVarUpdate} $0 "FAST_BUFFERS" "P" "HKLM" "$INSTDIR"
+       WriteRegStr HKLM "${REGKEY}\Components" "FAST_BUFFERS" 1
+    ${EndIf}
+    ${If} $CheckboxScripts_State == ${BST_CHECKED}
+       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\scripts"
+       WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
+    ${EndIf}
+    ${If} $CheckboxX64_State == ${BST_CHECKED}
+       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
+       WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
+    ${EndIf}
+    ${If} $CheckboxI86_State == ${BST_CHECKED}
+       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
+       WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
+    ${EndIf}
+    
 SectionEnd
 
 # Macro for selecting uninstaller sections
@@ -188,22 +214,33 @@ Section /o -un.Main UNSEC0000
     # Delete README
     Delete /REBOOTOK $INSTDIR\README.html
     DeleteRegValue HKLM "${REGKEY}\Components" Main
-SectionEnd
-
-Section /o "-un.i86 libraries location" UNSEC0006
+    
+    ### Quitamos las variables de entorno
     DeleteRegValue HKLM "${REGKEY}\Components" "i86 libraries location"
-SectionEnd
-Section /o "-un.x64 libraries location" UNSEC0005
     DeleteRegValue HKLM "${REGKEY}\Components" "x64 libraries location"
-SectionEnd
-Section /o "-un.Script location" UNSEC0004
     DeleteRegValue HKLM "${REGKEY}\Components" "Script location"
+    DeleteRegValue HKLM "${REGKEY}\Components" "FAST_BUFFERS"
+    
+    ${un.EnvVarUpdate} $0 "FAST_BUFFERS" "R" "HKLM" "$INSTDIR"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\scripts"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
 SectionEnd
 
-Section /o "-un.FAST_BUFFERS" UNSEC0003
-    ${un.EnvVarUpdate} $0 "FAST_BUFFERS" "R" "HKLM" "$INSTDIR"
-    DeleteRegValue HKLM "${REGKEY}\Components" "FAST_BUFFERS"
-SectionEnd
+#Section /o "-un.i86 libraries location" UNSEC0006
+#    DeleteRegValue HKLM "${REGKEY}\Components" "i86 libraries location"
+#SectionEnd
+#Section /o "-un.x64 libraries location" UNSEC0005
+#    DeleteRegValue HKLM "${REGKEY}\Components" "x64 libraries location"
+#SectionEnd
+#Section /o "-un.Script location" UNSEC0004
+#    DeleteRegValue HKLM "${REGKEY}\Components" "Script location"
+#SectionEnd
+
+#Section /o "-un.FAST_BUFFERS" UNSEC0003
+#    ${un.EnvVarUpdate} $0 "FAST_BUFFERS" "R" "HKLM" "$INSTDIR"
+#    DeleteRegValue HKLM "${REGKEY}\Components" "FAST_BUFFERS"
+#SectionEnd
 
 Section /o "-un.i86 libraries" UNSEC0002
     RmDir /r /REBOOTOK "$INSTDIR\lib\i86Win32VS2010"
@@ -216,6 +253,8 @@ Section /o "-un.x64 libraries" UNSEC0001
 SectionEnd
 
 Section -un.post UNSEC0007
+    SetShellVarContext all ### Necesario para tener permisos para borrar archivos en el Menú inicio
+    
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\README.lnk"
@@ -252,8 +291,8 @@ FunctionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${SECGRP0000} "Fast Buffers target libraries."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC0001} "Libraries for x64 target platform."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC0002} "Libraries for i86 target platform."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC0003} "Set the FAST_BUFFERS environment variable."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC0004} "Add to the PATH environment variable the location of Fast Buffers scripts."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC0005} "Add to the PATH environment variable the location of Fast Buffers target libraries for platform x64."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC0006} "Add to the PATH environment variable the location of Fast Buffers target libraries for platform i86."
+#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0003} "Set the FAST_BUFFERS environment variable."
+#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0004} "Add to the PATH environment variable the location of Fast Buffers scripts."
+#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0005} "Add to the PATH environment variable the location of Fast Buffers target libraries for platform x64."
+#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0006} "Add to the PATH environment variable the location of Fast Buffers target libraries for platform i86."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
