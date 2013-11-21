@@ -27,14 +27,8 @@ function package
     # Get current version of GCC. (Not more needed)
     #. $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
 
-    # Update, compile and package the FastCDR library.
-    cd ../CDR
-    # Update FastCDR library.
-    svn update
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-    cd utils/scripts
     # Compile and packageing FastCDR library for all archictectures
+    cd ../CDR/utils/scripts
     ./package_fastcdr.sh
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi

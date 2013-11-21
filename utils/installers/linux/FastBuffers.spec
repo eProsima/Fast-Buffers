@@ -1,4 +1,4 @@
-Name: FastBuffers
+Name: fastbuffers
 Version: VERSION
 Release:	1%{?dist}
 Summary: Java tool that generates source code to serialize data using FastCDR library.
@@ -7,8 +7,8 @@ URL: http://eprosima.com
 Source0: %{name}_%{version}_rpm.tar.gz
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: antlr stringtemplate ant
-Requires: antlr stringtemplate
+BuildRequires: antlr, stringtemplate, ant
+Requires: antlr, stringtemplate, fastcdr
 
 %description
 

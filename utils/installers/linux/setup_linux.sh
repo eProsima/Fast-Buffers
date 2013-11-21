@@ -3,7 +3,7 @@
 # This scripts creates a tar.gz file with all the linux installation
 # @param The version of the project
 
-project="FastBuffers"
+project="fastbuffers"
 
 function installer
 {
@@ -100,7 +100,10 @@ function rpminstaller
 	rm -r tmp/$project/classes
 
 	# Change the script form local to general script.
-	cp ../../../scripts/fastbuffers.sh tmp/$project/scripts
+	cp ../../../scripts/fastbuffers_rpm.sh tmp/$project/scripts/fastbuffers.sh
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	chmod 755 tmp/$project/scripts/fastbuffers.sh
 
 	# Change the build.xml
 	cp build_rpm.xml tmp/$project/build.xml
