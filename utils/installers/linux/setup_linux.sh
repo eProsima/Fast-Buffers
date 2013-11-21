@@ -106,8 +106,12 @@ function installer
 
 function rpminstaller
 {
-	# Remove auxiliary Jar files
-	rm -r tmp/$project/classes
+	# Remove auxiliary Jar files that are not needed.
+    if [ ${distroversion} == CentOS6.4 ]; then
+        rm tmp/$project/classes/antlr-2.7.7.jar
+    else
+        rm -r tmp/$project/classes
+    fi
 
 	# Change the script form local to general script.
 	cp ../../../scripts/fastbuffers_rpm.sh tmp/$project/scripts/fastbuffers.sh
@@ -116,12 +120,20 @@ function rpminstaller
 	chmod 755 tmp/$project/scripts/fastbuffers.sh
 
 	# Change the build.xml
-	cp build_rpm.xml tmp/$project/build.xml
+    if [ ${distroversion} == CentOS6.4 ]; then
+        cp build_rpm_centos.xml tmp/$project/build.xml
+    else
+        cp build_rpm.xml tmp/$project/build.xml
+    fi
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy SPEC file
-	sed "s/VERSION/${version}/g" FastBuffers.spec > ~/rpmbuild/SPECS/FastBuffers.spec
+    if [ ${distroversion} == CentOS6.4 ]; then
+        sed "s/VERSION/${version}/g" FastBuffers_centos.spec > ~/rpmbuild/SPECS/FastBuffers.spec
+    else
+        sed "s/VERSION/${version}/g" FastBuffers.spec > ~/rpmbuild/SPECS/FastBuffers.spec
+    fi
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

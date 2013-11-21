@@ -52,12 +52,6 @@
 			</fileset>
 		</path>
 
-		<path id="run.classpath">
-			<fileset dir="${lib.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</path>
-
 		<property name="build.dist" value="${build.dir}${file.separator}${name}-${version}"/>
 
 		<property name="dist.basedir" value="${build.dir}"/>
