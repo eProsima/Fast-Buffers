@@ -5,7 +5,7 @@
 
 # Configuration
 BASE_FLAGS=""
-BASE_JARS="antlr stringtemplate fastbuffers"
+BASE_JARS="antlr-2.7.7 stringtemplate-3.2.1 fastbuffers"
 BASE_OPTIONS=""
 MAIN_CLASS=com.eprosima.fastbuffers.FastBuffers
 
