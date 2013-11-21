@@ -1,7 +1,17 @@
 #!/bin/sh
 
 # This scripts creates a tar.gz file with all the linux installation
+# Also it creates a RPM package.
 # @param The version of the project
+
+# To create the source tar file you have to install next packages:
+# ant, antlr, stringtemplate
+
+# To create RPM in Fedora you have to follow this section on the link:
+#   https://fedoraproject.org/wiki/How_to_create_an_RPM_package#Preparing_your_system
+
+# To create RPM in CentOs you have to follow this link:
+#   http://wiki.centos.org/HowTos/SetupRpmBuildEnvironment
 
 project="fastbuffers"
 
