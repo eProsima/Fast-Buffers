@@ -88,9 +88,9 @@ Section -Main SEC0000
     File "..\..\..\scripts\fastbuffers.bat"
     # Copy CDR header files.
     SetOutPath $INSTDIR\include
-    File /r "..\..\..\..\CDR\include\cdr"
+    File /r "$%FASTCDR%\include\fastcdr"
     # Copy eProsima header files.
-    SetOutPath $INSTDIR\include\cdr\eProsima_cpp
+    SetOutPath $INSTDIR\include\fastcdr\eProsima_cpp
     File "$%EPROSIMADIR%\code\eProsima_cpp\eProsima_auto_link.h"
     # Copy licenses.
     SetOutPath $INSTDIR
@@ -106,14 +106,14 @@ SectionGroup "Target libraries" SECGRP0000
     Section "x64 libraries" SEC0001
         SetOutPath $INSTDIR\lib\x64Win64VS2010
         SetOverwrite on
-        File /r "..\..\..\..\CDR\lib\x64Win64VS2010\*"
+        File /r "$%FASTCDR%\lib\x64Win64VS2010\*"
         WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
     SectionEnd
 
     Section "i86 libraries" SEC0002
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
-        File /r "..\..\..\..\CDR\lib\i86Win32VS2010\*"
+        File /r "$%FASTCDR%\lib\i86Win32VS2010\*"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
     SectionEnd
 SectionGroupEnd
@@ -205,9 +205,9 @@ Section /o -un.Main UNSEC0000
     # Delete script.
     Delete /REBOOTOK "$INSTDIR\scripts\fastbuffers.bat"
     # Delete eProsima header files.
-    Delete /REBOOTOK "$INSTDIR\include\cdr\eProsima_cpp\eProsima_auto_link.h"
+    Delete /REBOOTOK "$INSTDIR\include\fastcdr\eProsima_cpp\eProsima_auto_link.h"
     # Delete CDR header files.
-    RmDir /r /REBOOTOK "$INSTDIR\include\cdr"
+    RmDir /r /REBOOTOK "$INSTDIR\include\fastcdr"
     # Delete licences.
     Delete /REBOOTOK $INSTDIR\LGPLv3_LICENSE.txt
     Delete /REBOOTOK $INSTDIR\FAST_BUFFERS_LICENSE.txt

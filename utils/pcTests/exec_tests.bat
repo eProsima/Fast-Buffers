@@ -33,21 +33,6 @@ if %argC% geq 1 (
     )
 )
 
-:: Create symbolic link to EPROSIMADIR in the CDR folder.
-if not exist ..\..\..\CDR\include\cdr\eProsima_cpp mklink /J ..\..\..\CDR\include\cdr\eProsima_cpp %EPROSIMADIR%\code\eProsima_cpp
-set errorstatus=%ERRORLEVEL%
-if not %errorstatus%==0 goto :exit
-
-:: Create symbolic link to CDR include directory in FastBuffers folder.
-if not exist ..\..\include mklink /J ..\..\include ..\..\..\CDR\include
-set errorstatus=%ERRORLEVEL%
-if not %errorstatus%==0 goto :exit
-
-:: Create symbolic link to CDR library directory in FastBuffers folder.
-if not exist ..\..\lib mklink /J ..\..\lib ..\..\..\CDR\lib
-set errorstatus=%ERRORLEVEL%
-if not %errorstatus%==0 goto :exit
-
 :: Find all directories.
 for /D %%D in ("*") do (
    set exec_test_bool=0
@@ -125,7 +110,7 @@ mkdir output
 ::Info about test
 echo "EXECUTING %1 for %EPROSIMA_TARGET% using CDR"
 :: Generates the file with RPCDDS script
-call ..\..\scripts\fastbuffers.bat -o output -ser cdr -example %EPROSIMA_TARGET% "%1\%1.idl"
+call ..\..\scripts\fastbuffers.bat -o output -ser cdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
@@ -180,7 +165,7 @@ mkdir output
 ::Info about test
 echo "EXECUTING %1 for %EPROSIMA_TARGET% using CDR"
 :: Generates the file with RPCDDS script
-call ..\..\scripts\fastbuffers.bat -o output -ser fastcdr -example %EPROSIMA_TARGET% "%1\%1.idl"
+call ..\..\scripts\fastbuffers.bat -o output -ser fastcdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
@@ -234,15 +219,6 @@ goto :EOF
 :exit
 :: Remove output directory
 rd /S /Q output
-
-:: Remove symbolic link from CDR library directory
-if exist ..\..\lib rmdir /Q ..\..\lib
-
-:: Remove symbolic link from CDR include directory
-if exist ..\..\include rmdir /Q ..\..\include
-
-:: Remove symbolic link from EPROSIMADIR
-if exist ..\..\..\CDR\include\cdr\eProsima_cpp rmdir /Q ..\..\..\CDR\include\cdr\eProsima_cpp
 
 if %errorstatus%==0 (echo "TEST SUCCESFULLY") else (echo "TEST FAILED")
 exit /b %errorstatus%

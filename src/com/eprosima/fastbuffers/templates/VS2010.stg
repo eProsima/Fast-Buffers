@@ -34,7 +34,7 @@ EndGlobal
  *   configuration - local
  *   filter        - local
  */ 
-project(name, guid, example, arch, configurations, client) ::= <<
+project(name, guid, example, arch, local, configurations) ::= <<
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
@@ -71,7 +71,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
-      <AdditionalIncludeDirectories>\$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$if(!local)$\$(FAST_BUFFERS)\include;$else$\$(FASTCDR)\include;\$(EPROSIMADIR)\code;$endif$%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_ALL_DYN_LINK;USER_CPP_DLL_EXPORT;$endif$$if(it.debug)$_DEBUG;$else$NDEBUG;$endif$</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -82,7 +82,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       $if(it.dll)$
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>\$(FAST_BUFFERS)\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$if(!local)$\$(FAST_BUFFERS)\lib\\$example$;$else$\$(FASTCDR)\lib\\$example$;$endif$%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>\$(TargetDir)\$(TargetName).lib</ImportLibrary>
       $endif$   
     </Link>
@@ -106,7 +106,7 @@ project(name, guid, example, arch, configurations, client) ::= <<
 </Project>
 >>
 
-projectExample(name, guid, guidParent, example, arch, configurations, client) ::= <<
+projectExample(name, guid, guidParent, example, arch, local, configurations) ::= <<
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
@@ -143,7 +143,7 @@ projectExample(name, guid, guidParent, example, arch, configurations, client) ::
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
-      <AdditionalIncludeDirectories>\$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$if(!local)$\$(FAST_BUFFERS)\include;$else$\$(FASTCDR)\include;\$(EPROSIMADIR)\code;$endif$%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_ALL_DYN_LINK;USER_CPP_DLL_EXPORT;$endif$$if(it.debug)$_DEBUG;$else$NDEBUG;$endif$</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -153,7 +153,7 @@ projectExample(name, guid, guidParent, example, arch, configurations, client) ::
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$name$$if(!it.dll)$z$endif$$if(it.debug)$d$endif$.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>\$(FAST_BUFFERS)\lib\\$example$;.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$if(!local)$\$(FAST_BUFFERS)\lib\\$example$;$else$\$(FASTCDR)\lib\\$example$;$endif$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>};separator="\n"$
   <ItemGroup>

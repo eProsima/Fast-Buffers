@@ -244,6 +244,7 @@ public class FastBuffers
                 project.setAttribute("name", idlFilename);
                 project.setAttribute("example", m_exampleOption);
                 project.setAttribute("arch", arch);
+                project.setAttribute("local", m_local);
                 projectFiles.setAttribute("name", idlFilename);
                 
                 projectExample.setAttribute("guid", guidExample);
@@ -251,6 +252,7 @@ public class FastBuffers
                 projectExample.setAttribute("name", idlFilename);
                 projectExample.setAttribute("example", m_exampleOption);
                 projectExample.setAttribute("arch", arch);
+                projectExample.setAttribute("local", m_local);
                 projectExampleFiles.setAttribute("name", idlFilename);
                 
                 // project configurations   

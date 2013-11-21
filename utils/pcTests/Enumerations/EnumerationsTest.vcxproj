@@ -167,38 +167,38 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Enumerationszd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Enumerationszd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;EPROSIMA_ALL_DYN_LINK;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
       <AdditionalDependencies>Enumerationsd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -206,12 +206,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;EPROSIMA_ALL_DYN_LINK;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
       <AdditionalDependencies>Enumerationsd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -221,7 +221,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -229,7 +229,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Enumerationsz.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -238,7 +238,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -246,7 +246,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Enumerationsz.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
@@ -255,14 +255,14 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN3;EPROSIMA_ALL_DYN_LINK;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\i86Win32VS2010;.\lib\i86Win32VS2010</AdditionalLibraryDirectories>
       <AdditionalDependencies>Enumerations.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -272,14 +272,14 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FASTCDR)\include;$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN3;EPROSIMA_ALL_DYN_LINK;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(FAST_BUFFERS)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FASTCDR)\lib\x64Win64VS2010;.\lib\x64Win64VS2010</AdditionalLibraryDirectories>
       <AdditionalDependencies>Enumerations.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
