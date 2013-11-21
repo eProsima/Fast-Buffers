@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!-- buildrootdir property has to be pased as argument to ant program.-->
+<project name="fastbuffers" default="jar" basedir=".">
+	<macrodef name="antlr">
+		<attribute name="base"/>
+		<attribute name="grammar"/>
+		<sequential>
+			<java classname="antlr.Tool" classpath="/usr/share/java/antlr-2.7.7.jar">
+				<arg value="-o"/>
+				<arg value="@{base}"/>
+				<arg value="@{grammar}"/>
+			</java>
+		</sequential>
+	</macrodef>
+
+	<target name="init">
+		<tstamp>
+			<format property="src.timestamp" pattern="dd/MM/yyyy"/>
+			<format property="year" pattern="2009-yyyy"/>
+		</tstamp>
+
+		<!-- Allow any user specific values to override the defaults -->
+		<property file="./build.properties"/>
+		<property environment="env"/>
+
+		<property name="Name" value="${ant.project.name}"/>
+		<property name="name" value="${ant.project.name}"/>
+		<property name="copyright" value="${year} Proyectos y Sistema de Mantenimiento S.L"/>
+
+		<!-- Filters -->
+		<filter token="date" value="${src.timestamp}"/>
+		<filter token="version" value="${version}"/>
+		<filter token="copyright" value="${copyright}"/>
+
+		<!-- Source related properties -->
+		<property name="src.dir" value="${basedir}${file.separator}src"/>
+		<property name="src.java" value="${src.dir}"/>
+        <!-- buildrootdir is pased as argument to ant program.-->
+		<property name="lib.dir" value="${basedir}${file.separator}classes${file.separator}"/>
+		<property name="grammar.dir" value="${basedir}${file.separator}grammar"/>
+		<property name="src.excludes" value=""/>
+
+		<!-- Build related properties -->
+		<property name="build.dir" value="${basedir}${file.separator}build"/>
+		<property name="build.src" value="${build.dir}${file.separator}src"/>
+		<property name="build.classes" value="${build.dir}"/>
+		<property name="build.javadocs" value="${basedir}${file.separator}docs${file.separator}api"/>
+		<property name="build.jar" value="${lib.dir}${file.separator}${name}.jar"/>
+
+		<property name="build.dist" value="${build.dir}${file.separator}${name}-${version}"/>
+
+		<property name="dist.basedir" value="${build.dir}"/>
+		<property name="dist.includes" value="${name}${file.separator}**"/>
+		<property name="dist.excludes"
+	      value="**/prj/**,
+	            **/dist/**,
+	             **/test/**,
+	             **/model/**,
+	             **/build/**,
+	             **/.DS_Store"
+	      />
+		<property name="packages" value="${build.packages}"/>
+		<property name="library.includes" value="${bundle.includes}"/>
+
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Basic build targets                                                 -->
+	<!-- =================================================================== -->
+	<target name="prepare-sources" depends="init">
+		<mkdir dir="${build.dir}"/>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Compiles the source code                                            -->
+	<!-- =================================================================== -->
+	<target name="compile" depends="init, prepare-sources" description="Compiles the sources. (Default)">
+		<!-- Echo compilation properties -->
+		<echo>Building ANTLR grammars... Some warnings are expected...</echo>
+        <antlr base="${src.java}${file.separator}com/eprosima/${name}/parser" grammar="${grammar.dir}${file.separator}idl.g"/>
+		<echo>Compiling java code...</echo>
+		<mkdir dir="${build.classes}"/>
+		<javac source="1.6" target="1.6" srcdir="${src.java}"
+			destdir="${build.classes}" classpath="/usr/share/java/antlr-2.7.7:/usr/share/java/stringtemplate-3.2.1.jar">
+		</javac>
+		<copy todir="${build.classes}">
+		    <fileset dir="${src.dir}" includes="**/*.stg"/>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${src.dir}">
+    			<include name="version.cpp"/>
+				<include name="platforms"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Creates the jar archive                                             -->
+	<!-- =================================================================== -->
+	<target name="jar" depends="init,compile" description="Builds the library (.jar).">
+		<jar jarfile="${build.jar}"
+	      basedir="${build.classes}"
+	      manifest="manifest">
+		</jar>
+
+	</target>
+
+	<!-- =================================================================== -->
+    <!-- Install components to be packaged in a RPM file. ant jar had to be executed-->
+	<!-- =================================================================== -->
+	<target name="install" depends="init" description="Copy necessary data for RPM in the buildrootdir">
+        <!-- Copy Jar file -->
+        <copy todir="${buildrootdir}${file.separator}usr${file.separator}share${file.separator}java"
+            file="${build.jar}"/>
+        <!-- Copy documentation -->
+        <copy todir="${buildrootdir}${file.separator}usr${file.separator}share${file.separator}doc${file.separator}${name}">
+            <fileset dir="${basedir}${file.separator}doc" includes="**/*"/>
+        </copy>
+        <!-- Copy example -->
+        <copy todir="${buildrootdir}${file.separator}usr${file.separator}share${file.separator}${name}${file.separator}examples">
+            <fileset dir="${basedir}${file.separator}examples" includes="**/*"/>
+        </copy>
+        <!-- Copy licencias -->
+        <copy todir="${buildrootdir}${file.separator}usr${file.separator}share${file.separator}doc${file.separator}${name}">
+            <fileset dir="${basedir}">
+                <include name="FAST_BUFFERS_LICENSE.txt"/>
+                <include name="LGPLv3_LICENSE.txt"/>
+            </fileset>
+        </copy>
+        <!-- Copy script -->
+        <copy todir="${buildrootdir}${file.separator}usr${file.separator}bin"
+            file="${basedir}${file.separator}scripts${file.separator}${name}.sh"/>
+	</target>
+</project>

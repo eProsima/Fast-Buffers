@@ -94,6 +94,49 @@ function installer
 	if [ $errorstatus != 0 ]; then return; fi
 }
 
+function rpminstaller
+{
+	# Remove auxiliary Jar files
+	rm -r tmp/$project/classes
+
+	# Change the script form local to general script.
+	cp ../../../scripts/fastbuffers.sh tmp/$project/scripts
+
+	# Change the build.xml
+	cp build_rpm.xml tmp/$project/build.xml
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Copy SPEC file
+	sed "s/VERSION/${version}/g" FastBuffers.spec > ~/rpmbuild/SPECS/FastBuffers.spec
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Create new source
+	cd tmp
+	tar cvzf "../${project}_${version}_rpm.tar.gz" $project
+	errorstatus=$?
+	cd ..
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Copy source
+	mv "${project}_${version}_rpm.tar.gz" ~/rpmbuild/SOURCES
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Go to directory to build.
+	cd ~/rpmbuild/SPECS
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+	# Build command
+	rpmbuild -bb FastBuffers.spec
+	errorstatus=$?
+	# Return
+	cd -
+	if [ $errorstatus != 0 ]; then return; fi
+}
+
 if [ $# -lt 1 ]; then
 	echo "Needs as parameter the version of the product $project"
 	exit -1
@@ -109,6 +152,9 @@ mkdir tmp
 mkdir tmp/$project
 
 installer
+
+# TODO Detect if the distro suport RPM
+[ $errorstatus == 0 ] && { rpminstaller; }
 
 # Remove temporaly directory
 rm -rf tmp
