@@ -27,6 +27,7 @@ RequestExecutionLevel admin
 !include MUI2.nsh
 !include EnvVarUpdate.nsh
 !include EnvVarPage.nsh
+!include x64.nsh
 
 # Variables
 Var StartMenuGroup
@@ -51,7 +52,7 @@ Page custom VariablesEntornoPage
 
 # Installer attributes
 OutFile FastBuffers_${VERSION}.exe
-InstallDir "$PROGRAMFILES\eProsima\FastBuffers"
+#InstallDir "$PROGRAMFILES\eProsima\FastBuffers" ### El directorio de instalación se fija ahora en onInit
 CRCCheck on
 XPStyle on
 ShowInstDetails show
@@ -269,6 +270,14 @@ SectionEnd
 
 # Installer functions
 Function .onInit
+
+    # La variable PROGRAMFILES depende de si estamos en x64 o i86
+    ${If} ${RunningX64}
+        StrCpy '$INSTDIR' '$PROGRAMFILES64\eProsima\FastBuffers'
+    ${else}
+        StrCpy '$INSTDIR' '$PROGRAMFILES\eProsima\FastBuffers'
+    ${EndIf}
+    
     InitPluginsDir
     Push $R1
     File /oname=$PLUGINSDIR\spltmp.jpg "$%EPROSIMADIR%\logo\eProsimaLogoAndNameFinal_wBorder_460.jpg"
@@ -279,6 +288,14 @@ FunctionEnd
 
 # Uninstaller functions
 Function un.onInit
+
+    # La variable PROGRAMFILES depende de si estamos en x64 o i86
+    ${If} ${RunningX64}
+        StrCpy '$INSTDIR' '$PROGRAMFILES64\eProsima\FastBuffers'
+    ${else}
+        StrCpy '$INSTDIR' '$PROGRAMFILES\eProsima\FastBuffers'
+    ${EndIf}
+
     ReadRegStr $INSTDIR HKLM "${REGKEY}" Path
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
