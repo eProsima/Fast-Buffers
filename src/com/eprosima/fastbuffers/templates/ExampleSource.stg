@@ -41,6 +41,10 @@ module(ctx, name, definition_list) ::= <<
 $definition_list$
 >>
 
+interface(ctx, name, definition_list) ::= <<
+$definition_list$
+>>
+
 definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>

@@ -7,7 +7,7 @@ header {
     import com.eprosima.fastbuffers.typecode.*;
     import com.eprosima.fastbuffers.util.Pair;
     import com.eprosima.fastbuffers.Utils;
-    import com.eprosima.fastbuffers.exceptions.ParseException;
+    import com.eprosima.fastbuffers.exceptions.*;
     
     import org.antlr.stringtemplate.StringTemplate;
    
@@ -158,7 +158,7 @@ specification [String outdir, String idlFilename, String serType, boolean replac
     
     TemplateGroup tg = null;
 }
-	:   (import_dcl)* (tg=definition{maintemplates.setAttribute("blocks", tg);})+
+	:   (import_dcl)* (tg=definition{ if (tg != null) maintemplates.setAttribute("blocks", tg);	})+
 {
     if(Utils.writeFile(outdir + idlFilename + ".h", maintemplates.getTemplate("TypesHeader"), replace))
     {
@@ -182,7 +182,7 @@ definition returns [TemplateGroup tg = null]
 	:   (   tg=type_dcl SEMI!
 	    |   const_dcl SEMI!
 	    |   except_dcl SEMI!
-	    |   (("abstract" | "local")? "interface") => interf SEMI!
+	    |   (("abstract" | "local")? "interface") => tg=interf SEMI!
 	    |   tg=module SEMI!
 	    |   (("abstract" | "custom")? "valuetype") => value SEMI!
 	    |   type_id_dcl SEMI!
@@ -218,20 +218,20 @@ definition_list returns [TemplateGroup dlTemplates = tmanager.createTemplateGrou
 	:   (tg=definition{dlTemplates.setAttribute("definitions", tg);})+
 	;
 
-interf
-    : ( interface_dcl
+interf returns [TemplateGroup tg = null]
+    : ( tg=interface_dcl
       | forward_dcl
       )
     ;
  
 // Grammar changed to differentiate between 
 // forward declared interfaces and empty interfaces
-interface_dcl
+interface_dcl returns [TemplateGroup tg = null]
 	:   (( "abstract" | "local" )?
  	    "interface"^
  	    identifier
 	    ( interface_inheritance_spec )?	   
-	    LCURLY interface_body RCURLY) 
+	    LCURLY tg=interface_body RCURLY) 
 	;
 	
 forward_dcl
@@ -241,12 +241,18 @@ forward_dcl
  	;
 
 
-interface_body
-	:   ( export )*
+interface_body returns [TemplateGroup interfaceTemplates = tmanager.createTemplateGroup("interface") ]
+{
+    TemplateGroup tg = null;
+}
+	:   ( tg=export {interfaceTemplates.setAttribute("definition_list", tg);} )*
 	;
 
-export
-	:   (   type_dcl SEMI!
+export returns [TemplateGroup dlTemplates = tmanager.createTemplateGroup("definition_list")]
+{
+    TemplateGroup tg = null;
+}
+	:   (   tg=type_dcl{dlTemplates.setAttribute("definitions", tg);} SEMI!
 	    |   const_dcl SEMI!
 	    |   except_dcl SEMI!
 	    |   attr_dcl SEMI!
@@ -280,6 +286,9 @@ scoped_name returns [String literal = ""]
 	;
 
 value
+{
+    System.out.println("WARNING: ValueType declarations are not supported. Ignoring...");
+}
 	:   ( value_dcl
 	    | value_abs_dcl
 	    | value_box_dcl
@@ -392,6 +401,9 @@ init_param_attribute
 	;
 
 const_dcl
+{
+    System.out.println("WARNING: Constant declarations are not supported. Ignoring...");
+}
 	:   "const"^ const_type identifier ASSIGN! const_exp
 	;
 
@@ -420,10 +432,10 @@ or_expr returns [String literal = null]
     String aux = null;
 }
 	:   literal=xor_expr
-	    (  {literal += LT(1).getText();}
+	    (  {literal += LT(1).getText(); }
 	       OR^ // or_op
 	       aux=xor_expr
-	       {literal += aux;}
+	       { literal += aux; }
 	    )*
 	;
 
@@ -582,7 +594,15 @@ boolean_literal returns [String lit = null]
 	;
 
 positive_int_const returns [String literal = null]
-	:    literal=const_exp
+	:    literal=const_exp {
+	
+	try { 
+        Integer.parseInt(literal); 
+    } catch(NumberFormatException e) { 
+        throw new ParseException(ctx.getFilename(), LT(0).getLine(), "The expression '" + literal + "' is not supported. You must use a positive integer.");
+    }
+    
+    }
 	;
 
 
@@ -748,10 +768,7 @@ struct_type returns [TemplateGroup structTemplates = tmanager.createTemplateGrou
     StructTypeCode structTP = null;
 }
 	:   "struct"^
-	    name=identifier
-	    {
-	       structTP = new StructTypeCode(ctx.getScope(), name);
-	    }
+	    name=identifier { structTP = new StructTypeCode(ctx.getScope(), name); }
 	    LCURLY! member_list[structTP] RCURLY!
 	    {
 	       structTemplates.setAttribute("ctx", ctx);
@@ -987,6 +1004,9 @@ attr_dcl
 	;
 
 except_dcl
+{
+    System.out.println("WARNING: Exception declarations are not supported. Ignoring...");
+}
 	:   "exception"^
 	    identifier
 	    LCURLY! opt_member_list RCURLY!
@@ -1080,12 +1100,17 @@ imported_scope
 	;
 
 type_id_dcl
+{
+    System.out.println("WARNING: TypeID declarations are not supported. Ignoring...");
+}
 	:   "typeid"^
 	    scoped_name
 	    string_literal
 	;
 
-type_prefix_dcl
+type_prefix_dcl {
+    System.out.println("WARNING: TypePrefix declarations are not supported. Ignoring...");
+}
 	:   "typeprefix"^
 	    scoped_name
 	    string_literal
@@ -1135,6 +1160,9 @@ exception_list
 // Component Stuff
 
 component
+{
+    System.out.println("WARNING: Component declarations are not supported. Ignoring...");
+}
 	:   "component"^
 	    identifier
 	    (component_dcl)?
@@ -1195,6 +1223,9 @@ consumes_dcl
 	;
 
 home_dcl
+{
+    System.out.println("WARNING: Home declarations are not supported. Ignoring...");
+}
 	:   home_header home_body
 	;
 
@@ -1238,6 +1269,9 @@ finder_dcl
 	;
 
 event
+{
+    System.out.println("WARNING: Event declarations are not supported. Ignoring...");
+}
 	:   ( event_abs
 	    | event_custom
 	    | event_dcl
