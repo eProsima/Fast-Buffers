@@ -33,7 +33,7 @@ public class FastBuffers
         
         while(count < args.length)
         {
-            if(args[count].equals("-o"))
+            if(args[count].equals("-d"))
             {
                 if(++count < args.length)
                 {
@@ -42,7 +42,7 @@ public class FastBuffers
                 }
                 else
                 {
-                    throw new BadArgumentException("No directory after -o argument.");
+                    throw new BadArgumentException("No directory after -d argument.");
                 }
             }
             else if(args[count].equals("-example"))
@@ -332,7 +332,7 @@ public class FastBuffers
         System.out.println("\twhere the options are:");
         System.out.println("\t\t-help: Show help.");
         System.out.println("\t\t-version: shows the current version of Fast Buffers.");
-        System.out.println("\t\t-o <directory>: Output directory where the generated files will be put.");         
+        System.out.println("\t\t-d <directory>: Output directory where the generated files will be put.");         
         System.out.println("\t\t-example <platform>: Generate solution for specific platform (example: x64Win64VS2010)\n" +
         "                        Platforms supported:");
         for(int count = 0; count < m_platforms.size(); ++count)

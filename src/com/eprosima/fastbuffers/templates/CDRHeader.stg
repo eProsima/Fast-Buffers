@@ -34,12 +34,13 @@ module(ctx, name, definition_list) ::= <<
 $definition_list$
 >>
 
-interface(ctx, name, definition_list) ::= <<
-$definition_list$
->>
-
 definition_list(definitions) ::= <<
 $definitions; separator="\n"$
+>>
+
+export_list(ctx, name, exports) ::= <<
+$exports; separator="\n"$
+
 >>
 
 membered_type(ctx, mtype) ::=<<

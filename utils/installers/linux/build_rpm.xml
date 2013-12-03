@@ -81,7 +81,7 @@
 		<echo>Compiling java code...</echo>
 		<mkdir dir="${build.classes}"/>
 		<javac source="1.6" target="1.6" srcdir="${src.java}"
-			destdir="${build.classes}" classpath="/usr/share/java/antlr-2.7.7:/usr/share/java/stringtemplate-3.2.1.jar">
+			destdir="${build.classes}" classpath="/usr/share/java/antlr-2.7.7.jar:/usr/share/java/stringtemplate-3.2.1.jar">
 		</javac>
 		<copy todir="${build.classes}">
 		    <fileset dir="${src.dir}" includes="**/*.stg"/>

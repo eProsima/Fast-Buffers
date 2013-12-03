@@ -215,7 +215,7 @@ definition_list returns [TemplateGroup dlTemplates = tmanager.createTemplateGrou
 {
     TemplateGroup tg = null;
 }
-	:   (tg=definition{dlTemplates.setAttribute("definitions", tg);})+
+	:   (tg=definition{if(tg != null)dlTemplates.setAttribute("definitions", tg);})+
 	;
 
 interf returns [TemplateGroup tg = null]
@@ -241,18 +241,15 @@ forward_dcl
  	;
 
 
-interface_body returns [TemplateGroup interfaceTemplates = tmanager.createTemplateGroup("interface") ]
+interface_body returns [TemplateGroup interfaceTemplates = tmanager.createTemplateGroup("export_list")]
 {
     TemplateGroup tg = null;
 }
-	:   ( tg=export {interfaceTemplates.setAttribute("definition_list", tg);} )*
+	:   ( tg=export {if(tg != null)interfaceTemplates.setAttribute("exports", tg);} )*
 	;
 
-export returns [TemplateGroup dlTemplates = tmanager.createTemplateGroup("definition_list")]
-{
-    TemplateGroup tg = null;
-}
-	:   (   tg=type_dcl{dlTemplates.setAttribute("definitions", tg);} SEMI!
+export returns [TemplateGroup tg = null]
+	:   (   tg=type_dcl SEMI!
 	    |   const_dcl SEMI!
 	    |   except_dcl SEMI!
 	    |   attr_dcl SEMI!
@@ -287,7 +284,7 @@ scoped_name returns [String literal = ""]
 
 value
 {
-    System.out.println("WARNING: ValueType declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): ValueType declarations are not supported. Ignoring...");
 }
 	:   ( value_dcl
 	    | value_abs_dcl
@@ -402,7 +399,7 @@ init_param_attribute
 
 const_dcl
 {
-    System.out.println("WARNING: Constant declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): Constant declarations are not supported. Ignoring...");
 }
 	:   "const"^ const_type identifier ASSIGN! const_exp
 	;
@@ -1005,7 +1002,7 @@ attr_dcl
 
 except_dcl
 {
-    System.out.println("WARNING: Exception declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): Exception declarations are not supported. Ignoring...");
 }
 	:   "exception"^
 	    identifier
@@ -1101,7 +1098,7 @@ imported_scope
 
 type_id_dcl
 {
-    System.out.println("WARNING: TypeID declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): TypeID declarations are not supported. Ignoring...");
 }
 	:   "typeid"^
 	    scoped_name
@@ -1109,7 +1106,7 @@ type_id_dcl
 	;
 
 type_prefix_dcl {
-    System.out.println("WARNING: TypePrefix declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): TypePrefix declarations are not supported. Ignoring...");
 }
 	:   "typeprefix"^
 	    scoped_name
@@ -1161,7 +1158,7 @@ exception_list
 
 component
 {
-    System.out.println("WARNING: Component declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): Component declarations are not supported. Ignoring...");
 }
 	:   "component"^
 	    identifier
@@ -1224,7 +1221,7 @@ consumes_dcl
 
 home_dcl
 {
-    System.out.println("WARNING: Home declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): Home declarations are not supported. Ignoring...");
 }
 	:   home_header home_body
 	;
@@ -1270,7 +1267,7 @@ finder_dcl
 
 event
 {
-    System.out.println("WARNING: Event declarations are not supported. Ignoring...");
+    System.out.println("WARNING (Line " + LT(0).getLine() + "): Event declarations are not supported. Ignoring...");
 }
 	:   ( event_abs
 	    | event_custom
