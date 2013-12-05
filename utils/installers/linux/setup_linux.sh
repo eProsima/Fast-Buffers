@@ -59,7 +59,7 @@ function installer
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy README
-	cp ../../../README.html tmp/$project
+	cp ../../../README.html tmp/$project/doc
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

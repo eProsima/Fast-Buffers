@@ -87,11 +87,11 @@ if not %errorstatus%==0 goto :exit
 :: Create doxygen information.
 :: Generate the examples
 :: CDR example
-call scripts\fastbuffers.bat -replace -ser cdr -o utils\doxygen\examples\cdr utils\doxygen\examples\cdr\FooCdr.idl
+call scripts\fastbuffers.bat -replace -ser cdr -d utils\doxygen\examples\cdr utils\doxygen\examples\cdr\FooCdr.idl
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Fast CDR example
-call scripts\fastbuffers.bat -replace -ser fastcdr -o utils\doxygen\examples\fastcdr utils\doxygen\examples\fastcdr\FooFastCdr.idl
+call scripts\fastbuffers.bat -replace -ser fastcdr -d utils\doxygen\examples\fastcdr utils\doxygen\examples\fastcdr\FooFastCdr.idl
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Export version

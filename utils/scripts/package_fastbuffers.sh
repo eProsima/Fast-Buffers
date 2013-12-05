@@ -77,18 +77,18 @@ function package
     cd ..
 
     # Create README
-    soffice --headless "macro:///eProsima.documentation.changeVersionToHTML($PWD/README.odt,$fastbuffersversion)"
+    soffice --headless "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML($PWD/README.odt,$fastbuffersversion,./doc/,./)"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
     # Create doxygen information.
     # Generate the examples
     # CDR example
-    ./scripts/fastbuffers_local.sh -replace -ser cdr -o utils/doxygen/examples/cdr utils/doxygen/examples/cdr/FooCdr.idl
+    ./scripts/fastbuffers_local.sh -replace -ser cdr -d utils/doxygen/examples/cdr utils/doxygen/examples/cdr/FooCdr.idl
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     # Fast CDR example
-    ./scripts/fastbuffers_local.sh -replace -ser fastcdr -o utils/doxygen/examples/fastcdr utils/doxygen/examples/fastcdr/FooFastCdr.idl
+    ./scripts/fastbuffers_local.sh -replace -ser fastcdr -d utils/doxygen/examples/fastcdr utils/doxygen/examples/fastcdr/FooFastCdr.idl
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     #Export version

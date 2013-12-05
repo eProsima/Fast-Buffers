@@ -110,7 +110,7 @@ mkdir output
 ::Info about test
 echo "EXECUTING %1 for %EPROSIMA_TARGET% using CDR"
 :: Generates the file with RPCDDS script
-call ..\..\scripts\fastbuffers.bat -o output -ser cdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
+call ..\..\scripts\fastbuffers.bat -d output -ser cdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
@@ -165,7 +165,7 @@ mkdir output
 ::Info about test
 echo "EXECUTING %1 for %EPROSIMA_TARGET% using CDR"
 :: Generates the file with RPCDDS script
-call ..\..\scripts\fastbuffers.bat -o output -ser fastcdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
+call ..\..\scripts\fastbuffers.bat -d output -ser fastcdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
