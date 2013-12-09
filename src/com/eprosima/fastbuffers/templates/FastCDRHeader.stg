@@ -17,10 +17,10 @@ class user_cpp_DllExport $ctx.filename$Ser : public eprosima::FastCdr
 { 
 public:
     /*!
-     * @brief This constructor creates a $ctx.filename$Ser object that could serialize/deserialize
+     * @brief This constructor creates a $ctx.filename$Ser object that can serialize/deserialize
      * the assigned buffer.
      *
-     * @param buffer A reference to the buffer that contains or will contain the CDR representation.
+     * @param buffer A reference to the buffer that contains (or will contain) the CDR representation.
      */
     $ctx.filename$Ser(eprosima::FastBuffer &buffer);
     
@@ -45,38 +45,38 @@ $exports; separator="\n"$
 
 membered_type(ctx, mtype) ::=<<
 /*!
- * @brief This function serialize a type $mtype.scopedname$.
- * @param x Reference to a  that will be serialized in the buffer.
+ * @brief This function serializes a type $mtype.scopedname$.
+ * @param x Reference to the $mtype.scopedname$ object that that will be serialized in the buffer.
  * @return Reference to the $ctx.filename$Ser object.
- * @exception NotEnoughMemoryException This exception is thrown trying to serialize in a position that exceed the internal memory size.
- * @exception BadParamException This exception is thrown trying to serialize in an invalid value.
+ * @exception NotEnoughMemoryException This exception is thrown when trying to serialize a position that exceeds the internal memory size.
+ * @exception BadParamException This exception is thrown when trying to serialize in an invalid value.
  */
 inline $ctx.filename$Ser& operator<<(const $mtype.scopedname$ &x){return serialize(x);}
 
 /*!
- * @brief This function serialize a type $mtype.scopedname$.
- * @param x Reference to a  that will be serialized in the buffer.
+ * @brief This function serializes a type $mtype.scopedname$.
+ * @param x Reference to the $mtype.scopedname$ object that will be serialized in the buffer.
  * @return Reference to the $ctx.filename$Ser object.
- * @exception NotEnoughMemoryException This exception is thrown trying to serialize in a position that exceed the internal memory size.
- * @exception BadParamException This exception is thrown trying to serialize in an invalid value.
+ * @exception NotEnoughMemoryException This exception is thrown when trying to serialize a position that exceeds the internal memory size.
+ * @exception BadParamException This exception is thrown when trying to serialize in an invalid value.
  */
 $ctx.filename$Ser& serialize(const $mtype.scopedname$ &x);
 
 /*!
- * @brief This function deserialize a type $mtype.scopedname$.
+ * @brief This function deserializes a type $mtype.scopedname$.
  * @param x Reference to the variable that will store the $mtype.scopedname$ read from the buffer.
  * @return Reference to the $ctx.filename$Ser object.
- * @exception NotEnoughMemoryException This exception is thrown trying to deserialize in a position that exceed the internal memory size.
- * @exception BadParamException This exception is thrown trying to deserialize in an invalid value.
+ * @exception NotEnoughMemoryException This exception is thrown when trying to deserialize a position that exceeds the internal memory size.
+ * @exception BadParamException This exception is thrown when trying to deserialize in an invalid value.
  */
 inline $ctx.filename$Ser& operator$ctx.sersym$($mtype.scopedname$ &x){return deserialize(x);}
 
 /*!
- * @brief This function deserialize a type $mtype.scopedname$.
+ * @brief This function deserializes a type $mtype.scopedname$.
  * @param x Reference to the variable that will store the $mtype.scopedname$ read from the buffer.
  * @return Reference to the $ctx.filename$Ser object.
- * @exception NotEnoughMemoryException This exception is thrown trying to deserialize in a position that exceed the internal memory size.
- * @exception BadParamException This exception is thrown trying to deserialize in an invalid value.
+ * @exception NotEnoughMemoryException This exception is thrown when trying to deserialize a position that exceeds the internal memory size.
+ * @exception BadParamException This exception is thrown when trying to deserialize in an invalid value.
  */
 $ctx.filename$Ser& deserialize($mtype.scopedname$ &x);
 >>

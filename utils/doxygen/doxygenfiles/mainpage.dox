@@ -6,11 +6,23 @@
  * @image html eProsimaLogo.png
  * @image latex eProsimaLogo.png "" width=5cm
  * <br/><a href="http://www.eprosima.com">eProsima</a></center>
+ * 
+ * eProsima Fast Buffers is a high-performance library designed to serialize structured data. You have to define your structured data once,
+ * and then you can use specific generated source code to easily serialize and deserialize it in different operating systems.
  *
- * eProsima Fast Buffers is a suite that has everything you need to serialize your data types.
- * IDL (Interface Definition Language) will be used to define the data types that you want to serialize.
- * eProsima Fast Buffers provides a tool that reads your data type definitions in IDL and generates the source code that will serialize them.
- * This source code uses a little and fast library for serializing basic data types.
+ * To declare your structured data, you have to use IDL (Interface Definition Language) format. IDL is a specification language, made by OMG (Object Management Group),
+ * which describes an interface in a language-independent way, enabling communication between software components that do not share the same language.
+ *
+ * The main component of eProsima Fast Buffers is a tool that reads IDL files and parses a subset of the OMG IDL specification to generate serialization source code.
+ * The rest of the file content is ignored.
+ *
+ * eProsima Fast Buffers has another relevant component: a C++11 library which provides different serialization mechanisms. Currently two serialization mechanisms are supported:
+ * One of them is the standard CDR (Common Data Representation). CDR is a transfer syntax low-level representation for transfer between agents, mapping from data types defined in OMG IDL to byte streams.
+ * The other one is a modified implementation of CDR, which has an overwhelming speed-up compared to the classical approach. The reason why this implementation is faster is because it does not use some of
+ * the features of the standard CDR serialization, in order to improve  performance.
+ *
+ * One of the main features of eProsima Fast Buffers is it avoids users from knowing anything about serialization or deserialization procedures. For that task, it provides a homogeneous API which supports
+ * serialization of several different data types.
  *
  */
 
