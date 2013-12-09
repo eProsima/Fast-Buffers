@@ -49,16 +49,33 @@ Function VariablesEntornoPage
         ${NSD_Check} $CheckboxScripts
     ${EndIf}
     
-    ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of Fast Buffers target libraries for platform x64"
-    Pop $CheckboxX64  
-    ${If} $CheckboxX64_State == ${BST_CHECKED}
-        ${NSD_Check} $CheckboxX64
-    ${EndIf}
+    ${If} ${RunningX64}
+        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of Fast Buffers target libraries for platform x64"
+        Pop $CheckboxX64  
+        ${If} ${SectionIsSelected} ${SEC_LIB_x64}
+            ${If} $CheckboxX64_State == ${BST_CHECKED}
+                ${NSD_Check} $CheckboxX64
+            ${EndIf}
+        ${Else}
+            ${NSD_AddStyle} $CheckboxX64 ${WS_DISABLED}
+        ${EndIf}
+
+        ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
+	${NSD_OnClick} $CheckboxX64 ClickX64  
     
-    ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of Fast Buffers target libraries for platform i86"
-    Pop $CheckboxI86
-    ${If} $CheckboxI86_State == ${BST_CHECKED}
-        ${NSD_Check} $CheckboxI86
+        ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of Fast Buffers target libraries for platform i86"
+        Pop $CheckboxI86
+    ${Else}
+        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of Fast Buffers target libraries for platform i86"
+        Pop $CheckboxI86
+    ${EndIf}
+
+    ${If} ${SectionIsSelected} ${SEC_LIB_i86}
+        ${If} $CheckboxI86_State == ${BST_CHECKED}
+            ${NSD_Check} $CheckboxI86
+        ${EndIf}
+    ${Else}
+        ${NSD_AddStyle} $CheckboxI86 ${WS_DISABLED}
     ${EndIf}
     
     ### La primera vez que lanzamos el instalador, el checkbox de FAST_BUFFERS
@@ -73,7 +90,6 @@ Function VariablesEntornoPage
     ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
     ${NSD_OnClick} $CheckboxFAST_BUFFERS ClickFAST_BUFFERS 
     ${NSD_OnClick} $CheckboxScripts ClickScripts
-    ${NSD_OnClick} $CheckboxX64 ClickX64  
     ${NSD_OnClick} $CheckboxI86 ClickI86  
 
     nsDialogs::Show

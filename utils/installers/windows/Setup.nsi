@@ -26,48 +26,9 @@ RequestExecutionLevel admin
 !include Sections.nsh
 !include MUI2.nsh
 !include EnvVarUpdate.nsh
-!include EnvVarPage.nsh
 !include x64.nsh
 
-# Variables
-Var StartMenuGroup
-
-# Reserved Files
-ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
-
-# Installer pages
-!insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ..\..\..\doc\licencias\FAST_BUFFERS_LICENSE.txt
-!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
-!insertmacro MUI_PAGE_COMPONENTS
-Page custom VariablesEntornoPage
-!insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
-!insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES
-
-# Installer languages
-!insertmacro MUI_LANGUAGE English
-
-# Installer attributes
-OutFile FastBuffers_${VERSION}.exe
-#InstallDir "$PROGRAMFILES\eProsima\FastBuffers" ### El directorio de instalación se fija ahora en onInit
-CRCCheck on
-XPStyle on
-ShowInstDetails show
-VIProductVersion "${VERSION}.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "Fast Buffers"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite "${URL}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription ""
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
-InstallDirRegKey HKLM "${REGKEY}" Path
-ShowUninstDetails show
-
-# Installer sections
+# Installer sections. Has to be defined at the beginning because they are used by EnvVarPage.nsh
 Section -Main SEC0000
     # Copy documentation
     SetOutPath $INSTDIR\doc\pdf
@@ -75,7 +36,7 @@ Section -Main SEC0000
     File "..\..\..\doc\User Manual.pdf"
     File "..\..\..\doc\Installation Manual.pdf"
     # Copy doxygen documentation
-    File "/oname=API C++ Manual.pdf" "..\..\..\output\doxygen\latex\refman.pdf"
+    #File "/oname=API C++ Manual.pdf" "..\..\..\output\doxygen\latex\refman.pdf"
     SetOutPath $INSTDIR\doc\html
     File /r "..\..\..\output\doxygen\html\*"
     # Copy examples
@@ -104,40 +65,68 @@ SectionEnd
 
 # Select and copy target libraries.
 SectionGroup "Target libraries" SECGRP0000
-    Section "x64 libraries" SEC0001
+    Section "x64 libraries" SEC_LIB_x64
         SetOutPath $INSTDIR\lib\x64Win64VS2010
         SetOverwrite on
         File /r "$%FASTCDR%\lib\x64Win64VS2010\*"
         WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
+        # Copy visual studio redistributable for x64
+        SetOutPath $TEMP
+        File "redistributables\vcredist_x64.exe"
     SectionEnd
 
-    Section "i86 libraries" SEC0002
+    Section "i86 libraries" SEC_LIB_i86
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
         File /r "$%FASTCDR%\lib\i86Win32VS2010\*"
-        WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
+        WriteRegStr HKLM "${REGKEY}\Components" "x86 libraries" 1
+        # Copy visual studio redistributable for i86
+        SetOutPath $TEMP
+        File "redistributables\vcredist_x86.exe"
     SectionEnd
 SectionGroupEnd
 
-#SectionGroup "Environment variables" SECGRP0001
-#    Section "FAST_BUFFERS" SEC0003
-#       ${EnvVarUpdate} $0 "FAST_BUFFERS" "P" "HKLM" "$INSTDIR"
-#       WriteRegStr HKLM "${REGKEY}\Components" "FAST_BUFFERS" 1
-#    SectionEnd
-#    Section "Script location" SEC0004
-#       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\scripts"
-#       WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
-#    SectionEnd
-#    Section /o "x64 libraries location" SEC0005
-#       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
-#       WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
-#    SectionEnd
-#    Section /o "i86 libraries location" SEC0006
-#       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
-#       WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
-#    SectionEnd
-#SectionGroupEnd
+!include EnvVarPage.nsh
+!include InstallRedistributables.nsh
 
+# Variables
+Var StartMenuGroup
+
+# Reserved Files
+ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
+
+# Installer pages
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE ..\..\..\doc\licencias\FAST_BUFFERS_LICENSE.txt
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
+!insertmacro MUI_PAGE_COMPONENTS
+Page custom VariablesEntornoPage
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+# Installer languages
+!insertmacro MUI_LANGUAGE English
+
+# Installer attributes
+OutFile FastBuffers_${VERSION}.exe
+CRCCheck on
+XPStyle on
+ShowInstDetails show
+VIProductVersion "${VERSION}.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "Fast Buffers"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite "${URL}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription ""
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
+InstallDirRegKey HKLM "${REGKEY}" Path
+ShowUninstDetails show
+
+# More installer sections.
 Section -post SEC0007
     SetShellVarContext all
 
@@ -167,14 +156,21 @@ Section -post SEC0007
        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\scripts"
        WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
     ${EndIf}
-    ${If} $CheckboxX64_State == ${BST_CHECKED}
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
-       WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
+    ${If} ${SectionIsSelected} ${SEC_LIB_x64}
+        ${If} $CheckboxX64_State == ${BST_CHECKED}
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
+             WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
+        ${EndIf}
     ${EndIf}
-    ${If} $CheckboxI86_State == ${BST_CHECKED}
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
-       WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
+    ${If} ${SectionIsSelected} ${SEC_LIB_i86}
+        ${If} $CheckboxI86_State == ${BST_CHECKED}
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
+             WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
+        ${EndIf}
     ${EndIf}
+
+    # Comprobamos si tiene instalado los redistributables de Visual Studio
+    Call InstallRedistributables
     
 SectionEnd
 
@@ -228,27 +224,12 @@ Section /o -un.Main UNSEC0000
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
 SectionEnd
 
-#Section /o "-un.i86 libraries location" UNSEC0006
-#    DeleteRegValue HKLM "${REGKEY}\Components" "i86 libraries location"
-#SectionEnd
-#Section /o "-un.x64 libraries location" UNSEC0005
-#    DeleteRegValue HKLM "${REGKEY}\Components" "x64 libraries location"
-#SectionEnd
-#Section /o "-un.Script location" UNSEC0004
-#    DeleteRegValue HKLM "${REGKEY}\Components" "Script location"
-#SectionEnd
-
-#Section /o "-un.FAST_BUFFERS" UNSEC0003
-#    ${un.EnvVarUpdate} $0 "FAST_BUFFERS" "R" "HKLM" "$INSTDIR"
-#    DeleteRegValue HKLM "${REGKEY}\Components" "FAST_BUFFERS"
-#SectionEnd
-
-Section /o "-un.i86 libraries" UNSEC0002
+Section /o "-un.i86 libraries" UNSEC_LIB_i86
     RmDir /r /REBOOTOK "$INSTDIR\lib\i86Win32VS2010"
     DeleteRegValue HKLM "${REGKEY}\Components" "i86 libraries"
 SectionEnd
 
-Section /o "-un.x64 libraries" UNSEC0001
+Section /o "-un.x64 libraries" UNSEC_LIB_x64
     RmDir /r /REBOOTOK "$INSTDIR\lib\x64Win64VS2010"
     DeleteRegValue HKLM "${REGKEY}\Components" "x64 libraries"
 SectionEnd
@@ -274,8 +255,9 @@ Function .onInit
     # La variable PROGRAMFILES depende de si estamos en x64 o i86
     ${If} ${RunningX64}
         StrCpy '$INSTDIR' '$PROGRAMFILES64\eProsima\FastBuffers'
-    ${else}
+    ${Else}
         StrCpy '$INSTDIR' '$PROGRAMFILES\eProsima\FastBuffers'
+        !insertmacro UnselectSection ${SEC_LIB_X64}
     ${EndIf}
     
     InitPluginsDir
@@ -299,17 +281,13 @@ Function un.onInit
     ReadRegStr $INSTDIR HKLM "${REGKEY}" Path
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
-    !insertmacro SELECT_UNSECTION "x64 libraries" ${UNSEC0001}
-    !insertmacro SELECT_UNSECTION "i86 libraries" ${UNSEC0002}
+    !insertmacro SELECT_UNSECTION "x64 libraries" ${UNSEC_LIB_x64}
+    !insertmacro SELECT_UNSECTION "i86 libraries" ${UNSEC_LIB_i86}
 FunctionEnd
 
 # Section Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SECGRP0000} "Fast Buffers target libraries."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC0001} "Libraries for x64 target platform."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC0002} "Libraries for i86 target platform."
-#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0003} "Set the FAST_BUFFERS environment variable."
-#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0004} "Add to the PATH environment variable the location of Fast Buffers scripts."
-#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0005} "Add to the PATH environment variable the location of Fast Buffers target libraries for platform x64."
-#!insertmacro MUI_DESCRIPTION_TEXT ${SEC0006} "Add to the PATH environment variable the location of Fast Buffers target libraries for platform i86."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64} "Libraries for x64 target platform."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86} "Libraries for i86 target platform."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
