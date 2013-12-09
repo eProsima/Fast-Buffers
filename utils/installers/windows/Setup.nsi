@@ -36,7 +36,7 @@ Section -Main SEC0000
     File "..\..\..\doc\User Manual.pdf"
     File "..\..\..\doc\Installation Manual.pdf"
     # Copy doxygen documentation
-    #File "/oname=API C++ Manual.pdf" "..\..\..\output\doxygen\latex\refman.pdf"
+    File "/oname=API C++ Manual.pdf" "..\..\..\output\doxygen\latex\refman.pdf"
     SetOutPath $INSTDIR\doc\html
     File /r "..\..\..\output\doxygen\html\*"
     # Copy examples
