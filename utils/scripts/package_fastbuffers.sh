@@ -26,9 +26,12 @@ function package
 {
     # Get current version of GCC. (Not more needed)
     #. $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
+	cd ../CDR
+	# Get the current version of CDR
+    . $EPROSIMADIR/scripts/common_pack_functions.sh getVersionFromCPP cdrversion include/fastcdr/FastCdr_version.h
 
     # Compile and packageing FastCDR library for all archictectures
-    cd ../CDR/utils/scripts
+    utils/scripts
     ./package_fastcdr.sh
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
@@ -124,9 +127,9 @@ function package
     
     mkdir -p tmpRelease
     cp ~/rpmbuild/RPMS/i686/fastcdr-${cdrversion}-1.${distro}.i686.rpm tmpRelease
-    cp ~/rpmbuild/RPMS/i686/fastbuffers-${dfbversion}-1.${distro}.i686.rpm tmpRelease
+    cp ~/rpmbuild/RPMS/i686/fastbuffers-${fastbuffersversion}-1.${distro}.i686.rpm tmpRelease
     cp ~/rpmbuild/RPMS/x86_64/fastcdr-${cdrversion}-1.${distro}.x86_64.rpm tmpRelease
-    cp ~/rpmbuild/RPMS/x86_64/fastbuffers-${dfbversion}-1.${distro}.x86_64.rpm tmpRelease
+    cp ~/rpmbuild/RPMS/x86_64/fastbuffers-${fastbuffersversion}-1.${distro}.x86_64.rpm tmpRelease
     
     cd tmpRelease
     tar cvzf "../installers/linux/eProsima_${distroName}_${dfbversion}_${distroversion}.tar.gz" *
