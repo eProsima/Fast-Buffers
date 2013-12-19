@@ -195,6 +195,7 @@ Section /o -un.Main UNSEC0000
     # Delete doxygen documentation
     Delete /REBOOTOK "$INSTDIR\doc\pdf\API C++ Manual.pdf"
     RmDir /r /REBOOTOK "$INSTDIR\doc\html"
+	RmDir /r /REBOOTOK "$INSTDIR\doc\pdf"
     # Delete examples.
     RmDir /r /REBOOTOK "$INSTDIR\examples"
     # Delete java classes.
