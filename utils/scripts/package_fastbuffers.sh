@@ -127,12 +127,11 @@ function package
     
     mkdir -p tmpRelease
     cp ~/rpmbuild/RPMS/i686/fastcdr-${cdrversion}-1.${distro}.i686.rpm tmpRelease
-    cp ~/rpmbuild/RPMS/i686/fastbuffers-${fastbuffersversion}-1.${distro}.i686.rpm tmpRelease
+    cp ~/rpmbuild/RPMS/noarch/fastbuffers-${fastbuffersversion}-1.${distro}.noarch.rpm tmpRelease
     cp ~/rpmbuild/RPMS/x86_64/fastcdr-${cdrversion}-1.${distro}.x86_64.rpm tmpRelease
-    cp ~/rpmbuild/RPMS/x86_64/fastbuffers-${fastbuffersversion}-1.${distro}.x86_64.rpm tmpRelease
     
     cd tmpRelease
-    tar cvzf "../installers/linux/eProsima_${distroName}_${dfbversion}_${distroversion}.tar.gz" *
+    tar cvzf "../installers/linux/eProsima_${distroName}_${fastbuffersversion}_${distroversion}.tar.gz" *
    errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ..
