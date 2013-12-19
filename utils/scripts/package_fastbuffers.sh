@@ -112,7 +112,7 @@ function package
     cd utils/installers/linux
     ./setup_linux.sh $fastbuffersversion
     errorstatus=$?
-    cd ../../..
+    cd ../..
     if [ $errorstatus != 0 ]; then return; fi
 
     # Remove the doxygen tmp directory
