@@ -31,7 +31,7 @@ function package
     . $EPROSIMADIR/scripts/common_pack_functions.sh getVersionFromCPP cdrversion include/fastcdr/FastCdr_version.h
 
     # Compile and packageing FastCDR library for all archictectures
-    utils/scripts
+    cd utils/scripts
     ./package_fastcdr.sh
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
