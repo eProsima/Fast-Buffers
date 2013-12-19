@@ -114,6 +114,31 @@ function package
 
     # Remove the doxygen tmp directory
     rm -rf output
+	
+	# Generate distribution
+    distroName="Fast_Buffers"
+    . $EPROSIMADIR/scripts/common_pack_functions.sh getDistroVersion
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+    distro=`cat /etc/rpm/macros.dist  | grep %dist | cut -d. -f2`
+    
+    mkdir -p tmpRelease
+    cp ~/rpmbuild/RPMS/i686/fastcdr-${cdrversion}-1.${distro}.i686.rpm tmpRelease
+    cp ~/rpmbuild/RPMS/i686/fastbuffers-${dfbversion}-1.${distro}.i686.rpm tmpRelease
+    cp ~/rpmbuild/RPMS/x86_64/fastcdr-${cdrversion}-1.${distro}.x86_64.rpm tmpRelease
+    cp ~/rpmbuild/RPMS/x86_64/fastbuffers-${dfbversion}-1.${distro}.x86_64.rpm tmpRelease
+    
+    cd tmpRelease
+    tar cvzf "../installers/linux/eProsima_${distroName}_${dfbversion}_${distroversion}.tar.gz" *
+   errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+    cd ..
+
+    # Remove temp directory
+    rm -rf tmpRelease
+    cd ..
+    rm -rf utils/installers/linux/tmp
+	
 }
 
 # Check that the environment.sh script was run.
