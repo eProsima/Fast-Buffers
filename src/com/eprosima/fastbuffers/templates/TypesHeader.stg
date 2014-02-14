@@ -65,19 +65,7 @@ $exports; separator="\n"$
 
 exception(ctx, exception) ::= <<>>
 
-operation(ctx, operation, param_list) ::= <<
-$if(ctx.isGenerateOperationTypes)$
-/*!
- * @brief This class represents the structure $operation.name$Request that can be used to send requests
- * for the operation $operation.parent.name$::$operation.name$
- * @ingroup $ctx.trimfilename$
- */
-class user_cpp_DllExport $operation.name$Request
-{
-};
-
-$endif$
->>
+operation(ctx, operation, param_list) ::= <<>>
 
 param_list(parameters) ::= <<>>
 
