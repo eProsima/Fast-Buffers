@@ -599,15 +599,20 @@ boolean_literal returns [String lit = null]
 	;
 
 positive_int_const returns [String literal = null]
-	:    literal=const_exp {
-	
-	try { 
-        Integer.parseInt(literal); 
-    } catch(NumberFormatException e) { 
-        throw new ParseException(ctx.getFilename(), LT(0).getLine(), "The expression '" + literal + "' is not supported. You must use a positive integer.");
-    }
-    
-    }
+	:    literal=const_exp
+             {
+	         try
+                 {
+                     // TODO Cambiar cuando se permitan constantes.
+		     int value = Integer.parseInt(literal); 
+                     
+                     if(value < 0)
+                         throw new ParseException(ctx.getFilename(), LT(0).getLine(), "The expression '" + literal + "' is not supported. You must use a positive integer.");
+                 } catch(NumberFormatException e)
+                 { 
+                     throw new ParseException(ctx.getFilename(), LT(0).getLine(), "The expression '" + literal + "' is not supported. You must use a positive integer.");
+                 }
+             }
 	;
 
 
