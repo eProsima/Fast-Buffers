@@ -29,6 +29,12 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 #define user_cpp_DllExport
 #endif
 
+// TODO Solo imprimir si se necesita (ctx.cdr)
+namespace eprosima
+{
+    class Cdr;
+};
+
 $definitions; separator="\n"$
 
 #endif // _$ctx.filename;format="toUpper"$_H_
@@ -119,6 +125,8 @@ public:
     $struct.members:{$public_structmember_declaration(it)$}; separator="\n"$
     
     $size_functions(struct)$
+
+    $serialization_functions(struct)$
     
 private:
     $struct.members:{$private_member_declaration(it)$}; separator="\n"$
@@ -348,4 +356,15 @@ size_functions(type) ::= <<
  */
  inline
  size_t getMaxSerializedSizeWithoutAlign(){ return $type.maxSerializedSizeWithoutAlignment$;}
+
+ // TODO
+ static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+>>
+
+serialization_functions(type) ::= <<
+// TODO
+void serialize(eprosima::Cdr &cdr) const;
+
+// TODO
+void deserialize(eprosima::Cdr &cdr);
 >>
