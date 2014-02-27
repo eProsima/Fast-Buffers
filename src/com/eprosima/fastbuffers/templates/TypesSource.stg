@@ -4,6 +4,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(file=[ctx.filename, ".cpp"], description=["This source file contains the definition of the described types in the IDL file."])$
 
 #include "$ctx.filename$.h"
+
+#include "fastcdr/Cdr.h"
 #include "fastcdr/exceptions/BadParamException.h"
 
 #include <utility>
@@ -20,7 +22,9 @@ $definitions; separator="\n"$
 
 >>
 
-interface(ctx, interface, export_list) ::= <<>>
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+>>
 
 export_list(exports) ::= <<
 $exports; separator="\n"$
@@ -82,12 +86,12 @@ size_t $struct.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 
 void $struct.scopedname$::serialize(eprosima::Cdr &cdr) const
 {
-    $struct.members : { member |cdr << m_$member.name$}; separator="\n"$
+    $struct.members : { member |cdr << m_$member.name$;}; separator="\n"$
 }
 
 void $struct.scopedname$::deserialize(eprosima::Cdr &cdr)
 {
-    $struct.members : { member |cdr \>> m_$member.name$}; separator="\n"$
+    $struct.members : { member |cdr \>> m_$member.name$;}; separator="\n"$
 }
 >>
 
@@ -225,7 +229,7 @@ $endif$
 
 member_default_init(member) ::= <<
 $if(member.typecode.primitive)$
-m_$member.name$ $member.typecode.initialValue$;
+m_$member.name$ = $member.typecode.initialValue$;
 $endif$
 >>
 
