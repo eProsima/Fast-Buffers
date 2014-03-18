@@ -44,7 +44,7 @@ type_declarator(ctx, typedefs) ::= <<>>
 struct_type(ctx, struct) ::= <<
 $struct.scopedname$::$struct.name$()
 {
-    $struct.members:{$member_default_init(it)$}; separator="\n"$
+    $struct.members:{ member |$member_default_init(member=member)$}; separator="\n"$
 }
 
 $struct.scopedname$::~$struct.name$()
@@ -79,19 +79,19 @@ size_t $struct.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;
             
-    $struct.members : { member |$max_serialized_size(member=member, var="current_align")$}; separator="\n"$
+    $struct.members : { member |$max_serialized_size(ctx=ctx, typecode=member.typecode, var="current_align")$}; separator="\n"$
 
     return current_align;
 }
 
 void $struct.scopedname$::serialize(eprosima::Cdr &cdr) const
 {
-    $struct.members : { member |cdr << m_$member.name$;}; separator="\n"$
+    $struct.members : { member |$member_serialization(member=member)$}; separator="\n"$
 }
 
 void $struct.scopedname$::deserialize(eprosima::Cdr &cdr)
 {
-    $struct.members : { member |cdr \>> m_$member.name$;}; separator="\n"$
+    $struct.members : { member |$member_deserialization(member=member)$}; separator="\n"$
 }
 >>
 
@@ -99,7 +99,7 @@ union_type(ctx, union) ::= <<
 $union.scopedname$::$union.name$()
 {
     m__d = $union.defaultvalue$;
-    $union.members:{$member_default_init(it)$}; separator="\n"$
+    $union.members:{ member |$member_default_init(member=member)$}; separator="\n"$
 }
 
 $union.scopedname$::~$union.name$()
@@ -175,7 +175,53 @@ $union.discriminator.cppTypename$& $union.scopedname$::_d()
 }
 
 $union.members:{$public_unionmember_declaration(class=union.scopedname, member=it, defaultvalue=union.defaultvalue, totallabels=union.totallabels)$}; separator="\n"$
+
+size_t $union.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+    size_t reset_align = 0;
+    size_t union_max_size_serialized = 0;
+
+    $max_serialized_size(ctx=ctx, typecode=union.discriminator, var="current_align")$
+
+    $union.members : { member |
+    reset_align = current_align;
+
+    $max_serialized_size(ctx=ctx, typecode=member.typecode, var="reset_align")$
+
+    if(union_max_size_serialized < reset_align)
+        union_max_size_serialized = reset_align;
+
+    }; separator="\n"$
+
+    return union_max_size_serialized;
+}
+
+void $union.scopedname$::serialize(eprosima::Cdr &cdr) const
+{
+    cdr << $serializeCasting(typecode=union.discriminator)$m__d;
+
+    switch(m__d)
+    {
+        $union.members:{ member |$unionmember_case_selection_se(member=member)$}; separator="\n"$
+    }
+}
+
+void $union.scopedname$::deserialize(eprosima::Cdr &cdr)
+{
+    cdr \>> $deserializeCasting(typecode=union.discriminator)$m__d;
+
+    switch(m__d)
+    {
+        $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
+    }
+}
+
 >>
+
+enum_type(ctx, enum) ::= <<>>
+
+/***** Utils *****/
 
 public_unionmember_declaration(class, member, totallabels, defaultvalue) ::= <<
 $if(member.typecode.primitive)$
@@ -250,6 +296,8 @@ switch(__d)
     $totallabels:{case $it$:}; separator="\n"$
     b = false;
     break;
+    default:
+    break;
 }
 break;
 $else$
@@ -258,6 +306,8 @@ switch(__d)
 {
     $member.labels:{case $it$:}; separator="\n"$
     b = true;
+    break;
+    default:
     break;
 }
 break;
@@ -303,6 +353,8 @@ switch(m__d)
     $totallabels:{case $it$:}; separator="\n"$
     b = false;
     break;
+    default:
+    break;
 }
 $else$
 bool b = false;
@@ -312,25 +364,43 @@ switch(m__d)
     $member.labels:{case $it$:}; separator="\n"$
     b = true;
     break;
+    default:
+    break;
 }
 $endif$
     
 if(!b) throw eprosima::BadParamException("This member is not been selected");
 >>
 
-enum_type(ctx, enum) ::= <<>>
-
-/***** Utils *****/
-
-// TODO Todos los tipos. MEJORAR. size of 1 no deberia generar alignment.
-max_serialized_size(member, var) ::= <<
-$if(member.typecode.primitive)$
-$if(member.typecode.isType_d)$
-$var$ += $member.typecode.maxsize$;
-$else$
-$var$ += $member.typecode.size$ + eprosima::Cdr::alignment($var$, $member.typecode.size$);
+unionmember_case_selection_se(member) ::= <<
+$member.labels:{ label |case $label$:}; separator="\n"$
+$if(member.default)$
+default:$\n$
 $endif$
-$else$
-$var$ += $member.typecode.scopedname$::getMaxCdrSerializedSize($var$);
+$member_serialization(member=member)$
+break;
+>>
+
+unionmember_case_selection_de(member) ::= <<
+$member.labels:{ label |case $label$:}; separator="\n"$
+$if(member.default)$
+default:$\n$
 $endif$
+$member_deserialization(member=member)$
+break;
+>>
+
+member_serialization(member) ::= <<
+$if(member.typecode.maxsize)$
+if(m_$member.name$.$sizeFunction.(member.typecode.stType)$ <= $member.typecode.maxsize$)
+
+$endif$cdr << $serializeCasting(typecode=member.typecode)$m_$member.name$;
+$if(member.typecode.maxsize)$
+else
+    throw eprosima::BadParamException(std::string("The maximum length was exceeded"));
+$endif$
+>>
+
+member_deserialization(member) ::= <<
+cdr \>> $deserializeCasting(typecode=member.typecode)$m_$member.name$;
 >>

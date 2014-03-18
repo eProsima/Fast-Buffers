@@ -77,7 +77,9 @@ param_list(parameters) ::= <<>>
 
 param(parameter) ::= <<>>
 
-type_declarator(ctx, typedefs) ::= <<>>
+type_declarator(ctx, typedefs) ::= <<
+typedef $typedefs.typedefContentTypeCode.cppTypename$ $typedefs.name$;
+>>
 
 struct_type(ctx, struct) ::= <<
 /*!
@@ -132,6 +134,94 @@ private:
     $struct.members:{$private_member_declaration(it)$}; separator="\n"$
 };
 >>
+
+union_type(ctx, union) ::= <<
+/*!
+ * @brief This class represents the union $union.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
+ */
+class user_cpp_DllExport $union.name$
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    $union.name$();
+    
+    /*!
+     * @brief Default destructor.
+     */
+    ~$union.name$();
+    
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
+    $union.name$(const $union.name$ &x);
+    
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
+    $union.name$($union.name$ &&x);
+    
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
+    $union.name$& operator=(const $union.name$ &x);
+    
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object $union.scopedname$ that will be copied.
+     */
+    $union.name$& operator=($union.name$ &&x);
+    
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    void _d($union.discriminator.cppTypename$ __d);
+    
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    $union.discriminator.cppTypename$ _d() const;
+    
+    /*!
+     * @brief This function returns a reference to the discriminator.
+     * @return Reference to the discriminator.
+     */
+    $union.discriminator.cppTypename$& _d();
+    
+    $union.members:{$public_unionmember_declaration(it)$}; separator="\n"$
+    
+    $size_functions(union)$
+
+    $serialization_functions(union)$
+    
+private:
+    $private_declaration(typecode=union.discriminator, name="_d")$
+    
+    $union.members:{$private_member_declaration(it)$}; separator="\n"$
+};
+>>
+
+enum_type(ctx, enum) ::= <<
+/*!
+ * @brief This class represents the enumeration $enum.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
+ */
+enum $enum.name$ : uint32_t
+{
+    $enum.members:{$it.name$}; separator=",\n"$
+};
+>>
+
+/***** Utils *****/
 
 public_structmember_declaration(member) ::= <<
 $if(member.typecode.primitive)$
@@ -256,89 +346,6 @@ private_declaration(typecode, name) ::= <<
 $typecode.cppTypename$ m_$name$;
 >>
 
-union_type(ctx, union) ::= <<
-/*!
- * @brief This class represents the union $union.name$ defined by the user in the IDL file.
- * @ingroup $ctx.trimfilename$
- */
-class user_cpp_DllExport $union.name$
-{
-public:
-
-    /*!
-     * @brief Default constructor.
-     */
-    $union.name$();
-    
-    /*!
-     * @brief Default destructor.
-     */
-    ~$union.name$();
-    
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object $union.scopedname$ that will be copied.
-     */
-    $union.name$(const $union.name$ &x);
-    
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object $union.scopedname$ that will be copied.
-     */
-    $union.name$($union.name$ &&x);
-    
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object $union.scopedname$ that will be copied.
-     */
-    $union.name$& operator=(const $union.name$ &x);
-    
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object $union.scopedname$ that will be copied.
-     */
-    $union.name$& operator=($union.name$ &&x);
-    
-    /*!
-     * @brief This function sets the discriminator value.
-     * @param __d New value for the discriminator.
-     * @exception eprosima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
-     */
-    void _d($union.discriminator.cppTypename$ __d);
-    
-    /*!
-     * @brief This function returns the value of the discriminator.
-     * @return Value of the discriminator
-     */
-    $union.discriminator.cppTypename$ _d() const;
-    
-    /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    $union.discriminator.cppTypename$& _d();
-    
-    $union.members:{$public_unionmember_declaration(it)$}; separator="\n"$
-    
-    $size_functions(union)$
-    
-private:
-    $private_declaration(typecode=union.discriminator, name="_d")$
-    
-    $union.members:{$private_member_declaration(it)$}; separator="\n"$
-};
->>
-
-enum_type(ctx, enum) ::= <<
-/*!
- * @brief This class represents the enumeration $enum.name$ defined by the user in the IDL file.
- * @ingroup $ctx.trimfilename$
- */
-enum $enum.name$ : uint32_t
-{
-    $enum.members:{$it.name$}; separator=",\n"$
-};
->>
 
 size_functions(type) ::= <<
 /*!
