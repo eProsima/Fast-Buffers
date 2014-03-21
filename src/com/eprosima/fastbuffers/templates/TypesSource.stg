@@ -31,7 +31,66 @@ $exports; separator="\n"$
 
 >>
 
-exception(ctx, exception) ::= <<>>
+exception(ctx, exception) ::= <<
+$exception.scopedname$::$exception.name$() : UserException()
+{
+    $exception.members : { member |$member_default_init(member=member)$}; separator="\n"$
+}
+
+$exception.scopedname$::$exception.name$(const $exception.name$ &x) : UserException(x)
+{
+    $exception.members : { member |m_$member.name$ = x.m_$member.name$;}; separator="\n"$
+}
+
+$exception.scopedname$::$exception.name$($exception.name$&& x) : UserException(std::move(x))
+{
+    $exception.members : { member |$member_move(member=member)$}; separator="\n"$
+}
+
+$exception.scopedname$& $exception.scopedname$::operator=(const $exception.name$ &x)
+{
+	UserException::operator=(x);
+	$exception.members : { member |m_$member.name$ = x.m_$member.name$;}; separator="\n"$
+	return *this;
+}
+
+$exception.scopedname$& $exception.scopedname$::operator=($exception.name$&& x)
+{
+	operator=(std::move(x));
+	$exception.members : { member |$member_move(member=member)$}; separator="\n"$
+	return *this;
+}
+
+$exception.scopedname$::~$exception.name$() throw()
+{
+    $exception.members : { member |$varDel(variable=member)$}; separator="\n"$
+}
+
+void $exception.scopedname$::raise() const
+{
+	throw *this;
+}
+
+size_t $exception.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+            
+    $exception.members : { member |$max_serialized_size(ctx=ctx, typecode=member.typecode, var="current_align")$}; separator="\n"$
+
+    return current_align;
+}
+
+void $exception.scopedname$::serialize(eprosima::Cdr &cdr) const
+{
+    $exception.members : { member |$object_serialization(object=member)$}; separator="\n"$
+}
+
+void $exception.scopedname$::deserialize(eprosima::Cdr &cdr)
+{
+    $exception.members : { member |$object_deserialization(object=member)$}; separator="\n"$
+}
+
+>>
 
 operation(ctx, operation, param_list) ::= <<>>
 
@@ -58,7 +117,7 @@ $struct.scopedname$::$struct.name$(const $struct.name$ &x)
 
 $struct.scopedname$::$struct.name$($struct.name$ &&x)
 {
-    $struct.members:{$structmember_move(it)$}; separator="\n"$
+    $struct.members:{$member_move(it)$}; separator="\n"$
 }
 
 $struct.scopedname$& $struct.scopedname$::operator=(const $struct.name$ &x)
@@ -70,7 +129,7 @@ $struct.scopedname$& $struct.scopedname$::operator=(const $struct.name$ &x)
 
 $struct.scopedname$& $struct.scopedname$::operator=($struct.name$ &&x)
 {
-    $struct.members:{$structmember_move(it)$}; separator="\n"$
+    $struct.members:{$member_move(it)$}; separator="\n"$
     
     return *this;
 }
@@ -86,12 +145,12 @@ size_t $struct.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 
 void $struct.scopedname$::serialize(eprosima::Cdr &cdr) const
 {
-    $struct.members : { member |$member_serialization(member=member)$}; separator="\n"$
+    $struct.members : { member |$object_serialization(object=member)$}; separator="\n"$
 }
 
 void $struct.scopedname$::deserialize(eprosima::Cdr &cdr)
 {
-    $struct.members : { member |$member_deserialization(member=member)$}; separator="\n"$
+    $struct.members : { member |$object_deserialization(object=member)$}; separator="\n"$
 }
 >>
 
@@ -273,13 +332,7 @@ $member.typecode.cppTypename$& $class$::$member.name$()
 $endif$
 >>
 
-member_default_init(member) ::= <<
-$if(member.typecode.primitive)$
-m_$member.name$ = $member.typecode.initialValue$;
-$endif$
->>
-
-structmember_move(member) ::= <<
+member_move(member) ::= <<
 $if(member.typecode.primitive)$
 m_$member.name$ = x.m_$member.name$;
 $else$
@@ -287,6 +340,7 @@ m_$member.name$ = std::move(x.m_$member.name$);
 $endif$
 >>
 
+// TODO Mirar si el default: está delante de otros casos, el resto no se ejecuta.
 unionmember_discriminator_case(member, totallabels) ::= <<
 $if(member.default)$
 default:
@@ -377,7 +431,7 @@ $member.labels:{ label |case $label$:}; separator="\n"$
 $if(member.default)$
 default:$\n$
 $endif$
-$member_serialization(member=member)$
+$object_serialization(object=member)$
 break;
 >>
 
@@ -386,21 +440,6 @@ $member.labels:{ label |case $label$:}; separator="\n"$
 $if(member.default)$
 default:$\n$
 $endif$
-$member_deserialization(member=member)$
+$object_deserialization(object=member)$
 break;
->>
-
-member_serialization(member) ::= <<
-$if(member.typecode.maxsize)$
-if(m_$member.name$.$sizeFunction.(member.typecode.stType)$ <= $member.typecode.maxsize$)
-
-$endif$cdr << $serializeCasting(typecode=member.typecode)$m_$member.name$;
-$if(member.typecode.maxsize)$
-else
-    throw eprosima::BadParamException(std::string("The maximum length was exceeded"));
-$endif$
->>
-
-member_deserialization(member) ::= <<
-cdr \>> $deserializeCasting(typecode=member.typecode)$m_$member.name$;
 >>

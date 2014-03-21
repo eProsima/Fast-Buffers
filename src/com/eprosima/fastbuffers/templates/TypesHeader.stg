@@ -14,6 +14,9 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 #ifndef _$ctx.filename;format="toUpper"$_H_
 #define _$ctx.filename;format="toUpper"$_H_
 
+// TODO Unir con FastBuffers. Puesto por fastrpc
+#include "rpcdds/exceptions/UserException.h"
+
 #include <stdint.h>
 #include <array>
 #include <string>
@@ -69,7 +72,41 @@ export_list(exports) ::= <<
 $exports; separator="\n"$
 >>
 
-exception(ctx, exception) ::= <<>>
+// TODO UserException the todos.
+exception(ctx, exception) ::= <<
+/*!
+ * @brief This class implementes the user exception $exception.scopedname$
+ * @ingroup $ctx.trimfilename$
+ */
+class user_cpp_DllExport $exception.name$ : public eprosima::rpcdds::exception::UserException
+{
+public:
+    
+	$exception.name$();
+
+	$exception.name$(const $exception.name$ &ex);
+
+	$exception.name$($exception.name$&& ex);
+
+	$exception.name$& operator=(const $exception.name$ &ex);
+
+	$exception.name$& operator=($exception.name$&& ex);
+	
+	virtual ~$exception.name$() throw();
+
+	virtual void raise() const;
+
+    $exception.members:{ member |$public_member_declaration(member=member)$}; separator="\n"$
+    
+    $size_functions(exception)$
+
+    $serialization_functions(exception)$
+    
+private:
+	// Exception members
+    $exception.members:{ member |$private_member_declaration(member=member)$}; separator="\n"$
+};
+>>
 
 operation(ctx, operation, param_list) ::= <<>>
 
@@ -124,7 +161,7 @@ public:
      */
     $struct.name$& operator=($struct.name$ &&x);
     
-    $struct.members:{$public_structmember_declaration(it)$}; separator="\n"$
+    $struct.members:{$public_member_declaration(it)$}; separator="\n"$
     
     $size_functions(struct)$
 
@@ -223,7 +260,7 @@ enum $enum.name$ : uint32_t
 
 /***** Utils *****/
 
-public_structmember_declaration(member) ::= <<
+public_member_declaration(member) ::= <<
 $if(member.typecode.primitive)$
 /*!
  * @brief This function sets a value in member $member.name$
@@ -347,23 +384,24 @@ $typecode.cppTypename$ m_$name$;
 >>
 
 
-size_functions(type) ::= <<
-/*!
+/*! TODO Quitado de FastBuffers porque no encaja con las excepciones de fastrpc.
  * @brief This function calculates the space needed to serialize a type $type.scopedname$.
  *        For all types with a variable size (strings, sequences) and without a maximum limit, this function uses
  *        255 as maximum limit.
- */
+ *
  inline
  size_t getMaxSerializedSize() { return $type.maxSerializedSize$;}
  
- /*!
+ *!
  * @brief This function calculates the space needed to serialize a type $type.scopedname$ without alignment.
  *        For all types with a variable size (strings, sequences) and without a maximum limit, this function uses
  *        255 as maximum limit.
- */
+ *
  inline
  size_t getMaxSerializedSizeWithoutAlign(){ return $type.maxSerializedSizeWithoutAlignment$;}
+ */
 
+size_functions(type) ::= <<
  // TODO
  static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 >>
