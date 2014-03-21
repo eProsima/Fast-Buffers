@@ -17,6 +17,8 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 // TODO Unir con FastBuffers. Puesto por fastrpc
 #include "rpcdds/exceptions/UserException.h"
 
+$ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="\n"$
+
 #include <stdint.h>
 #include <array>
 #include <string>
