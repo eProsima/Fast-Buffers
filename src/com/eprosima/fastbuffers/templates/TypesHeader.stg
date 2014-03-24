@@ -62,12 +62,10 @@ interface(ctx, interface, export_list) ::= <<
  * @brief This class represents the interface $interface.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $interface.name$
+namespace $interface.name$
 {
-public:
     $export_list$
-
-};
+}
 >>
 
 export_list(exports) ::= <<
@@ -116,8 +114,12 @@ param_list(parameters) ::= <<>>
 
 param(parameter) ::= <<>>
 
-type_declarator(ctx, typedefs) ::= <<
-typedef $typedefs.typedefContentTypeCode.cppTypename$ $typedefs.name$;
+const_decl(ctx, const) ::= <<
+const $const.typeCode.cppTypename$ $const.name$ = $const.value$;
+>>
+
+typedef_decl(ctx, typedefs) ::= <<
+$typedefs : { typedef |typedef $typedef.typedefContentTypeCode.cppTypename$ $typedef.name$;}; separator="\n"$
 >>
 
 struct_type(ctx, struct) ::= <<
