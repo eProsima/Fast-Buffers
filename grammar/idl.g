@@ -166,7 +166,7 @@ specification [String outdir, String idlFilename, String serType, boolean replac
     
     TemplateGroup tg = null;
 }
-	:   (import_dcl)* (tg=definition{ if (tg != null) maintemplates.setAttribute("blocks", tg);	})+
+	:   (import_dcl)* (tg=definition{ if (tg != null) maintemplates.setAttribute("definitions", tg);	})+
 {
     if(Utils.writeFile(outdir + idlFilename + ".h", maintemplates.getTemplate("TypesHeader"), replace))
     {

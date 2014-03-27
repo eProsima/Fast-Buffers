@@ -8,18 +8,23 @@
 
 group TypesHeader;
 
-main(ctx, blocks) ::= <<
+main(ctx, definitions) ::= <<
 $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains the declaration of the described types in the IDL file."])$
 
-#ifndef _$ctx.filename$_H_
-#define _$ctx.filename$_H_
+#ifndef _$ctx.filename;format="toUpper"$_H_
+#define _$ctx.filename;format="toUpper"$_H_
+
+// TODO Unir con FastBuffers. Puesto por fastrpc
+#include "rpcdds/exceptions/UserException.h"
+
+$ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="\n"$
 
 #include <stdint.h>
 #include <array>
 #include <string>
 #include <vector>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #if defined(USER_CPP_DLL_EXPORT)
 #define user_cpp_DllExport __declspec( dllexport )
 #else
@@ -29,13 +34,20 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 #define user_cpp_DllExport
 #endif
 
-$blocks; separator="\n"$
+// TODO Solo imprimir si se necesita (ctx.cdr)
+namespace eprosima
+{
+    class Cdr;
+};
 
-#endif // _$ctx.filename$_H_
+$definitions; separator="\n"$
+
+#endif // _$ctx.filename;format="toUpper"$_H_
 >>
 
-module(ctx, name, definition_list) ::= <<
-namespace $name$
+// TODO name -> module
+module(ctx, module, definition_list) ::= <<
+namespace $module.name$
 {
     $definition_list$
 }
@@ -45,9 +57,69 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-export_list(ctx, name, exports) ::= <<
-$exports; separator="\n"$
+interface(ctx, interface, export_list) ::= <<
+/*!
+ * @brief This class represents the interface $interface.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
+ */
+namespace $interface.name$
+{
+    $export_list$
+}
+>>
 
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+// TODO UserException the todos.
+exception(ctx, exception) ::= <<
+/*!
+ * @brief This class implementes the user exception $exception.scopedname$
+ * @ingroup $ctx.trimfilename$
+ */
+class user_cpp_DllExport $exception.name$ : public eprosima::rpcdds::exception::UserException
+{
+public:
+    
+	$exception.name$();
+
+	$exception.name$(const $exception.name$ &ex);
+
+	$exception.name$($exception.name$&& ex);
+
+	$exception.name$& operator=(const $exception.name$ &ex);
+
+	$exception.name$& operator=($exception.name$&& ex);
+	
+	virtual ~$exception.name$() throw();
+
+	virtual void raise() const;
+
+    $exception.members:{ member |$public_member_declaration(member=member)$}; separator="\n"$
+    
+    $size_functions(exception)$
+
+    $serialization_functions(exception)$
+    
+private:
+	// Exception members
+    $exception.members:{ member |$private_member_declaration(member=member)$}; separator="\n"$
+};
+>>
+
+operation(ctx, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<
+const $const.typeCode.cppTypename$ $const.name$ = $const.value$;
+>>
+
+typedef_decl(ctx, typedefs) ::= <<
+$typedefs : { typedef |typedef $typedef.typedefContentTypeCode.cppTypename$ $typedef.name$;}; separator="\n"$
 >>
 
 struct_type(ctx, struct) ::= <<
@@ -93,136 +165,15 @@ public:
      */
     $struct.name$& operator=($struct.name$ &&x);
     
-    $struct.members:{$public_structmember_declaration(it)$}; separator="\n"$
+    $struct.members:{$public_member_declaration(it)$}; separator="\n"$
     
     $size_functions(struct)$
+
+    $serialization_functions(struct)$
     
 private:
     $struct.members:{$private_member_declaration(it)$}; separator="\n"$
 };
->>
-
-public_structmember_declaration(member) ::= <<
-$if(member.typecode.primitive)$
-/*!
- * @brief This function sets a value in member $member.name$
- * @param _$member.name$ New value for member $member.name$
- */
-inline void $member.name$($member.typecode.typename$ _$member.name$)
-{
-    m_$member.name$ = _$member.name$;
-}
-
-/*!
- * @brief This function returns the value of member $member.name$
- * @return Value of member $member.name$
- */
-inline $member.typecode.typename$ $member.name$() const
-{
-    return m_$member.name$;
-}
-
-/*!
- * @brief This function returns a reference to member $member.name$
- * @return Reference to member $member.name$
- */
-inline $member.typecode.typename$& $member.name$()
-{
-    return m_$member.name$;
-}
-$else$
-/*!
- * @brief This function copies the value in member $member.name$
- * @param _$member.name$ New value to be copied in member $member.name$
- */
-inline void $member.name$(const $member.typecode.typename$ &_$member.name$)
-{
-    m_$member.name$ = _$member.name$;
-}
-
-/*!
- * @brief This function moves the value in member $member.name$
- * @param _$member.name$ New value to be moved in member $member.name$
- */
-inline void $member.name$($member.typecode.typename$ &&_$member.name$)
-{
-    m_$member.name$ = std::move(_$member.name$);
-}
-
-/*!
- * @brief This function returns a constant reference to member $member.name$
- * @return Constant reference to member $member.name$
- */
-inline const $member.typecode.typename$& $member.name$() const
-{
-    return m_$member.name$;
-}
-
-/*!
- * @brief This function returns a reference to member $member.name$
- * @return Reference to member $member.name$
- */
-inline $member.typecode.typename$& $member.name$()
-{
-    return m_$member.name$;
-}
-$endif$
->>
-
-private_member_declaration(member) ::= <<$private_declaration(typecode=member.typecode, name=member.name)$>>
-
-public_unionmember_declaration(member) ::= <<
-$if(member.typecode.primitive)$
-/*!
- * @brief This function sets a value in member $member.name$
- * @param _$member.name$ New value for member $member.name$
- */
-void $member.name$($member.typecode.typename$ _$member.name$);
-
-/*!
- * @brief This function returns the value of member $member.name$
- * @return Value of member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
- */
-$member.typecode.typename$ $member.name$() const;
-
-/*!
- * @brief This function returns a reference to member $member.name$
- * @return Reference to member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
- */
-$member.typecode.typename$& $member.name$();
-$else$
-/*!
- * @brief This function copies the value in member $member.name$
- * @param _$member.name$ New value to be copied in member $member.name$
- */
-void $member.name$(const $member.typecode.typename$ &_$member.name$);
-
-/*!
- * @brief This function moves the value in member $member.name$
- * @param _$member.name$ New value to be moved in member $member.name$
- */
-void $member.name$($member.typecode.typename$ &&_$member.name$);
-
-/*!
- * @brief This function returns a constant reference to member $member.name$
- * @return Constant reference to member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
- */
-const $member.typecode.typename$& $member.name$() const;
-
-/*!
- * @brief This function returns a reference to member $member.name$
- * @return Reference to member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
- */
-$member.typecode.typename$& $member.name$();
-$endif$
->>
-
-private_declaration(typecode, name) ::= <<
-$typecode.typename$ m_$name$;
 >>
 
 union_type(ctx, union) ::= <<
@@ -273,23 +224,25 @@ public:
      * @param __d New value for the discriminator.
      * @exception eprosima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
-    void _d($union.discriminator.typename$ __d);
+    void _d($union.discriminator.cppTypename$ __d);
     
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    $union.discriminator.typename$ _d() const;
+    $union.discriminator.cppTypename$ _d() const;
     
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    $union.discriminator.typename$& _d();
+    $union.discriminator.cppTypename$& _d();
     
     $union.members:{$public_unionmember_declaration(it)$}; separator="\n"$
     
     $size_functions(union)$
+
+    $serialization_functions(union)$
     
 private:
     $private_declaration(typecode=union.discriminator, name="_d")$
@@ -309,20 +262,158 @@ enum $enum.name$ : uint32_t
 };
 >>
 
-size_functions(type) ::= <<
+/***** Utils *****/
+
+public_member_declaration(member) ::= <<
+$if(member.typecode.primitive)$
 /*!
+ * @brief This function sets a value in member $member.name$
+ * @param _$member.name$ New value for member $member.name$
+ */
+inline void $member.name$($member.typecode.cppTypename$ _$member.name$)
+{
+    m_$member.name$ = _$member.name$;
+}
+
+/*!
+ * @brief This function returns the value of member $member.name$
+ * @return Value of member $member.name$
+ */
+inline $member.typecode.cppTypename$ $member.name$() const
+{
+    return m_$member.name$;
+}
+
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ */
+inline $member.typecode.cppTypename$& $member.name$()
+{
+    return m_$member.name$;
+}
+$else$
+/*!
+ * @brief This function copies the value in member $member.name$
+ * @param _$member.name$ New value to be copied in member $member.name$
+ */
+inline void $member.name$(const $member.typecode.cppTypename$ &_$member.name$)
+{
+    m_$member.name$ = _$member.name$;
+}
+
+/*!
+ * @brief This function moves the value in member $member.name$
+ * @param _$member.name$ New value to be moved in member $member.name$
+ */
+inline void $member.name$($member.typecode.cppTypename$ &&_$member.name$)
+{
+    m_$member.name$ = std::move(_$member.name$);
+}
+
+/*!
+ * @brief This function returns a constant reference to member $member.name$
+ * @return Constant reference to member $member.name$
+ */
+inline const $member.typecode.cppTypename$& $member.name$() const
+{
+    return m_$member.name$;
+}
+
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ */
+inline $member.typecode.cppTypename$& $member.name$()
+{
+    return m_$member.name$;
+}
+$endif$
+>>
+
+private_member_declaration(member) ::= <<$private_declaration(typecode=member.typecode, name=member.name)$>>
+
+public_unionmember_declaration(member) ::= <<
+$if(member.typecode.primitive)$
+/*!
+ * @brief This function sets a value in member $member.name$
+ * @param _$member.name$ New value for member $member.name$
+ */
+void $member.name$($member.typecode.cppTypename$ _$member.name$);
+
+/*!
+ * @brief This function returns the value of member $member.name$
+ * @return Value of member $member.name$
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+$member.typecode.cppTypename$ $member.name$() const;
+
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+$member.typecode.cppTypename$& $member.name$();
+$else$
+/*!
+ * @brief This function copies the value in member $member.name$
+ * @param _$member.name$ New value to be copied in member $member.name$
+ */
+void $member.name$(const $member.typecode.cppTypename$ &_$member.name$);
+
+/*!
+ * @brief This function moves the value in member $member.name$
+ * @param _$member.name$ New value to be moved in member $member.name$
+ */
+void $member.name$($member.typecode.cppTypename$ &&_$member.name$);
+
+/*!
+ * @brief This function returns a constant reference to member $member.name$
+ * @return Constant reference to member $member.name$
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+const $member.typecode.cppTypename$& $member.name$() const;
+
+/*!
+ * @brief This function returns a reference to member $member.name$
+ * @return Reference to member $member.name$
+ * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ */
+$member.typecode.cppTypename$& $member.name$();
+$endif$
+>>
+
+private_declaration(typecode, name) ::= <<
+$typecode.cppTypename$ m_$name$;
+>>
+
+
+/*! TODO Quitado de FastBuffers porque no encaja con las excepciones de fastrpc.
  * @brief This function calculates the space needed to serialize a type $type.scopedname$.
  *        For all types with a variable size (strings, sequences) and without a maximum limit, this function uses
  *        255 as maximum limit.
- */
+ *
  inline
  size_t getMaxSerializedSize() { return $type.maxSerializedSize$;}
  
- /*!
+ *!
  * @brief This function calculates the space needed to serialize a type $type.scopedname$ without alignment.
  *        For all types with a variable size (strings, sequences) and without a maximum limit, this function uses
  *        255 as maximum limit.
- */
+ *
  inline
  size_t getMaxSerializedSizeWithoutAlign(){ return $type.maxSerializedSizeWithoutAlignment$;}
+ */
+
+size_functions(type) ::= <<
+ // TODO
+ static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+>>
+
+serialization_functions(type) ::= <<
+// TODO
+void serialize(eprosima::Cdr &cdr) const;
+
+// TODO
+void deserialize(eprosima::Cdr &cdr);
 >>
