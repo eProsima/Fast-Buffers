@@ -34,11 +34,19 @@ $ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="
 #define user_cpp_DllExport
 #endif
 
-// TODO Solo imprimir si se necesita (ctx.cdr)
+$if(ctx.cdr)$
 namespace eprosima
 {
     class Cdr;
-};
+}
+
+$elseif(ctx.fastcdr)$
+namespace eprosima
+{
+    class FastCdr;
+}
+
+$endif$
 
 $definitions; separator="\n"$
 
@@ -411,9 +419,19 @@ size_functions(type) ::= <<
 >>
 
 serialization_functions(type) ::= <<
+$if(ctx.cdr)$
 // TODO
 void serialize(eprosima::Cdr &cdr) const;
 
 // TODO
 void deserialize(eprosima::Cdr &cdr);
+
+$elseif(ctx.fastcdr)$
+// TODO
+void serialize(eprosima::FastCdr &cdr) const;
+
+// TODO
+void deserialize(eprosima::FastCdr &cdr);
+
+$endif$
 >>

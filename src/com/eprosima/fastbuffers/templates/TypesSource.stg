@@ -5,7 +5,13 @@ $fileHeader(file=[ctx.filename, ".cpp"], description=["This source file contains
 
 #include "$ctx.filename$.h"
 
+$if(ctx.cdr)$
 #include "fastcdr/Cdr.h"
+
+$elseif(ctx.fastcdr)$
+#include "fastcdr/FastCdr.h"
+
+$endif$
 #include "fastcdr/exceptions/BadParamException.h"
 
 #include <utility>
@@ -80,15 +86,27 @@ size_t $exception.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
     return current_align;
 }
 
-void $exception.scopedname$::serialize(eprosima::Cdr &cdr) const
+$if(ctx.cdr)$
+void $exception.scopedname$::serialize(eprosima::Cdr &scdr) const
 {
-    $exception.members : { member |$object_serialization(object=member)$}; separator="\n"$
+    $exception.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
 }
 
-void $exception.scopedname$::deserialize(eprosima::Cdr &cdr)
+void $exception.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
-    $exception.members : { member |$object_deserialization(object=member)$}; separator="\n"$
+    $exception.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
 }
+$else$
+void $exception.scopedname$::serialize(eprosima::FastCdr &scdr) const
+{
+    $exception.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
+}
+
+void $exception.scopedname$::deserialize(eprosima::FastCdr &dcdr)
+{
+    $exception.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
+}
+$endif$
 
 >>
 
@@ -145,15 +163,27 @@ size_t $struct.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
     return current_align;
 }
 
-void $struct.scopedname$::serialize(eprosima::Cdr &cdr) const
+$if(ctx.cdr)$
+void $struct.scopedname$::serialize(eprosima::Cdr &scdr) const
 {
-    $struct.members : { member |$object_serialization(object=member)$}; separator="\n"$
+    $struct.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
 }
 
-void $struct.scopedname$::deserialize(eprosima::Cdr &cdr)
+void $struct.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
-    $struct.members : { member |$object_deserialization(object=member)$}; separator="\n"$
+    $struct.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
 }
+$elseif(ctx.fastcdr)$
+void $struct.scopedname$::serialize(eprosima::FastCdr &scdr) const
+{
+    $struct.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
+}
+
+void $struct.scopedname$::deserialize(eprosima::FastCdr &dcdr)
+{
+    $struct.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
+}
+$endif$
 >>
 
 union_type(ctx, union) ::= <<
@@ -258,9 +288,10 @@ size_t $union.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
     return union_max_size_serialized;
 }
 
-void $union.scopedname$::serialize(eprosima::Cdr &cdr) const
+$if(ctx.cdr)$
+void $union.scopedname$::serialize(eprosima::Cdr &scdr) const
 {
-    cdr << $serializeCasting(typecode=union.discriminator)$m__d;
+    scdr << $serializeCasting(typecode=union.discriminator)$m__d;
 
     switch(m__d)
     {
@@ -268,15 +299,36 @@ void $union.scopedname$::serialize(eprosima::Cdr &cdr) const
     }
 }
 
-void $union.scopedname$::deserialize(eprosima::Cdr &cdr)
+void $union.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
-    cdr \>> $deserializeCasting(typecode=union.discriminator)$m__d;
+    dcdr \>> $deserializeCasting(typecode=union.discriminator)$m__d;
 
     switch(m__d)
     {
         $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
     }
 }
+$elseif(ctx.fastcdr)$
+void $union.scopedname$::serialize(eprosima::FastCdr &scdr) const
+{
+    scdr << $serializeCasting(typecode=union.discriminator)$m__d;
+
+    switch(m__d)
+    {
+        $union.members:{ member |$unionmember_case_selection_se(member=member)$}; separator="\n"$
+    }
+}
+
+void $union.scopedname$::deserialize(eprosima::FastCdr &dcdr)
+{
+    dcdr \>> $deserializeCasting(typecode=union.discriminator)$m__d;
+
+    switch(m__d)
+    {
+        $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
+    }
+}
+$endif$
 
 >>
 
@@ -433,7 +485,7 @@ $member.labels:{ label |case $label$:}; separator="\n"$
 $if(member.default)$
 default:$\n$
 $endif$
-$object_serialization(object=member)$
+$object_serialization(object=member, preffix="m_")$
 break;
 >>
 
@@ -442,6 +494,6 @@ $member.labels:{ label |case $label$:}; separator="\n"$
 $if(member.default)$
 default:$\n$
 $endif$
-$object_deserialization(object=member)$
+$object_deserialization(object=member, preffix="m_")$
 break;
 >>
