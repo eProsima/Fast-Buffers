@@ -12,7 +12,11 @@ $elseif(ctx.fastcdr)$
 #include "fastcdr/FastCdr.h"
 
 $endif$
-#include "fastcdr/exceptions/BadParamException.h"
+
+$if(ctx.fastrpcProduct)$
+#include "rpcdds/exceptions/BadParamException.h"
+
+$endif$
 
 #include <utility>
 
@@ -77,6 +81,7 @@ void $exception.scopedname$::raise() const
 	throw *this;
 }
 
+$if(ctx.anyCdr)$
 size_t $exception.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;
@@ -85,6 +90,8 @@ size_t $exception.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 
     return current_align;
 }
+
+$endif$
 
 $if(ctx.cdr)$
 void $exception.scopedname$::serialize(eprosima::Cdr &scdr) const
@@ -96,6 +103,7 @@ void $exception.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
     $exception.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
 }
+
 $else$
 void $exception.scopedname$::serialize(eprosima::FastCdr &scdr) const
 {
@@ -106,6 +114,7 @@ void $exception.scopedname$::deserialize(eprosima::FastCdr &dcdr)
 {
     $exception.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
 }
+
 $endif$
 
 >>
@@ -154,6 +163,7 @@ $struct.scopedname$& $struct.scopedname$::operator=($struct.name$ &&x)
     return *this;
 }
 
+$if(ctx.anyCdr)$
 size_t $struct.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;
@@ -162,6 +172,8 @@ size_t $struct.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 
     return current_align;
 }
+
+$endif$
 
 $if(ctx.cdr)$
 void $struct.scopedname$::serialize(eprosima::Cdr &scdr) const
@@ -173,6 +185,7 @@ void $struct.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
     $struct.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
 }
+
 $elseif(ctx.fastcdr)$
 void $struct.scopedname$::serialize(eprosima::FastCdr &scdr) const
 {
@@ -183,6 +196,7 @@ void $struct.scopedname$::deserialize(eprosima::FastCdr &dcdr)
 {
     $struct.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
 }
+
 $endif$
 >>
 
@@ -250,7 +264,7 @@ void $union.scopedname$::_d($union.discriminator.cppTypename$ __d)
         $union.members:{$unionmember_discriminator_case(member=it, totallabels=union.totallabels)$}; separator="\n"$
     }
     
-    if(!b) throw eprosima::BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b) throw eprosima::rpcdds::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
     
     m__d = __d;
 }
@@ -267,6 +281,7 @@ $union.discriminator.cppTypename$& $union.scopedname$::_d()
 
 $union.members:{$public_unionmember_declaration(class=union.scopedname, member=it, defaultvalue=union.defaultvalue, totallabels=union.totallabels)$}; separator="\n"$
 
+$if(ctx.anyCdr)$
 size_t $union.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;
@@ -288,6 +303,8 @@ size_t $union.scopedname$::getMaxCdrSerializedSize(size_t current_alignment)
     return union_max_size_serialized;
 }
 
+$endif$
+
 $if(ctx.cdr)$
 void $union.scopedname$::serialize(eprosima::Cdr &scdr) const
 {
@@ -308,6 +325,7 @@ void $union.scopedname$::deserialize(eprosima::Cdr &dcdr)
         $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
     }
 }
+
 $elseif(ctx.fastcdr)$
 void $union.scopedname$::serialize(eprosima::FastCdr &scdr) const
 {
@@ -328,6 +346,7 @@ void $union.scopedname$::deserialize(eprosima::FastCdr &dcdr)
         $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
     }
 }
+
 $endif$
 
 >>
@@ -477,7 +496,7 @@ switch(m__d)
 }
 $endif$
     
-if(!b) throw eprosima::BadParamException("This member is not been selected");
+if(!b) throw eprosima::rpcdds::exception::BadParamException("This member is not been selected");
 >>
 
 unionmember_case_selection_se(member) ::= <<

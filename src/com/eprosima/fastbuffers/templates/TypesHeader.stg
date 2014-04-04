@@ -14,8 +14,9 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 #ifndef _$ctx.filename;format="toUpper"$_H_
 #define _$ctx.filename;format="toUpper"$_H_
 
-// TODO Unir con FastBuffers. Puesto por fastrpc
+$if(ctx.fastrpcProduct)$
 #include "rpcdds/exceptions/UserException.h"
+$endif$
 
 $ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="\n"$
 
@@ -80,8 +81,8 @@ export_list(exports) ::= <<
 $exports; separator="\n"$
 >>
 
-// TODO UserException the todos.
 exception(ctx, exception) ::= <<
+$if(ctx.fastrpcProduct)$
 /*!
  * @brief This class implementes the user exception $exception.scopedname$
  * @ingroup $ctx.trimfilename$
@@ -114,6 +115,7 @@ private:
 	// Exception members
     $exception.members:{ member |$private_member_declaration(member=member)$}; separator="\n"$
 };
+$endif$
 >>
 
 operation(ctx, operation, param_list) ::= <<>>
@@ -414,8 +416,11 @@ $typecode.cppTypename$ m_$name$;
  */
 
 size_functions(type) ::= <<
- // TODO
- static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+$if(ctx.anyCdr)$
+// TODO
+static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+$endif$
 >>
 
 serialization_functions(type) ::= <<
