@@ -96,23 +96,23 @@ $endif$
 $if(ctx.cdr)$
 void $exception.scopedname$::serialize(eprosima::Cdr &scdr) const
 {
-    $exception.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
+    $exception.members : { member |$object_serialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 void $exception.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
-    $exception.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
+    $exception.members : { member |$object_deserialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 $else$
 void $exception.scopedname$::serialize(eprosima::FastCdr &scdr) const
 {
-    $exception.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
+    $exception.members : { member |$object_serialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 void $exception.scopedname$::deserialize(eprosima::FastCdr &dcdr)
 {
-    $exception.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
+    $exception.members : { member |$object_deserialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 $endif$
@@ -178,23 +178,23 @@ $endif$
 $if(ctx.cdr)$
 void $struct.scopedname$::serialize(eprosima::Cdr &scdr) const
 {
-    $struct.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
+    $struct.members : { member |$object_serialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 void $struct.scopedname$::deserialize(eprosima::Cdr &dcdr)
 {
-    $struct.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
+    $struct.members : { member |$object_deserialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 $elseif(ctx.fastcdr)$
 void $struct.scopedname$::serialize(eprosima::FastCdr &scdr) const
 {
-    $struct.members : { member |$object_serialization(object=member, preffix="m_")$}; separator="\n"$
+    $struct.members : { member |$object_serialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 void $struct.scopedname$::deserialize(eprosima::FastCdr &dcdr)
 {
-    $struct.members : { member |$object_deserialization(object=member, preffix="m_")$}; separator="\n"$
+    $struct.members : { member |$object_deserialization(ctx=ctx, object=member, preffix="m_")$}; separator="\n"$
 }
 
 $endif$
@@ -312,7 +312,7 @@ void $union.scopedname$::serialize(eprosima::Cdr &scdr) const
 
     switch(m__d)
     {
-        $union.members:{ member |$unionmember_case_selection_se(member=member)$}; separator="\n"$
+        $union.members:{ member |$unionmember_case_selection_se(ctx=ctx, member=member)$}; separator="\n"$
     }
 }
 
@@ -322,7 +322,7 @@ void $union.scopedname$::deserialize(eprosima::Cdr &dcdr)
 
     switch(m__d)
     {
-        $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
+        $union.members:{ member |$unionmember_case_selection_de(ctx=ctx, member=member)$}; separator="\n"$
     }
 }
 
@@ -333,7 +333,7 @@ void $union.scopedname$::serialize(eprosima::FastCdr &scdr) const
 
     switch(m__d)
     {
-        $union.members:{ member |$unionmember_case_selection_se(member=member)$}; separator="\n"$
+        $union.members:{ member |$unionmember_case_selection_se(ctx=ctx, member=member)$}; separator="\n"$
     }
 }
 
@@ -343,7 +343,7 @@ void $union.scopedname$::deserialize(eprosima::FastCdr &dcdr)
 
     switch(m__d)
     {
-        $union.members:{ member |$unionmember_case_selection_de(member=member)$}; separator="\n"$
+        $union.members:{ member |$unionmember_case_selection_de(ctx=ctx, member=member)$}; separator="\n"$
     }
 }
 
@@ -499,20 +499,20 @@ $endif$
 if(!b) throw eprosima::rpcdds::exception::BadParamException("This member is not been selected");
 >>
 
-unionmember_case_selection_se(member) ::= <<
+unionmember_case_selection_se(ctx, member) ::= <<
 $member.labels:{ label |case $label$:}; separator="\n"$
 $if(member.default)$
 default:$\n$
 $endif$
-$object_serialization(object=member, preffix="m_")$
+$object_serialization(ctx=ctx, object=member, preffix="m_")$
 break;
 >>
 
-unionmember_case_selection_de(member) ::= <<
+unionmember_case_selection_de(ctx, member) ::= <<
 $member.labels:{ label |case $label$:}; separator="\n"$
 $if(member.default)$
 default:$\n$
 $endif$
-$object_deserialization(object=member, preffix="m_")$
+$object_deserialization(ctx=ctx, object=member, preffix="m_")$
 break;
 >>
