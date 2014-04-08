@@ -14,8 +14,9 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 #ifndef _$ctx.filename;format="toUpper"$_H_
 #define _$ctx.filename;format="toUpper"$_H_
 
+// TODO Poner en el contexto.
 $if(ctx.fastrpcProduct)$
-#include "rpcdds/exceptions/UserException.h"
+#include "fastrpc/exceptions/UserException.h"
 $endif$
 
 $ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="\n"$
@@ -87,7 +88,7 @@ $if(ctx.fastrpcProduct)$
  * @brief This class implementes the user exception $exception.scopedname$
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $exception.name$ : public eprosima::rpcdds::exception::UserException
+class user_cpp_DllExport $exception.name$ : public eprosima::fastrpc::exception::UserException
 {
 public:
     
@@ -232,7 +233,7 @@ public:
     /*!
      * @brief This function sets the discriminator value.
      * @param __d New value for the discriminator.
-     * @exception eprosima::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
     void _d($union.discriminator.cppTypename$ __d);
     
@@ -354,14 +355,14 @@ void $member.name$($member.typecode.cppTypename$ _$member.name$);
 /*!
  * @brief This function returns the value of member $member.name$
  * @return Value of member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 $member.typecode.cppTypename$ $member.name$() const;
 
 /*!
  * @brief This function returns a reference to member $member.name$
  * @return Reference to member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 $member.typecode.cppTypename$& $member.name$();
 $else$
@@ -380,14 +381,14 @@ void $member.name$($member.typecode.cppTypename$ &&_$member.name$);
 /*!
  * @brief This function returns a constant reference to member $member.name$
  * @return Constant reference to member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 const $member.typecode.cppTypename$& $member.name$() const;
 
 /*!
  * @brief This function returns a reference to member $member.name$
  * @return Reference to member $member.name$
- * @exception eprosima::BadParamException This exception is thrown if the requested union member is not the current selection.
+ * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
  */
 $member.typecode.cppTypename$& $member.name$();
 $endif$
@@ -426,17 +427,17 @@ $endif$
 serialization_functions(type) ::= <<
 $if(ctx.cdr)$
 // TODO
-void serialize(eprosima::Cdr &cdr) const;
+void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
 // TODO
-void deserialize(eprosima::Cdr &cdr);
+void deserialize(eprosima::fastcdr::Cdr &cdr);
 
 $elseif(ctx.fastcdr)$
 // TODO
-void serialize(eprosima::FastCdr &cdr) const;
+void serialize(eprosima::fastcdr::FastCdr &cdr) const;
 
 // TODO
-void deserialize(eprosima::FastCdr &cdr);
+void deserialize(eprosima::fastcdr::FastCdr &cdr);
 
 $endif$
 >>
