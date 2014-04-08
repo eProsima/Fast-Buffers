@@ -39,13 +39,19 @@ $ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="
 $if(ctx.cdr)$
 namespace eprosima
 {
-    class Cdr;
+    namespace fastcdr
+    {
+        class Cdr;
+    }
 }
 
 $elseif(ctx.fastcdr)$
 namespace eprosima
 {
-    class FastCdr;
+    namespace fastcdr
+    {
+        class FastCdr;
+    }
 }
 
 $endif$
