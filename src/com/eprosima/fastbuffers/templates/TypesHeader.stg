@@ -27,13 +27,13 @@ $ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="
 #include <vector>
 
 #if defined(_WIN32)
-#if defined(USER_CPP_DLL_EXPORT)
-#define user_cpp_DllExport __declspec( dllexport )
+#if defined(EPROSIMA_USER_DLL_EXPORT)
+#define eProsima_user_DllExport __declspec( dllexport )
 #else
-#define user_cpp_DllExport
+#define eProsima_user_DllExport
 #endif
 #else
-#define user_cpp_DllExport
+#define eProsima_user_DllExport
 #endif
 
 $if(ctx.cdr)$
@@ -94,7 +94,7 @@ $if(ctx.fastrpcProduct)$
  * @brief This class implementes the user exception $exception.scopedname$
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $exception.name$ : public eprosima::fastrpc::exception::UserException
+class eProsima_user_DllExport $exception.name$ : public eprosima::fastrpc::exception::UserException
 {
 public:
     
@@ -144,7 +144,7 @@ struct_type(ctx, struct) ::= <<
  * @brief This class represents the structure $struct.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $struct.name$
+class eProsima_user_DllExport $struct.name$
 {
 public:
 
@@ -198,7 +198,7 @@ union_type(ctx, union) ::= <<
  * @brief This class represents the union $union.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
  */
-class user_cpp_DllExport $union.name$
+class eProsima_user_DllExport $union.name$
 {
 public:
 
