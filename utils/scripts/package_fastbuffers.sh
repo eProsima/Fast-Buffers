@@ -26,13 +26,13 @@ function package
 {
     # Get current version of GCC. (Not more needed)
     #. $EPROSIMADIR/scripts/common_pack_functions.sh getGccVersion
-	cd ../CDR
-	# Get the current version of CDR
+    cd ../fastcdr
+    # Get the current version of CDR
     . $EPROSIMADIR/scripts/common_pack_functions.sh getVersionFromCPP cdrversion include/fastcdr/FastCdr_version.h
 
-    # Compile and packageing FastCDR library for all archictectures
+    # Compile and packaging FastCDR library for all archictectures
     cd utils/scripts
-    ./package_fastcdr.sh
+    #./package_fastcdr.sh
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ../../../FastBuffers
@@ -48,9 +48,6 @@ function package
 
     # Update and compile FastBuffers application.
     # Update FastBuffers application
-    svn update
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
     # Compile FastBuffers for target.
     rm -rf build
     ant jar
@@ -117,22 +114,22 @@ function package
 
     # Remove the doxygen tmp directory
     rm -rf output
-	
-	# Generate distribution
-    distroName="Fast_Buffers"
+
+    # Generate distribution
+    distroName="FastBuffers"
     . $EPROSIMADIR/scripts/common_pack_functions.sh getDistroVersion
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     distro=`cat /etc/rpm/macros.dist  | grep %dist | cut -d. -f2`
-    
+
     mkdir -p tmpRelease
     cp ~/rpmbuild/RPMS/i686/fastcdr-${cdrversion}-1.${distro}.i686.rpm tmpRelease
     cp ~/rpmbuild/RPMS/noarch/fastbuffers-${fastbuffersversion}-1.${distro}.noarch.rpm tmpRelease
     cp ~/rpmbuild/RPMS/x86_64/fastcdr-${cdrversion}-1.${distro}.x86_64.rpm tmpRelease
-    
+
     cd tmpRelease
-    tar cvzf "../installers/linux/eProsima_${distroName}_${fastbuffersversion}_${distroversion}.tar.gz" *
-   errorstatus=$?
+    tar cvzf "../installers/linux/eProsima_${distroName}-${fastbuffersversion}-${distroversion}.tar.gz" *
+    errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd ..
 
@@ -140,7 +137,6 @@ function package
     rm -rf tmpRelease
     cd ..
     rm -rf utils/installers/linux/tmp
-	
 }
 
 # Check that the environment.sh script was run.

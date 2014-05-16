@@ -71,22 +71,7 @@ function installer
 	cp ../../../classes/stringtemplate-3.2.1.jar tmp/$project/classes
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy build ant script
-	cp ../../../build.xml tmp/$project
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-	cp ../../../manifest tmp/$project
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy grammar
-	cp -r ../../../grammar tmp/$project
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy code
-	cp -r ../../../src tmp/$project
+	cp ../../../classes/fastbuffers.jar tmp/$project/classes
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
@@ -98,7 +83,7 @@ function installer
 	chmod 755 tmp/$project/scripts/fastbuffers.sh
 
 	cd tmp
-	tar cvzf "../${project}_${version}.tar.gz" $project
+	tar cvzf "../eProsima_FastBuffers-${version}-Linux.tar.gz" $project
 	errorstatus=$?
 	cd ..
 	if [ $errorstatus != 0 ]; then return; fi
