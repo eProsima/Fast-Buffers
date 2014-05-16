@@ -8,7 +8,7 @@
 
 group makefile;
 
-makecxx(projnames, example, arch, local) ::= <<
+makecxx(solution, example, arch, local) ::= <<
 CPP= g++
 CPPFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x
 LN= g++
@@ -21,35 +21,35 @@ LIBS= $if(local)$-L\$(FASTCDR)/lib/$example$$endif$ -lfastcdr
 
 DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
 
-all: \$(DIRECTORIES) $projnames:{$it$}; separator=" "$
+all: \$(DIRECTORIES) $solution.projects:{$it.name$ $it.name$Example}; separator=" \\\n\t"$
 
-$projnames:{
-$it$_TARGET= lib/$example$/lib$it$.so
-$it$_TARGET_Z= lib/$example$/lib$it$.a
-$it$_EXAMPLE_TARGET = bin/$example$/$it$
+$solution.projects:{
+$it.name$_TARGET= lib/$example$/lib$it.name$.so
+$it.name$_TARGET_Z= lib/$example$/lib$it.name$.a
+$it.name$_EXAMPLE_TARGET = bin/$example$/$it.name$Example
 
-$it$_SRC_CPPFILES= $it$.cpp $it$Ser.cpp
+$it.name$_SRC_CPPFILES= $it.name$.cpp
 
-$it$_OBJS = \$($it$_SRC_CPPFILES:%.cpp=output/$example$/%.o)
+$it.name$_OBJS = \$($it.name$_SRC_CPPFILES:%.cpp=output/$example$/%.o)
 
-OBJS+= \$($it$_OBJS)
+OBJS+= \$($it.name$_OBJS)
 
-$it$: \$($it$_TARGET) \$($it$_TARGET_Z) \$($it$_EXAMPLE_TARGET)
+$it.name$: \$($it.name$_TARGET) \$($it.name$_TARGET_Z) \$($it.name$_EXAMPLE_TARGET)
 
-\$($it$_TARGET): \$($it$_OBJS)
-	\$(LN) \$(LDFLAGS) -shared -o \$($it$_TARGET) \$($it$_OBJS) \$(LIBS)
+\$($it.name$_TARGET): \$($it.name$_OBJS)
+	\$(LN) \$(LDFLAGS) -shared -o \$($it.name$_TARGET) \$($it.name$_OBJS) \$(LIBS) -Llib/$example$ $it.dependencies : {dep |-l$dep$}; separator=" "$
 
-\$($it$_TARGET_Z): \$($it$_OBJS)
-	\$(AR) -cru \$($it$_TARGET_Z) \$($it$_OBJS)
+\$($it.name$_TARGET_Z): \$($it.name$_OBJS)
+	\$(AR) -cru \$($it.name$_TARGET_Z) \$($it.name$_OBJS)
 	
-\$($it$_EXAMPLE_TARGET): output/$example$/$it$Example.o
-	\$(LN) \$(LDFLAGS) -o \$($it$_EXAMPLE_TARGET) output/$example$/$it$Example.o -Wl,-Bstatic \$(LIBS) -Llib/$example$ -l$it$ -Wl,-Bdynamic
+\$($it.name$_EXAMPLE_TARGET): output/$example$/$it.name$Example.o
+	\$(LN) \$(LDFLAGS) -o \$@ output/$example$/$it.name$Example.o -Wl,-Bstatic -Llib/$example$ -l$it.name$ $it.dependencies : {dep |-l$dep$}; separator=" "$ -Wl,-Bdynamic \$(LIBS) 
 }; separator="\n"$
 
 output/$example$/%.o:%.cpp
 	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$< -o \$@
 
-.PHONY: $projnames:{$it$}; separator=" "$
+.PHONY: $solution.projects:{$it.name$ $it.name$Example}; separator=" "$
 
 clean:
 	@rm -f \$(OBJS)

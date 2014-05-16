@@ -29,16 +29,15 @@ function execTest
     cp $1/* output/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
+    mv output/${1}ExampleCdr.cpp output/${1}Example.cpp
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
     # Compile again the generated library
     make -C output -f makefile_$EPROSIMA_TARGET all
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    # Compile the application test
-    make -C output -f makefile_$1 all
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
     # Execute the test application
-    output/bin/$EPROSIMA_TARGET/$1Test
+    output/bin/$EPROSIMA_TARGET/$1Example
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
@@ -59,16 +58,15 @@ function execTest
     cp $1/* output/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
+    mv output/${1}ExampleFastCdr.cpp output/${1}Example.cpp
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
     # Compile again the generated library
     make -C output -f makefile_$EPROSIMA_TARGET all
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    # Compile the application test
-    make -C output -f makefile_$1 all
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
     # Execute the test application
-    output/bin/$EPROSIMA_TARGET/$1Test
+    output/bin/$EPROSIMA_TARGET/$1Example
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 }

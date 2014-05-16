@@ -9,24 +9,62 @@
 package com.eprosima.fastbuffers;
 
 import com.eprosima.fastbuffers.exceptions.*;
-import com.eprosima.fastbuffers.parser.*;
+import com.eprosima.solution.*;
+import com.eprosima.idl.util.Util;
+import com.eprosima.fastbuffers.context.Context;
+import com.eprosima.idl.parser.grammar.IDLLexer;
+import com.eprosima.idl.parser.grammar.IDLParser;
+import com.eprosima.idl.parser.exception.ParseException;
+import com.eprosima.idl.generator.manager.TemplateGroup;
+import com.eprosima.idl.generator.manager.TemplateManager;
+import com.eprosima.idl.parser.typecode.TypeCode;
 
 import java.io.*;
 import java.util.Vector;
 import java.util.ArrayList;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.antlr.stringtemplate.StringTemplateErrorListener;
 import org.antlr.stringtemplate.StringTemplateGroup;
+import org.antlr.stringtemplate.StringTemplateGroupLoader;
+import org.antlr.stringtemplate.CommonGroupLoader;
 import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 
 public class FastBuffers
 {
+    class TemplateErrorListener implements StringTemplateErrorListener
+    {  
+        public void error(String arg0, Throwable arg1)
+        {
+            System.out.println(arg0);
+            arg1.printStackTrace();
+        }
+    
+        public void warning(String arg0)
+        {
+            System.out.println(arg0);   
+        }   
+    }
+
+    // Use to know the protocol
+    public enum SERIALIZER
+    {
+        CDR,
+        FASTCDR
+    };
+
     private Vector<String> m_idlFiles;
-    private String m_outputDir = "." + File.separator;
+    private final String m_defaultOutputDir = "." + File.separator;
+    private String m_outputDir = m_defaultOutputDir;
+    private String m_tempDir = null;
     private String m_exampleOption = null;
-    private String m_serType = "CDR";
+    private SERIALIZER m_serializer = SERIALIZER.CDR;
     private boolean m_replace = false;
     private boolean m_local = false;
+    private boolean m_ppDisable = false;
+    private String m_ppPath = null;
+    private ArrayList m_includePaths = new ArrayList();
+    private String m_os = null;
     
     private static VSConfiguration m_vsconfigurations[]={new VSConfiguration("Debug DLL", "Win32", true, true),
         new VSConfiguration("Release DLL", "Win32", false, true),
@@ -38,6 +76,10 @@ public class FastBuffers
     {
         int count = 0;
         m_idlFiles = new Vector<String>();
+
+        // Detect OS system
+        // Detect OS
+        m_os = System.getProperty("os.name");
         
         while(count < args.length)
         {
@@ -75,11 +117,11 @@ public class FastBuffers
                 {
                     if(args[count].equals("cdr"))
                     {
-                        m_serType = "CDR";
+                        m_serializer = SERIALIZER.CDR;
                     }
                     else if(args[count].equals("fastcdr"))
                     {
-                        m_serType = "FastCDR";
+                        m_serializer = SERIALIZER.FASTCDR;
                     }
                     else
                     {
@@ -90,6 +132,40 @@ public class FastBuffers
                 {
                     throw new BadArgumentException("No platform after -ser argument.");
                 }
+            }
+            else if(args[count].equals("-ppPath"))
+            {
+                if(++count < args.length)
+                    m_ppPath = args[count];
+                else
+                    throw new BadArgumentException("No URL after -ppPath argument");
+            }
+            else if(args[count].equalsIgnoreCase("-ppDisable"))
+            {
+                m_ppDisable = true;
+            }
+            // Get include directories
+            else if(args[count].equals("-I"))
+            {
+                if(++count < args.length)
+                {
+                    m_includePaths.add(new String("-I" + args[count]));
+                }
+                else
+                    throw new BadArgumentException("No URL after -I argument");
+            }
+            else if(args[count].startsWith("-I"))
+            {
+                m_includePaths.add(args[count]);
+            }
+            else if(args[count].equals("-t"))
+            {
+                if(++count < args.length)
+                {
+                    m_tempDir = args[count];
+                }
+                else
+                    throw new BadArgumentException("No URL after -t argument");
             }
             else if(args[count].equals("-replace"))
             {
@@ -128,59 +204,264 @@ public class FastBuffers
     
     public boolean execute()
     {
+    	// Check the output directory.
+    	if(!m_outputDir.equals(m_defaultOutputDir))
+    	{
+    		File dir = new File(m_outputDir);
+    		
+    		if(!dir.exists())
+    		{
+    			System.out.println("ERROR: The output directory doesn't exist");
+    			return false;
+    		}
+    	}
+
+        // Set the temporary folder.
+        if(m_tempDir == null)
+        {
+        	if(m_os.contains("Windows"))
+        	{
+        		String tempPath = System.getenv("TEMP");
+        		
+        		if(tempPath == null)
+        			tempPath = System.getenv("TMP");
+        		
+        		m_tempDir = tempPath;
+        	}
+        	else if(m_os.contains("Linux"))
+        	{
+        		m_tempDir = "/tmp/";
+        	}
+        }
+        if(m_tempDir.charAt(m_tempDir.length() - 1) != File.separatorChar)
+		{
+			m_tempDir += File.separator;
+		}
+
+        // Load main string templates.
+        // Load string templates
+        System.out.println("Loading Templates...");     
+        StringTemplateGroupLoader loader = new CommonGroupLoader("com/eprosima/fastbuffers/templates", new TemplateErrorListener());
+        StringTemplateGroup.registerGroupLoader(loader);
+        TypeCode.cpptypesgr = StringTemplateGroup.loadGroup("Types", DefaultTemplateLexer.class, null);
+
         boolean returnedValue = true;
+        Solution solution = new Solution();
         
         for(int count = 0; returnedValue && (count < m_idlFiles.size()); ++count)
         {
-            returnedValue &= process(m_idlFiles.get(count));
+            Project project = process(m_idlFiles.get(count));
+
+            if(project != null)
+                solution.addProject(project);
+            else
+                returnedValue = false;
         }
         
         if(returnedValue && (m_exampleOption != null))
         {
-            if((returnedValue = genSolution()) == false)
+            if((returnedValue = genSolution(solution)) == false)
                 System.out.println("ERROR: While the solution was being generated");
         }
         
         return returnedValue;
     }
     
-    private boolean process(String idlFilename)
+    private Project process(String idlFilename)
     {
         boolean returnedValue = false;
+        String idlParseFileName = idlFilename;
+        Project project = null;
         System.out.println("Processing the file " + idlFilename + "...");
+
+        String onlyFileName = Util.getIDLFileNameOnly(idlFilename);
+
+        if(!m_ppDisable)
+        {
+            idlParseFileName = callPreprocessor(idlFilename);
+        }
+
+        if(idlParseFileName != null)
+        {
+            // Create initial context.
+            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_serializer);
+
+            // Create template manager
+            TemplateManager tmanager = new TemplateManager();
+            // Load template to generate source for common types.
+            tmanager.addGroup("TypesHeader");
+            tmanager.addGroup("TypesSource");
+            tmanager.addGroup("ExampleSource");
+
+	        // Create main template for all templates.
+	        TemplateGroup maintemplates = tmanager.createTemplateGroup("main");
+	        maintemplates.setAttribute("ctx", ctx);	        
+
+            try
+            {
+                InputStream input = new FileInputStream(idlFilename);
+                IDLLexer lexer = new IDLLexer(input);
+                IDLParser parser = new IDLParser(lexer);
+                // Pass the filename without the extension.
+                returnedValue = parser.specification(ctx, tmanager, maintemplates);
+            }
+            catch(FileNotFoundException ex)
+            {
+                System.out.println("ERROR<FileNotFoundException>: The file " + idlFilename + "was not found.");
+            }
+            catch(ParseException ex)
+            {
+                System.out.println("ERROR<ParseException>: " + ex.getMessage());
+            }
+            catch(Exception ex)
+            {
+                System.out.println("ERROR<Exception>: " + ex.getMessage());
+            }
+
+            if(returnedValue)
+            {
+	        	project = new Project(onlyFileName, idlFilename, ctx.getDependencies());
+
+                System.out.println("Generating Code...");
+
+                if(returnedValue = Utils.writeFile(m_outputDir + onlyFileName + ".h", maintemplates.getTemplate("TypesHeader"), m_replace))
+                {
+                    if(returnedValue = Utils.writeFile(m_outputDir + onlyFileName + ".cpp", maintemplates.getTemplate("TypesSource"), m_replace))
+                    {
+                        project.addCommonIncludeFile(onlyFileName + ".h");
+                        project.addCommonSrcFile(onlyFileName + ".cpp");
+
+                        if(m_exampleOption != null)
+                            returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Example.cpp", maintemplates.getTemplate("ExampleSource"), m_replace);
+                    }
+                }
+            }
+        }
+        
+        return project;
+    }
+
+    /*!
+     * @return The file used to store the preprocessed idl file. In error case null pointer is returned.
+     */
+    String callPreprocessor(String idlFilename)
+    {
+    	// Set line command.
+        ArrayList lineCommand = new ArrayList();
+        String[] lineCommandArray = null;
+        String outputfile = Util.getIDLFileOnly(idlFilename) + ".cc";
+        int exitVal = -1;
+        OutputStream of = null;
+        
+        // Use temp directory.
+        if(m_tempDir != null)
+        	outputfile = m_tempDir + outputfile;
+        
+        if(m_os.contains("Windows"))
+        {
+        	try
+            {
+            	of = new FileOutputStream(outputfile);
+            }
+            catch(FileNotFoundException ex)
+            {
+            	System.out.println("ERROR<callPreprocessor>: Cannot open file " + outputfile);
+            	return null;
+            }
+        }
+        
+        // Set the preprocessor path
+        String ppPath = m_ppPath;
+        
+        if(ppPath == null)
+        {
+        	if(m_os.contains("Windows"))
+        	{
+        		ppPath = "cl.exe";
+        	}
+        	else if(m_os.contains("Linux"))
+        	{
+        		ppPath = "cpp";
+        	}
+        }
+        
+        // Add command
+        lineCommand.add(ppPath);
+        
+        // Add the include paths given as parameters.
+        for(int i = 0; i < m_includePaths.size(); ++i)
+        {
+        	if(m_os.contains("Windows"))
+        		lineCommand.add(((String)m_includePaths.get(i)).replaceFirst("^-I", "/I"));
+        	else if(m_os.contains("Linux"))
+        		lineCommand.add(m_includePaths.get(i));
+        }
+        
+        if(m_os.contains("Windows"))
+        {
+        	lineCommand.add("/E");
+        	lineCommand.add("/C");
+        }
+        
+        // Add input file.
+        lineCommand.add(idlFilename);
+        
+        if(m_os.contains("Linux"))
+        {
+        	// Add output file.
+        	lineCommand.add(outputfile);
+        }
+        
+        lineCommandArray = new String[lineCommand.size()];
+        lineCommandArray = (String[])lineCommand.toArray(lineCommandArray);
         
         try
         {
-            InputStream input = new FileInputStream(idlFilename);
-            IDLLexer lexer = new IDLLexer(input);
-            IDLParser parser = new IDLParser(lexer);
-            // Pass the filename without the extension.
-            returnedValue = parser.specification(m_outputDir, Utils.getIDLFileNameOnly(idlFilename), m_serType,
-                    m_replace, (m_exampleOption != null ? true : false));
-        }
-        catch(FileNotFoundException ex)
-        {
-            System.out.println("ERROR<FileNotFoundException>: The file " + idlFilename + "was not found.");
-        }
-        catch(ParseException ex)
-        {
-        	System.out.println("ERROR<ParseException>: " + ex.getMessage());
+	        Process preprocessor = Runtime.getRuntime().exec(lineCommandArray);
+	        ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null);
+	        ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, of);
+	        errorOutput.start();
+	        normalOutput.start();
+	        exitVal = preprocessor.waitFor();
+	        errorOutput.join();
+	        normalOutput.join();
         }
         catch(Exception ex)
         {
-            System.out.println("ERROR<Exception>: " + ex.getMessage());
+        	System.out.println("Cannot execute the preprocessor. Reason: " + ex.getMessage());
+        	return null;
         }
         
-        return returnedValue;
+        if(of != null)
+        {
+        	try
+        	{
+        		of.close();
+        	}
+        	catch(IOException ex)
+        	{
+        		System.out.println("ERROR<callPreprocessor>: Cannot close file " + outputfile);
+        	}
+        }
+
+        if(exitVal != 0)
+        {
+        	System.out.println("Preprocessor return an error " + exitVal);
+        	return null;
+        }
+        
+        return outputfile;
     }
     
-    private boolean genSolution()
+    private boolean genSolution(Solution solution)
     {
         final String METHOD_NAME = "genSolution";
         boolean returnedValue = true;
 
         if(m_exampleOption != null)
         {
+            System.out.println("Generating solution for arch " + m_exampleOption  + "...");
+
             if(m_exampleOption.substring(3, 6).equals("Win"))
             {
                 System.out.println("Genering VS2010 solution");
@@ -208,11 +489,11 @@ public class FastBuffers
 
                 if(m_exampleOption.startsWith("i86"))
                 {
-                    returnedValue = genMakefile("32");
+                    returnedValue = genMakefile(solution, "32");
                 }
                 else if(m_exampleOption.startsWith("x64"))
                 {
-                    returnedValue = genMakefile("64");
+                    returnedValue = genMakefile(solution, "64");
                 }
                 else
                     returnedValue = false;
@@ -303,10 +584,9 @@ public class FastBuffers
         return returnedValue;
     }
     
-    private boolean genMakefile(String arch)
+    private boolean genMakefile(Solution solution, String arch)
     {
     	boolean returnedValue = false;
-    	String idlFilename = null;
     	StringTemplate makecxx = null;
     	
     	StringTemplateGroup makeTemplates = StringTemplateGroup.loadGroup("makefile", DefaultTemplateLexer.class, null);
@@ -315,14 +595,7 @@ public class FastBuffers
     	{
     		makecxx = makeTemplates.getInstanceOf("makecxx");
     		
-    		returnedValue = true;
-            for(int count = 0; returnedValue && (count < m_idlFiles.size()); ++count)
-            {
-            	idlFilename = Utils.getIDLFileNameOnly(m_idlFiles.get(count));
-	    			
-	    		makecxx.setAttribute("projnames", idlFilename);	
-            }
-            
+            makecxx.setAttribute("solution", solution);
             makecxx.setAttribute("example", m_exampleOption);
     		makecxx.setAttribute("arch", arch);
     		makecxx.setAttribute("local", m_local);   
@@ -417,5 +690,71 @@ public class FastBuffers
     	}
         
         System.exit(-1);
+    }
+}
+
+class ProcessOutput extends Thread
+{
+    InputStream is = null;
+    OutputStream of = null;
+    String type;
+    boolean m_check_failures;
+    boolean m_found_error = false;
+    final String clLine = "#line";
+
+    ProcessOutput(InputStream is, String type, boolean check_failures, OutputStream of)
+    {
+        this.is = is;
+        this.type = type;
+        m_check_failures = check_failures;
+        this.of = of;
+    }
+
+    public void run()
+    {
+        try
+        {
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line=null;
+            while ( (line = br.readLine()) != null)
+            {
+            	if(of == null)
+            		System.out.println(line);
+            	else
+            	{
+            		// Sustituir los \\ que pone cl.exe por \
+            		if(line.startsWith(clLine))
+            		{
+            			line = "#" + line.substring(clLine.length());
+	            		int count = 0;
+	            		while((count = line.indexOf("\\\\")) != -1)
+	            		{
+	            			line = line.substring(0, count) + "\\" + line.substring(count + 2);
+	            		}
+            		}
+
+            		of.write(line.getBytes());
+            		of.write('\n');
+            	}
+                
+                if(m_check_failures)
+                {
+                	if(line.startsWith("Done (failures)"))
+                	{
+                		m_found_error = true;
+                	}
+                }
+            }
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();  
+        }
+    }
+    
+    boolean getFoundError()
+    {
+    	return m_found_error;
     }
 }
