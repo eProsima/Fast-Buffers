@@ -9,9 +9,10 @@
 package com.eprosima.fastbuffers;
 
 import com.eprosima.fastbuffers.exceptions.*;
-import com.eprosima.solution.*;
-import com.eprosima.idl.util.Util;
+import com.eprosima.solution.Solution;
+import com.eprosima.fastbuffers.solution.Project;
 import com.eprosima.fastbuffers.context.Context;
+import com.eprosima.idl.util.Util;
 import com.eprosima.idl.parser.grammar.IDLLexer;
 import com.eprosima.idl.parser.grammar.IDLParser;
 import com.eprosima.idl.parser.exception.ParseException;
@@ -468,7 +469,7 @@ public class FastBuffers
                 
                 if(m_exampleOption.startsWith("i86"))
                 {
-                    returnedValue = genVS2010(null);
+                    returnedValue = genVS2010(solution, null);
                 }
                 else if(m_exampleOption.startsWith("x64"))
                 {
@@ -477,7 +478,7 @@ public class FastBuffers
                         m_vsconfigurations[index].setPlatform("x64");
                     }
                     
-                    returnedValue = genVS2010("64");
+                    returnedValue = genVS2010(solution, "64");
                 }
                 else
                     returnedValue = false;
@@ -503,77 +504,72 @@ public class FastBuffers
         return returnedValue;
     }
     
-    private boolean genVS2010(String arch)
+    private boolean genVS2010(Solution solution, String arch)
     {
         final String METHOD_NAME = "genVS2010";
         boolean returnedValue = false;
-        String idlFilename = null, guid = null, guidExample = null;
         
         // first load main language template
         StringTemplateGroup vsTemplates = StringTemplateGroup.loadGroup("VS2010", DefaultTemplateLexer.class, null);
 
         if(vsTemplates != null)
         {
-            StringTemplate solution = vsTemplates.getInstanceOf("solution");
-            StringTemplate project = vsTemplates.getInstanceOf("project");;
-            StringTemplate projectFiles = vsTemplates.getInstanceOf("projectFiles");
-            StringTemplate projectExample = vsTemplates.getInstanceOf("projectExample");
-            StringTemplate projectExampleFiles = vsTemplates.getInstanceOf("projectExampleFiles");
+            StringTemplate tsolution = vsTemplates.getInstanceOf("solution");
+            StringTemplate tproject = vsTemplates.getInstanceOf("project");;
+            StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
+            StringTemplate tprojectExample = vsTemplates.getInstanceOf("projectExample");
+            StringTemplate tprojectExampleFiles = vsTemplates.getInstanceOf("projectExampleFiles");
             
             returnedValue = true;
-            for(int count = 0; returnedValue && (count < m_idlFiles.size()); ++count)
+            for(int count = 0; returnedValue && (count < solution.getProjects().size()); ++count)
             {
-                idlFilename = Utils.getIDLFileNameOnly(m_idlFiles.get(count));
-                guid = GUIDGenerator.genGUID(idlFilename);
-                guidExample = GUIDGenerator.genGUID("Example" + idlFilename);
+		Project project = (Project)solution.getProjects().get(count);
                 
-                solution.setAttribute("projects.{name, guid, guidExample, dependsOn, example}", idlFilename, guid, guidExample, null, m_exampleOption);
+                tproject.setAttribute("solution", solution);
+                tproject.setAttribute("project", project);
+                tproject.setAttribute("example", m_exampleOption);
+                tproject.setAttribute("local", m_local);
+                tprojectFiles.setAttribute("project", project);
                 
-                project.setAttribute("guid", guid);
-                project.setAttribute("name", idlFilename);
-                project.setAttribute("example", m_exampleOption);
-                project.setAttribute("arch", arch);
-                project.setAttribute("local", m_local);
-                projectFiles.setAttribute("name", idlFilename);
-                
-                projectExample.setAttribute("guid", guidExample);
-                projectExample.setAttribute("guidParent", guid);
-                projectExample.setAttribute("name", idlFilename);
-                projectExample.setAttribute("example", m_exampleOption);
-                projectExample.setAttribute("arch", arch);
-                projectExample.setAttribute("local", m_local);
-                projectExampleFiles.setAttribute("name", idlFilename);
+                tprojectExample.setAttribute("solution", solution);
+                tprojectExample.setAttribute("project", project);
+                tprojectExample.setAttribute("example", m_exampleOption);
+                tprojectExample.setAttribute("local", m_local);
+                tprojectExampleFiles.setAttribute("project", project);
                 
                 // project configurations   
                 for(int index = 0; index < m_vsconfigurations.length; index++){
-                    project.setAttribute("configurations", m_vsconfigurations[index]);
-                    projectExample.setAttribute("configurations", m_vsconfigurations[index]);
+                    tproject.setAttribute("configurations", m_vsconfigurations[index]);
+                    tprojectExample.setAttribute("configurations", m_vsconfigurations[index]);
                 }
                 
-                if(returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".vcxproj", project, m_replace))
+                if(returnedValue = Utils.writeFile(m_outputDir + project.getName() +"-" + m_exampleOption + ".vcxproj", tproject, m_replace))
                 {
-                    if(returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".vcxproj.filters", projectFiles, m_replace))
+                    if(returnedValue = Utils.writeFile(m_outputDir + project.getName() +"-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace))
                     {
-                    	if(returnedValue = Utils.writeFile(m_outputDir + idlFilename +"Example-" + m_exampleOption + ".vcxproj", projectExample, m_replace))
+                    	if(returnedValue = Utils.writeFile(m_outputDir + project.getName() +"Example-" + m_exampleOption + ".vcxproj", tprojectExample, m_replace))
                         {
-                            returnedValue = Utils.writeFile(m_outputDir + idlFilename +"Example-" + m_exampleOption + ".vcxproj.filters", projectExampleFiles, m_replace);
+                            returnedValue = Utils.writeFile(m_outputDir + project.getName() +"Example-" + m_exampleOption + ".vcxproj.filters", tprojectExampleFiles, m_replace);
                         }
                     }
                 }
                 
-                project.reset();
-                projectFiles.reset();
+                tproject.reset();
+                tprojectFiles.reset();
             }
             
             // TODO Nombre del la solucion
             if(returnedValue)
             {
+		tsolution.setAttribute("solution", solution);
+		tsolution.setAttribute("example", m_exampleOption);
+
                 // project configurations   
                 for(int index = 0; index < m_vsconfigurations.length; index++){
-                    solution.setAttribute("configurations", m_vsconfigurations[index]);
+                    tsolution.setAttribute("configurations", m_vsconfigurations[index]);
                 }
                 
-                returnedValue = Utils.writeFile(m_outputDir + idlFilename +"-" + m_exampleOption + ".sln", solution, m_replace);
+                returnedValue = Utils.writeFile(m_outputDir + "solution-" + m_exampleOption + ".sln", tsolution, m_replace);
             }
         }
         else

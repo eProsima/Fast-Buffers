@@ -116,45 +116,47 @@ if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug DLL Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Release Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Copy static test files into output directory
 copy %1\* output\
+set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
+move output\%1ExampleCdr.cpp output\%1Example.cpp
 :: Compile the application test in RELEASE.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1Test.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Execute the test application
-output\bin\%EPROSIMA_TARGET%\%1Test
+output\bin\%EPROSIMA_TARGET%\%1Example
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 
@@ -171,45 +173,47 @@ if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug DLL Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Release Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Copy static test files into output directory
 copy %1\* output\
+set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
+move output\%1ExampleFastCdr.cpp output\%1Example.cpp
 :: Compile the application test in RELEASE.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\%1-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\%1Test.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Execute the test application
-output\bin\%EPROSIMA_TARGET%\%1Test
+output\bin\%EPROSIMA_TARGET%\%1Example
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 
