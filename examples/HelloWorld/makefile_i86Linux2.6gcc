@@ -1,0 +1,51 @@
+CPP= g++
+CPPFLAGS = -c -Wall -fpic -m32 -std=c++0x
+LN= g++
+AR=ar
+LDFLAGS = -m32
+
+INCLUDES= -I. 
+
+LIBS=  -lfastcdr
+
+DIRECTORIES= output.dir output/i86Linux2.6gcc.dir lib.dir lib/i86Linux2.6gcc.dir bin.dir bin/i86Linux2.6gcc.dir
+
+all: $(DIRECTORIES) HelloWorld HelloWorldExample
+
+
+HelloWorld_TARGET= lib/i86Linux2.6gcc/libHelloWorld.so
+HelloWorld_TARGET_Z= lib/i86Linux2.6gcc/libHelloWorld.a
+HelloWorld_EXAMPLE_TARGET = bin/i86Linux2.6gcc/HelloWorldExample
+
+HelloWorld_SRC_CPPFILES= HelloWorld.cpp
+
+HelloWorld_OBJS = $(HelloWorld_SRC_CPPFILES:%.cpp=output/i86Linux2.6gcc/%.o)
+
+OBJS+= $(HelloWorld_OBJS)
+
+HelloWorld: $(HelloWorld_TARGET) $(HelloWorld_TARGET_Z) $(HelloWorld_EXAMPLE_TARGET)
+
+$(HelloWorld_TARGET): $(HelloWorld_OBJS)
+	$(LN) $(LDFLAGS) -shared -o $(HelloWorld_TARGET) $(HelloWorld_OBJS) $(LIBS) -Llib/i86Linux2.6gcc 
+
+$(HelloWorld_TARGET_Z): $(HelloWorld_OBJS)
+	$(AR) -cru $(HelloWorld_TARGET_Z) $(HelloWorld_OBJS)
+	
+$(HelloWorld_EXAMPLE_TARGET): output/i86Linux2.6gcc/HelloWorldExample.o
+	$(LN) $(LDFLAGS) -o $@ output/i86Linux2.6gcc/HelloWorldExample.o -Wl,-Bstatic -Llib/i86Linux2.6gcc -lHelloWorld  -Wl,-Bdynamic $(LIBS) 
+
+
+output/i86Linux2.6gcc/%.o:%.cpp
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $< -o $@
+
+.PHONY: HelloWorld HelloWorldExample
+
+clean:
+	@rm -f $(OBJS)
+
+%.dir : 
+	@echo "Checking directory $*"
+	@if [ ! -d $* ]; then \
+		echo "Making directory $*"; \
+		mkdir -p $* ; \
+	fi;
