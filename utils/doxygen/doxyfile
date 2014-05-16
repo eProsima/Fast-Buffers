@@ -667,7 +667,6 @@ WARN_LOGFILE           =
 
 INPUT                  = utils/doxygen/doxygenfiles \
                          ../fastcdr/include/fastcdr \
-                         ../fastcdr/include/fastcdr/exceptions \
                          utils/doxygen/examples/cdr \
                          utils/doxygen/examples/fastcdr
 
