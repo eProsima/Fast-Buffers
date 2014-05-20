@@ -111,7 +111,7 @@ Page custom VariablesEntornoPage
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile eProsima_Fast_Buffers_${VERSION}.exe
+OutFile eProsima_FastBuffers-${VERSION}-Windows.exe
 CRCCheck on
 XPStyle on
 ShowInstDetails show
