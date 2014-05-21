@@ -48,7 +48,7 @@ for /D %%D in ("*") do (
             if "%test_targets%"=="i86" set exec_target_bool=1
             if !exec_target_bool!==1 (
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTarget i86Win32VS2010
-                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\%EPROSIMA_TARGET%
+                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\i86Win32VS2010
                 call "%%D\exec_test.bat"
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTargetPath
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTarget
@@ -60,7 +60,7 @@ for /D %%D in ("*") do (
             if "%test_targets%"=="x64" set exec_target_bool=2
             if !exec_target_bool!==2 (
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTarget x64Win64VS2010
-                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\%EPROSIMA_TARGET%
+                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\x64Win64VS2010
                 call "%%D\exec_test.bat"
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTargetPath
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTarget
@@ -73,8 +73,8 @@ for /D %%D in ("*") do (
             if "%test_targets%"=="i86" set exec_target_bool=3
             if !exec_target_bool!==3 (
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTarget i86Win32VS2010
-                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\%EPROSIMA_TARGET%
-                call :execTest %%D Win32
+                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\i86Win32VS2010
+                call :execTest i86Win32VS2010 Win32 %%D
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTargetPath
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTarget
             )
@@ -85,8 +85,8 @@ for /D %%D in ("*") do (
             if "%test_targets%"=="x64" set exec_target_bool=4
             if !exec_target_bool!==4 (
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTarget x64Win64VS2010
-                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\%EPROSIMA_TARGET%
-                call :execTest %%D x64
+                call %EPROSIMADIR%\scripts\common_exectest_functions.bat setTargetPath ..\..\..\lib\x64Win64VS2010
+                call :execTest x64Win64VS2010 x64 %%D
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTargetPath
                 call %EPROSIMADIR%\scripts\common_exectest_functions.bat restoreTarget
             )
@@ -108,55 +108,55 @@ goto :exit
 if exist output rd /S /Q output
 mkdir output
 ::Info about test
-echo "EXECUTING %1 for %EPROSIMA_TARGET% using CDR"
+echo "EXECUTING %3 for %1 using CDR"
 :: Generates the file with RPCDDS script
-call ..\..\scripts\fastbuffers.bat -d output -ser cdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
+call ..\..\scripts\fastbuffers.bat -d output -ser cdr -local -example %1 "%3\%3.idl"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug DLL Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Release Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Copy static test files into output directory
-copy %1\* output\
+copy %3\* output\
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
-move output\%1ExampleCdr.cpp output\%1Example.cpp
+move output\%3ExampleCdr.cpp output\%3Example.cpp
 :: Compile the application test in RELEASE.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Execute the test application
-output\bin\%EPROSIMA_TARGET%\%1Example
+output\bin\%1\%3Example
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 
@@ -165,55 +165,55 @@ if not %errorstatus%==0 goto :EOF
 if exist output rd /S /Q output
 mkdir output
 ::Info about test
-echo "EXECUTING %1 for %EPROSIMA_TARGET% using CDR"
+echo "EXECUTING %3 for %1 using CDR"
 :: Generates the file with RPCDDS script
-call ..\..\scripts\fastbuffers.bat -d output -ser fastcdr -local -example %EPROSIMA_TARGET% "%1\%1.idl"
+call ..\..\scripts\fastbuffers.bat -d output -ser fastcdr -local -example %1 "%3\%3.idl"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Compile the generated library in each configuration.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Release DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug DLL Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Debug DLL" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Release Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Debug Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Debug" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Copy static test files into output directory
-copy %1\* output\
+copy %3\* output\
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
-move output\%1ExampleFastCdr.cpp output\%1Example.cpp
+move output\%3ExampleFastCdr.cpp output\%3Example.cpp
 :: Compile the application test in RELEASE.
 :: Release DLL Configuration
 :: Clean the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Clean /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Clean /p:Platform="%2"
 :: Build the visual solution
-msbuild "output\solution-%EPROSIMA_TARGET%.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
+msbuild "output\solution-%1.sln" /t:Build /p:Configuration="Release" /p:Platform="%2"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 :: Execute the test application
-output\bin\%EPROSIMA_TARGET%\%1Example
+output\bin\%1\%3Example
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :EOF
 
