@@ -17,7 +17,7 @@ $fileHeader(file=[ctx.filename, ".h"], description=["This header file contains t
 
 // TODO Poner en el contexto.
 $if(ctx.fastrpcProduct)$
-#include "fastrpc/exceptions/UserException.h"
+#include "$ctx.product$/exceptions/UserException.h"
 $endif$
 
 $ctx.directIncludeDependencies : {include | #include "$include$.h"}; separator="\n"$
@@ -95,7 +95,7 @@ $if(ctx.fastrpcProduct)$
  * @brief This class implementes the user exception $exception.scopedname$
  * @ingroup $ctx.trimfilename$
  */
-class eProsima_user_DllExport $exception.name$ : public eprosima::fastrpc::exception::UserException
+class eProsima_user_DllExport $exception.name$ : public eprosima::rpc::exception::UserException
 {
 public:
     
