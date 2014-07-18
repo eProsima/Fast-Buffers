@@ -8,18 +8,31 @@
 
 group ExampleSource;
 
-main(ctx, blocks) ::= <<
+main(ctx, definitions) ::= <<
 $fileHeader(file=[ctx.filename, "Example.cpp"], description=["This source file contains an example of serialization/deserialization using one data type in the IDL file."])$
 
-#include "$ctx.filename$Ser.h"
+#include "$ctx.filename$.h"
+$if(ctx.cdr)$
+#include "fastcdr/Cdr.h"
+
+$elseif(ctx.fastcdr)$
+#include "fastcdr/FastCdr.h"
+
+$endif$
 #include "fastcdr/exceptions/Exception.h"
 
-using namespace eprosima;
+using namespace eprosima::fastcdr;
 
 int main()
 {
     FastBuffer fastbuffer;
-    $ctx.filename$Ser $ctx.filename$_ser(fastbuffer);
+    $if(ctx.cdr)$
+    Cdr ser(fastbuffer);
+
+    $elseif(ctx.fastcdr)$
+    FastCdr ser(fastbuffer);
+    
+    $endif$
     
     // Structure to serialize.
     $ctx.firstStructure.scopedname$ ser_var;
@@ -27,25 +40,25 @@ int main()
     // Here the structure has to be initialized.
     
     // Serialization.
-    $ctx.filename$_ser << ser_var;
+    ser << ser_var;
     
     // Reset the reading position in the serializer object to start deserialization.
-    $ctx.filename$_ser.reset();
+    ser.reset();
     
     // The buffer will be deserialized in the next structure.
     $ctx.firstStructure.scopedname$ des_var;
     
     // Deserialization.
-    $ctx.filename$_ser $ctx.sersym$ des_var;
+    ser \>> des_var;
     
     return 0;
 }
 
 
-$blocks; separator="\n"$
+$definitions; separator="\n"$
 >>
 
-module(ctx, name, definition_list) ::= <<
+module(ctx, module, definition_list) ::= <<
 $definition_list$
 >>
 
@@ -53,10 +66,24 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-export_list(ctx, name, exports) ::= <<
+interface(ctx, interface, export_list) ::= <<>>
+
+export_list(exports) ::= <<
 $exports; separator="\n"$
 
 >>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
 
 struct_type(ctx, struct) ::= <<>>
 

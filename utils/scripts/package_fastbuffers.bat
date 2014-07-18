@@ -27,17 +27,15 @@ if "%EPROSIMADIR%"=="" (
 :: Go to root directory
 cd "..\.."
 
-:: Update and compile CDR library.
-cd "..\CDR"
-:: Update CDR library.
-svn update
+:: Compile FAstCDR library.
+cd "..\fastcdr"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: Compile CDR library.
-rmdir /S /Q lib\i86Win32VS2010
-rmdir /S /Q lib\x64Win64VS2010
+::rmdir /S /Q lib\i86Win32VS2010
+::rmdir /S /Q lib\x64Win64VS2010
 cd "utils\scripts"
-call build_cdr.bat
+::call build_cdr.bat
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\..\FastBuffers"
@@ -46,11 +44,6 @@ cd "..\..\..\FastBuffers"
 call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSION src\version.cpp
 if not %errorstatus%==0 goto :exit
 
-:: Update and compile FastBuffers application.
-:: Update FastBuffers application.
-svn update
-set errorstatus=%ERRORLEVEL%
-if not %errorstatus%==0 goto :exit
 :: Compile FastBuffers for target.
 rmdir /S /Q build
 call ant jar
@@ -61,7 +54,7 @@ if not %errorstatus%==0 goto :exit
 set FAST_BUFFERS_OLD=%FAST_BUFFERS%
 set FAST_BUFFERS=%CD%
 cd utils/pcTests
-call exec_tests.bat %package_targets%
+::call exec_tests.bat %package_targets%
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd ../..

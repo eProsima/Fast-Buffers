@@ -24,19 +24,108 @@ fileHeader(file, description) ::= <<
  */
 >>
 
-basicTypes ::= [
-        "float":"0.0",
-        "double":"0.0",
-        "long double":"0.0",
-        "int16_t":"0",
-        "int32_t":"0",
-        "int64_t":"0",
-        "uint16_t":"0",
-        "uint32_t":"0",
-        "uint64_t":"0",
-        "char":"0",
-        "wchar_t":"0",
-        "bool":"false",
-        "uint8_t":"0",
+// TODO De aquí para abajo, juntar con FastRPC que son lo mismo.
+
+member_default_init(member) ::= <<
+$if(member.typecode.primitive)$
+m_$member.name$ = $member.typecode.initialValue$;
+$endif$
+>>
+
+max_serialized_size(ctx, typecode, var) ::= <<
+$if(typecode.primitive)$
+$if(typecode.isType_d)$
+$var$ += $typecode.maxsize$;
+$else$
+$var$ += $typecode.size$$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, $typecode.size$)$endif$;
+$endif$
+$else$
+$if(typecode.isType_e)$
+$var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$;
+$sequence_max_serialized_size(ctx=ctx, typecodeSeq=typecode, var=var, loopvar=ctx.newLoopVarName)$
+$elseif(typecode.isType_f)$
+$array_max_serialized_size(ctx=ctx, typecodeArr=typecode, var=var, loopvar=ctx.newLoopVarName)$
+$else$
+$var$ = $typecode.scopedname$::getMaxCdrSerializedSize($var$);
+$endif$
+$endif$
+>>
+
+sequence_max_serialized_size(ctx, typecodeSeq, var, loopvar) ::= <<
+$if(typecodeSeq.contentTypeCode.primitive)$
+$if(typecodeSeq.contentTypeCode.isType_d)$
+$var$ += $typecodeSeq.maxsize$ * $typecodeSeq.contentTypeCode.maxsize$;
+$else$
+$var$ += ($typecodeSeq.maxsize$ * $typecodeSeq.contentTypeCode.size$)$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, $typecodeSeq.contentTypeCode.size$)$endif$;
+$endif$
+$else$
+for(size_t $loopvar$ = 0; $loopvar$ < $typecodeSeq.maxsize$; ++$loopvar$)
+{
+$if(typecodeSeq.contentTypeCode.isType_e)$
+    $var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$;
+    $sequence_max_serialized_size(ctx=ctx, typecodeSeq=typecodeSeq.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$elseif(typecodeSeq.contentTypeCode.isType_f)$
+$array_max_serialized_size(ctx=ctx, typecodeArr=typecodeSeq.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$else$
+    $var$ = $typecodeSeq.contentTypeCode.scopedname$::getMaxCdrSerializedSize($var$);
+$endif$
+}
+$endif$
+>>
+
+array_max_serialized_size(ctx, typecodeArr, var, loopvar) ::= <<
+$if(typecodeArr.contentTypeCode.primitive)$
+$if(typecodeArr.contentTypeCode.isType_d)$
+$var$ += $typecodeArr.size$ * $typecodeArr.contentTypeCode.maxsize$;
+$else$
+$var$ += ($typecodeArr.size$ * $typecodeArr.contentTypeCode.size$)$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, $typecodeArr.contentTypeCode.size$)$endif$;
+$endif$
+$else$
+for(size_t $loopvar$ = 0; $loopvar$ < $typecodeArr.size$; ++$loopvar$)
+{
+$if(typecodeArr.contentTypeCode.isType_e)$
+    $var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$;
+    $sequence_max_serialized_size(ctx=ctx, typecodeArr=typecodeArr.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$elseif(typecodeArr.contentTypeCode.isType_f)$
+$array_max_serialized_size(ctx=ctx, typecodeArr=typecodeArr.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$else$
+    $var$ = $typecodeArr.contentTypeCode.scopedname$::getMaxCdrSerializedSize($var$);
+$endif$
+}
+$endif$
+>>
+
+object_serialization(ctx, object, preffix) ::= <<
+$if(object.typecode.maxsize)$
+if($preffix$$object.name$.$sizeFunction.(object.typecode.stType)$ <= $object.typecode.maxsize$)
+
+$endif$scdr << $serializeCasting(typecode=object.typecode)$$preffix$$object.name$;
+$if(object.typecode.maxsize)$
+else
+throw BadParamException(std::string("The maximum length was exceeded"));
+$endif$
+$endif$
+>>
+
+object_deserialization(ctx, object, preffix) ::= <<
+dcdr \>> $deserializeCasting(typecode=object.typecode)$$preffix$$object.name$;
+>>
+
+serializeCasting(typecode) ::= <<
+$if(typecode.isType_c)$
+(uint32_t)
+$endif$
+>>
+
+deserializeCasting(typecode) ::= <<
+$if(typecode.isType_c)$
+(uint32_t&)
+$endif$
+>>
+
+sizeFunction ::= [
+        "type_e":"size()",
+        "type_d":"length()",
+        "type_15":"length()",
         default: // not basic type.
 ]

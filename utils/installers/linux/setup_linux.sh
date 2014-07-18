@@ -36,19 +36,9 @@ function installer
 	# Copy example and create makefiles.
 	mkdir -p tmp/$project/examples
 	mkdir -p tmp/$project/examples/HelloWorld
-	cp ../../../examples/HelloWorld/HelloWorldExample.cpp tmp/$project/examples/HelloWorld
-	cp ../../../examples/HelloWorld/HelloWorld.idl tmp/$project/examples/HelloWorld
-	cp ../../../examples/HelloWorld/makefile_HelloWorldExample tmp/$project/examples/HelloWorld
-	cp ../../../examples/HelloWorld/README.txt tmp/$project/examples/HelloWorld
+	cp -r ../../../examples/HelloWorld/* tmp/$project/examples/HelloWorld
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	sed "s/TARGET_TO_SUBSTITUTE/i86Linux2.6gcc/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_i86Linux2.6gcc
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-	sed "s/TARGET_TO_SUBSTITUTE/x64Linux2.6gcc/g" tmp/$project/examples/HelloWorld/makefile_HelloWorldExample > tmp/$project/examples/HelloWorld/makefile_HelloWorldExample_x64Linux2.6gcc
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-	rm tmp/$project/examples/HelloWorld/makefile_HelloWorldExample
 
 	# Copy licenses.
 	cp ../../../doc/licencias/FAST_BUFFERS_LICENSE.txt tmp/$project
@@ -71,22 +61,7 @@ function installer
 	cp ../../../classes/stringtemplate-3.2.1.jar tmp/$project/classes
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy build ant script
-	cp ../../../build.xml tmp/$project
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-	cp ../../../manifest tmp/$project
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy grammar
-	cp -r ../../../grammar tmp/$project
-	errorstatus=$?
-	if [ $errorstatus != 0 ]; then return; fi
-
-	# Copy code
-	cp -r ../../../src tmp/$project
+	cp ../../../classes/fastbuffers.jar tmp/$project/classes
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
@@ -98,7 +73,7 @@ function installer
 	chmod 755 tmp/$project/scripts/fastbuffers.sh
 
 	cd tmp
-	tar cvzf "../${project}_${version}.tar.gz" $project
+	tar cvzf "../eProsima_FastBuffers-${version}-Linux.tar.gz" $project
 	errorstatus=$?
 	cd ..
 	if [ $errorstatus != 0 ]; then return; fi

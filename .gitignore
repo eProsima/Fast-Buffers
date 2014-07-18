@@ -13,3 +13,6 @@ ipch/
 objs/
 # Lib directory
 lib/
+# Java temporaly files.
+build/
+classes/fastbuffers.jar

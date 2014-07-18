@@ -14,7 +14,12 @@ $elseif(ctx.fastcdr)$
 $endif$
 
 $if(ctx.fastrpcProduct)$
-#include "$ctx.product$/exceptions/BadParamException.h"
+#include "fastrpc/exceptions/BadParamException.h"
+using namespace eprosima::fastrpc::exception;
+
+$else$
+#include "fastcdr/exceptions/BadParamException.h"
+using namespace eprosima::fastcdr::exception;
 
 $endif$
 
@@ -264,7 +269,7 @@ void $union.scopedname$::_d($union.discriminator.cppTypename$ __d)
         $union.members:{$unionmember_discriminator_case(member=it, totallabels=union.totallabels)$}; separator="\n"$
     }
     
-    if(!b) throw eprosima::rpc::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
     
     m__d = __d;
 }
@@ -496,7 +501,7 @@ switch(m__d)
 }
 $endif$
     
-if(!b) throw eprosima::rpc::exception::BadParamException("This member is not been selected");
+if(!b) throw BadParamException("This member is not been selected");
 >>
 
 unionmember_case_selection_se(ctx, member) ::= <<
