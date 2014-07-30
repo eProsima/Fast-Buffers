@@ -14,8 +14,8 @@ $elseif(ctx.fastcdr)$
 $endif$
 
 $if(ctx.fastrpcProduct)$
-#include "fastrpc/exceptions/BadParamException.h"
-using namespace eprosima::fastrpc::exception;
+#include "$ctx.product$/exceptions/BadParamException.h"
+using namespace eprosima::rpc::exception;
 
 $else$
 #include "fastcdr/exceptions/BadParamException.h"
